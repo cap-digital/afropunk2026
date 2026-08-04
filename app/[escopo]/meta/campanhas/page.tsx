@@ -1,0 +1,246 @@
+import { notFound } from "next/navigation";
+import { ErroMeta, Etiqueta, Shell, subtituloEscopo, Linha, Pagina } from "@/components/Shell";
+import { Cartao, Stat, StatusAtivo, Vazio } from "@/components/ui";
+import {
+  BarrasAgrupadas,
+  LinhasTempo,
+  Medidor,
+  type PontoGrafico,
+  type SerieTempo,
+} from "@/components/charts";
+import { carregarEscopo } from "@/lib/dados";
+import { periodoDeParams, type ParamsBusca } from "@/lib/periodo";
+import { explicarErroMeta, getSerieDiaria, MetaError, REVALIDATE } from "@/lib/meta";
+import {
+  ehEscopoValido,
+  ESCOPOS,
+  nomeCurtoCampanha,
+  OBJETIVO_LABEL,
+  type EscopoSlug,
+} from "@/lib/config";
+import { brl, brlCompact, dec, int, pct } from "@/lib/format";
+
+export const revalidate = REVALIDATE;
+
+export function generateStaticParams() {
+  return ESCOPOS.map((escopo) => ({ escopo }));
+}
+
+/** Cores por campanha. Os dois primeiros slots são o par binário validado. */
+const TONS = ["var(--par-a)", "var(--par-b)", "var(--seq-4)", "var(--seq-2)"];
+
+export default async function MetaCampanhas({
+  params,
+  searchParams,
+}: {
+  params: { escopo: string };
+  searchParams: ParamsBusca;
+}) {
+  if (!ehEscopoValido(params.escopo)) notFound();
+  const escopo = params.escopo as EscopoSlug;
+  const periodo = periodoDeParams(searchParams);
+
+  try {
+    const d = await carregarEscopo(escopo, periodo);
+
+    if (!d.ativo) {
+      return (
+        <Shell escopo={escopo} titulo="Meta Ads · Campanhas" sub={subtituloEscopo(escopo, undefined, periodo)}>
+          <div className="cartao h-[600px]">
+            <Vazio
+              cor={d.praca?.cor}
+              titulo="Nenhuma campanha ativa"
+              descricao="Assim que uma campanha entrar em veiculação, ela aparece aqui com investimento, entrega, orçamento e série diária."
+            />
+          </div>
+        </Shell>
+      );
+    }
+
+    const series = await getSerieDiaria(d.campanhas.map((c) => c.id), periodo);
+
+    // No comparativo a cor segue a praça (identidade); na praça única, o objetivo.
+    const corDa = (i: number, slugBucket: string | undefined) =>
+      d.comparativo
+        ? (d.fatias.find((f) => f.bucket.slug === slugBucket)?.bucket.cor ?? "var(--seq-2)")
+        : TONS[i % TONS.length];
+
+    const dias = [
+      ...new Set(d.campanhas.flatMap((c) => (series.get(c.id) ?? []).map((s) => s.date))),
+    ].sort();
+    const serieCampanhas: PontoGrafico[] = dias.map((dia) => {
+      const linha: PontoGrafico = { date: dia };
+      for (const c of d.campanhas) {
+        linha[c.id] = (series.get(c.id) ?? []).find((s) => s.date === dia)?.spend ?? 0;
+      }
+      return linha;
+    });
+    const seriesCfg: SerieTempo[] = d.campanhas.map((c, i) => ({
+      chave: c.id,
+      nome: d.comparativo
+        ? `${OBJETIVO_LABEL[c.objective] ?? c.objective} · ${c.bucket?.nome ?? "—"}`
+        : (OBJETIVO_LABEL[c.objective] ?? c.objective),
+      cor: corDa(i, c.bucket?.slug),
+    }));
+
+    const comparativo: PontoGrafico[] = d.campanhas.map((c) => ({
+      nome: d.comparativo
+        ? `${c.bucket?.nome ?? "—"}`
+        : (OBJETIVO_LABEL[c.objective] ?? c.objective),
+      investimento: c.m.spend,
+      cliques: c.m.clicks,
+    }));
+
+    return (
+      <Shell
+        escopo={escopo}
+        titulo="Meta Ads · Campanhas"
+        sub={subtituloEscopo(escopo, `${d.campanhas.length} ativas`)}
+      >
+        <Pagina>
+          {/* Cartões por campanha */}
+          <div
+            className={`grid grid-cols-1 gap-3 sm:grid-cols-2 ${
+              d.campanhas.length >= 5
+                ? "lg:grid-cols-5"
+                : d.campanhas.length === 4
+                  ? "lg:grid-cols-4"
+                  : d.campanhas.length === 3
+                    ? "lg:grid-cols-3"
+                    : "lg:grid-cols-2"
+            }`}
+          >
+            {d.campanhas.map((c, i) => {
+              const orcamento = Number(c.lifetime_budget ?? 0) / 100;
+              const cor = corDa(i, c.bucket?.slug);
+              return (
+                <div key={c.id} className="cartao flex flex-col gap-2.5 p-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <Etiqueta cor={cor}>{OBJETIVO_LABEL[c.objective] ?? c.objective}</Etiqueta>
+                    <StatusAtivo ativo={c.effective_status === "ACTIVE"} />
+                  </div>
+                  <p
+                    className="truncate text-[13px] font-semibold text-[var(--ink)]"
+                    title={c.name}
+                  >
+                    {d.comparativo ? (c.bucket?.nome ?? nomeCurtoCampanha(c.name)) : nomeCurtoCampanha(c.name)}
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Stat rotulo="Investido" valor={brlCompact(c.m.spend)} tamanho="sm" />
+                    <Stat rotulo="CTR" valor={pct(c.m.ctr, 1)} tamanho="sm" />
+                  </div>
+                  {orcamento > 0 ? (
+                    <Medidor valor={c.m.spend} limite={orcamento} rotulo="Orçamento" cor={cor} />
+                  ) : (
+                    <p className="text-[11px] leading-tight text-[var(--ink-muted)]">
+                      Orçamento no conjunto de anúncios
+                    </p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-[1.4fr_1fr]">
+            <Cartao
+              titulo="Investimento diário por campanha"
+              sub="Compara o ritmo de gasto entre as campanhas ativas"
+              className="h-full"
+            >
+              <div className="h-[260px] lg:h-full">
+                <LinhasTempo dados={serieCampanhas} series={seriesCfg} formato="brl" />
+              </div>
+            </Cartao>
+
+            <Cartao
+              titulo="Investimento × cliques"
+              sub="Duas escalas diferentes, dois gráficos — nunca eixo duplo"
+              className="h-full"
+            >
+              <div className="grid h-[300px] grid-rows-2 gap-2 lg:h-full">
+                <BarrasAgrupadas
+                  dados={comparativo}
+                  series={[{ chave: "investimento", nome: "Investimento (R$)", cor: "var(--par-a)" }]}
+                  formato="brl"
+                />
+                <BarrasAgrupadas
+                  dados={comparativo}
+                  series={[{ chave: "cliques", nome: "Cliques", cor: "var(--par-b)" }]}
+                  formato="int"
+                />
+              </div>
+            </Cartao>
+          </Linha>
+
+          <Cartao titulo="Detalhamento" sub="Todas as métricas por campanha ativa">
+            <div className="overflow-auto">
+              <table className="w-full text-[12.5px]">
+                <thead>
+                  <tr className="text-left text-[11px] uppercase tracking-[0.1em] text-[var(--ink-muted)]">
+                    <th className="pb-2 pr-3 font-semibold">Campanha</th>
+                    {d.comparativo && <th className="pb-2 pr-3 font-semibold">Praça</th>}
+                    <th className="pb-2 pr-3 font-semibold">Objetivo</th>
+                    <th className="pb-2 pr-3 text-right font-semibold">Investido</th>
+                    <th className="pb-2 pr-3 text-right font-semibold">Impressões</th>
+                    <th className="pb-2 pr-3 text-right font-semibold">Alcance</th>
+                    <th className="pb-2 pr-3 text-right font-semibold">Freq.</th>
+                    <th className="pb-2 pr-3 text-right font-semibold">Cliques</th>
+                    <th className="pb-2 pr-3 text-right font-semibold">CTR</th>
+                    <th className="pb-2 pr-3 text-right font-semibold">CPC</th>
+                    <th className="pb-2 pr-3 text-right font-semibold">CPM</th>
+                    <th className="pb-2 text-right font-semibold">Compras</th>
+                  </tr>
+                </thead>
+                <tbody className="tabular">
+                  {[...d.campanhas]
+                    .sort((a, b) => b.m.spend - a.m.spend)
+                    .map((c) => (
+                      <tr key={c.id} className="border-t border-[var(--border)] text-[var(--ink-2)]">
+                        <td
+                          className="max-w-[220px] truncate py-2 pr-3 font-medium text-[var(--ink)]"
+                          title={c.name}
+                        >
+                          {nomeCurtoCampanha(c.name)}
+                        </td>
+                        {d.comparativo && (
+                          <td className="py-2 pr-3">
+                            <span className="flex items-center gap-1.5">
+                              <span
+                                aria-hidden="true"
+                                className="block h-2 w-2 shrink-0 rotate-45"
+                                style={{ background: c.bucket?.cor ?? "var(--ink-muted)" }}
+                              />
+                              {c.bucket?.nome ?? "—"}
+                            </span>
+                          </td>
+                        )}
+                        <td className="py-2 pr-3">{OBJETIVO_LABEL[c.objective] ?? c.objective}</td>
+                        <td className="py-2 pr-3 text-right font-semibold text-[var(--ink)]">
+                          {brl(c.m.spend)}
+                        </td>
+                        <td className="py-2 pr-3 text-right">{int(c.m.impressions)}</td>
+                        <td className="py-2 pr-3 text-right">{int(c.m.reach)}</td>
+                        <td className="py-2 pr-3 text-right">{dec(c.m.frequency)}</td>
+                        <td className="py-2 pr-3 text-right">{int(c.m.clicks)}</td>
+                        <td className="py-2 pr-3 text-right">{pct(c.m.ctr)}</td>
+                        <td className="py-2 pr-3 text-right">{brl(c.m.cpc)}</td>
+                        <td className="py-2 pr-3 text-right">{brl(c.m.cpm)}</td>
+                        <td className="py-2 text-right">{int(c.m.purchases)}</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </Cartao>
+        </Pagina>
+      </Shell>
+    );
+  } catch (e) {
+    const msg = e instanceof MetaError ? explicarErroMeta(e) : (e as Error).message;
+    return (
+      <Shell escopo={escopo} titulo="Meta Ads · Campanhas" sub={subtituloEscopo(escopo, undefined, periodo)}>
+        <ErroMeta titulo="Falha ao carregar a Marketing API" detalhe={msg} />
+      </Shell>
+    );
+  }
+}
