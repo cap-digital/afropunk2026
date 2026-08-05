@@ -91,7 +91,7 @@ export default async function VisaoGeralGlobal({
     return (
       <Shell
         escopo={escopo}
-        titulo="Visão Geral"
+        titulo="Overview"
         sub={subtituloEscopo(escopo, `Meta + Google · ${janela}`, periodo)}
       >
         <Pagina>
@@ -223,7 +223,7 @@ export default async function VisaoGeralGlobal({
   } catch (e) {
     const msg = e instanceof MetaError ? explicarErroMeta(e) : (e as Error).message;
     return (
-      <Shell escopo={escopo} titulo="Visão Geral" sub={subtituloEscopo(escopo, undefined, periodo)}>
+      <Shell escopo={escopo} titulo="Overview" sub={subtituloEscopo(escopo, undefined, periodo)}>
         <ErroMeta titulo="Falha ao carregar a Marketing API" detalhe={msg} />
       </Shell>
     );

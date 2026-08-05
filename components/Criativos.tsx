@@ -28,7 +28,7 @@ export function CartaoCriativo({
     <article className="cartao group flex flex-col overflow-hidden transition-colors hover:border-[var(--border-forte)]">
       <div className="relative aspect-square w-full overflow-hidden bg-[var(--surface-2)]">
         {posicao !== undefined && (
-          <span className="absolute bottom-1.5 right-1.5 z-[2] flex h-4 min-w-[16px] items-center justify-center bg-black/80 px-1 text-[9px] font-bold tabular text-[var(--ink)]">
+          <span className="absolute bottom-2 right-2 z-[2] flex h-5 min-w-[19px] items-center justify-center bg-black/80 px-1 text-[10px] font-bold tabular text-[var(--ink)]">
             {posicao}
           </span>
         )}
@@ -47,7 +47,7 @@ export function CartaoCriativo({
 
         {c.bucket && (
           <span
-            className="absolute left-1.5 top-1.5 rounded-[3px] px-1 py-[2px] text-[8.5px] font-bold uppercase tracking-[0.08em] text-black"
+            className="absolute left-2 top-2 rounded-[3px] px-1.5 py-[3px] text-[9.5px] font-bold uppercase tracking-[0.08em] text-black"
             style={{ background: c.bucket.cor }}
           >
             {c.bucket.nome}
@@ -66,21 +66,21 @@ export function CartaoCriativo({
         (11px) aqui — os rótulos usam um passo abaixo para a altura acompanhar
         a redução da largura.
       */}
-      <div className="flex flex-1 flex-col gap-1 p-2">
+      <div className="flex flex-1 flex-col gap-1.5 p-2.5">
         <p
-          className="line-clamp-1 text-[11px] font-semibold leading-tight text-[var(--ink)]"
+          className="line-clamp-1 text-[12.5px] font-semibold leading-tight text-[var(--ink)]"
           title={c.adName}
         >
           {c.adName}
         </p>
 
-        <dl className="tabular grid grid-cols-3 gap-1.5 text-[10.5px]">
+        <dl className="tabular grid grid-cols-3 gap-1.5 text-[11.5px]">
           {metricas.map((m) => {
             const destacada = m.chave === metricaDestaque;
             return (
               <div key={m.chave} className="min-w-0">
                 <dt
-                  className="truncate text-[8.5px] font-bold uppercase tracking-[0.08em]"
+                  className="truncate text-[9.5px] font-bold uppercase tracking-[0.08em]"
                   style={{ color: destacada ? "var(--ink)" : "var(--ink-muted)" }}
                 >
                   {m.curto}
@@ -103,13 +103,13 @@ export function CartaoCriativo({
           dimensões, cards de nome idêntico ficam indistinguíveis na grade.
         */}
         <p
-          className="truncate text-[9px] text-[var(--ink-2)]"
+          className="truncate text-[10px] text-[var(--ink-2)]"
           title={`${OBJETIVO_LABEL[c.objetivo] ?? c.objetivo} · ${c.conjuntoNome ?? "—"} · ${c.campanhaNome}`}
         >
           <span className="font-semibold">{OBJETIVO_LABEL[c.objetivo] ?? c.objetivo}</span>
           {c.conjuntoNome ? ` · ${c.conjuntoNome}` : ""}
         </p>
-        <p className="tabular truncate text-[9px] text-[var(--ink-muted)]">
+        <p className="tabular truncate text-[10px] text-[var(--ink-muted)]">
           {compact(c.m.impressions)} impr. ·{" "}
           {c.m.purchases > 0 ? `${c.m.purchases} compras` : "sem compra"}
         </p>
@@ -120,13 +120,13 @@ export function CartaoCriativo({
             target="_blank"
             rel="noopener noreferrer"
             title="Ver no Instagram"
-            className="mt-auto flex items-center justify-center gap-1 border border-[var(--border-forte)] px-1.5 py-[4px] text-[9px] font-bold uppercase tracking-[0.08em] text-[var(--ink-2)] transition-colors hover:border-[var(--ink)] hover:text-[var(--ink)]"
+            className="mt-auto flex items-center justify-center gap-1 border border-[var(--border-forte)] px-2 py-[5px] text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--ink-2)] transition-colors hover:border-[var(--ink)] hover:text-[var(--ink)]"
           >
             <IconeInstagram />
             Instagram
           </a>
         ) : (
-          <span className="mt-auto block border border-dashed border-[var(--border)] px-1.5 py-[4px] text-center text-[9px] uppercase tracking-[0.08em] text-[var(--ink-muted)]">
+          <span className="mt-auto block border border-dashed border-[var(--border)] px-2 py-[5px] text-center text-[10px] uppercase tracking-[0.08em] text-[var(--ink-muted)]">
             Sem link
           </span>
         )}
@@ -138,8 +138,8 @@ export function CartaoCriativo({
 function IconeInstagram() {
   return (
     <svg
-      width="10"
-      height="10"
+      width="11"
+      height="11"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"

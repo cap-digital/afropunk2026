@@ -1,5 +1,5 @@
 import type { Criativo } from "@/lib/meta";
-import { brl, compact, dec, int, pct } from "@/lib/format";
+import { brlCurto, compact, dec, int, pct } from "@/lib/format";
 
 export type ChaveMetrica =
   | "investimento"
@@ -28,7 +28,9 @@ export const METRICAS: Metrica[] = [
     chave: "investimento",
     rotulo: "Maior investimento",
     curto: "Invest.",
-    valor: (c) => brl(c.m.spend),
+    // Sem centavos: o valor completo não cabe na coluna do card e truncava.
+    // Está inteiro na tabela de conjuntos e na página de Resultados.
+    valor: (c) => brlCurto(c.m.spend),
     comparar: (a, b) => b.m.spend - a.m.spend,
   },
   {
@@ -58,7 +60,7 @@ export const METRICAS: Metrica[] = [
     chave: "cpa",
     rotulo: "Menor CPA",
     curto: "CPA",
-    valor: (c) => (c.m.purchases > 0 ? brl(c.m.cpa) : "—"),
+    valor: (c) => (c.m.purchases > 0 ? brlCurto(c.m.cpa) : "—"),
     // CPA 0 significa "nenhuma compra", não "custo zero".
     comparar: (a, b) =>
       (a.m.cpa > 0 ? a.m.cpa : semCompra) - (b.m.cpa > 0 ? b.m.cpa : semCompra),

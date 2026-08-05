@@ -200,12 +200,9 @@ function CartaoPraca({
           </>
         ) : (
           <div className="flex min-h-[118px] flex-col justify-center gap-2">
-            <p className="text-[13px] font-semibold text-[var(--ink-2)]">
-              Ainda sem campanha ativa
-            </p>
+            <p className="marca text-[17px] text-[var(--ink-2)]">Sem Campanha Ativa</p>
             <p className="text-[12px] leading-relaxed text-[var(--ink-muted)]">
-              O painel já está montado e passa a exibir dados assim que a primeira campanha
-              de {nome} entrar no ar.
+              O painel já está montado esperando a Campanha de {nome} entrar no ar
             </p>
             <span className="mt-1 inline-flex w-fit items-center rounded-[3px] border border-[var(--border-forte)] px-2 py-1 text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--ink-muted)]">
               Em breve

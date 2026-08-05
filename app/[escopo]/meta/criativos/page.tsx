@@ -3,7 +3,6 @@ import { ErroMeta, Shell, subtituloEscopo, Pagina } from "@/components/Shell";
 import { Cartao, Stat, Vazio } from "@/components/ui";
 import { DestaqueCriativo } from "@/components/Criativos";
 import { GradeCriativos } from "@/components/GradeCriativos";
-import { BarrasH, type PontoGrafico } from "@/components/charts";
 import { carregarCriativos, carregarEscopo } from "@/lib/dados";
 import { periodoDeParams, type ParamsBusca } from "@/lib/periodo";
 import { explicarErroMeta, MetaError, REVALIDATE, somar } from "@/lib/meta";
@@ -49,15 +48,6 @@ export default async function MetaCriativos({
     const ordenados = [...criativos].sort((a, b) => b.m.spend - a.m.spend);
     const comPermalink = criativos.filter((c) => c.permalink).length;
 
-    const ctrPorCriativo: PontoGrafico[] = [...criativos]
-      .filter((c) => c.m.impressions > 0)
-      .sort((a, b) => b.m.ctr - a.m.ctr)
-      .slice(0, 6)
-      .map((c) => ({
-        nome: c.adName.length > 24 ? `${c.adName.slice(0, 23)}…` : c.adName,
-        valor: c.m.ctr,
-        cor: c.bucket?.cor ?? "var(--seq-2)",
-      }));
 
     return (
       <Shell
@@ -77,23 +67,9 @@ export default async function MetaCriativos({
           </div>
 
           <Cartao
-            titulo="CTR por criativo"
-            sub={
-              d.comparativo
-                ? "Do melhor para o pior · cor identifica a praça"
-                : "Do melhor para o pior no período"
-            }
-            className="shrink-0"
-          >
-            <div className="h-[190px]">
-              <BarrasH dados={ctrPorCriativo} formato="pct" larguraRotulo={168} />
-            </div>
-          </Cartao>
-
-          <Cartao
-            titulo="Todos os criativos"
-            sub="Clique no botão do card para abrir o post original no Instagram"
-            className="min-h-[460px] lg:min-h-0 lg:flex-1"
+            titulo="Galeria de criativos"
+            sub="Ordene pela métrica que importa · clique no card para abrir o post no Instagram"
+            className="min-h-[520px] lg:min-h-0 lg:flex-1"
           >
             <div className="h-full overflow-auto pr-1">
               <GradeCriativos criativos={ordenados} />

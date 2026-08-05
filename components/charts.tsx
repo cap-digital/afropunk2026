@@ -158,6 +158,107 @@ function legenda() {
 /** Ponto genérico de gráfico: chaves de série resolvidas em runtime. */
 export type PontoGrafico = Record<string, string | number | undefined>;
 
+// ------------------------------------------------------------- rótulos
+
+interface PropsRotulo {
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+  value?: number | string;
+  index?: number;
+}
+
+const num = (v: unknown): number | null => {
+  const n = Number(v);
+  return Number.isFinite(n) && n !== 0 ? n : null;
+};
+
+/**
+ * Rótulo no PICO de cada série.
+ *
+ * Rotular o último ponto parecia natural, mas as séries convergem no dia
+ * corrente (parcial) e os rótulos se empilham uns sobre os outros. O pico de
+ * cada série cai em dias e alturas diferentes, então se espalham sozinhos — e
+ * é a informação mais útil da linha.
+ */
+function rotuloPico(dados: PontoGrafico[], chave: string, formato: Formato, cor: string) {
+  let iPico = -1;
+  let maior = 0;
+  dados.forEach((d, i) => {
+    const v = Number(d[chave]);
+    if (Number.isFinite(v) && v > maior) {
+      maior = v;
+      iPico = i;
+    }
+  });
+
+  const Conteudo = (props: unknown) => {
+    const { x, y, value, index } = props as PropsRotulo;
+    const v = num(value);
+    if (v === null || x === undefined || y === undefined || index !== iPico) return null;
+    return (
+      <text x={x} y={y - 10} fill={cor} fontSize={11.5} fontWeight={700} textAnchor="middle">
+        {fmt(v, formato)}
+      </text>
+    );
+  };
+  Conteudo.displayName = "RotuloPico";
+  return Conteudo;
+}
+
+/**
+ * Rótulo em todos os pontos quando são poucos; só no último quando são muitos.
+ * O limite evita que a série vire uma fileira de números conforme os dias
+ * se acumulam.
+ */
+function rotuloPontos(total: number, formato: Formato, cor: string, limite = 8) {
+  const todos = total <= limite;
+  const Conteudo = (props: unknown) => {
+    const { x, y, value, index } = props as PropsRotulo;
+    const v = num(value);
+    if (v === null || x === undefined || y === undefined) return null;
+    if (!todos && index !== total - 1) return null;
+    return (
+      <text x={x} y={y - 9} fill={cor} fontSize={11} fontWeight={700} textAnchor="middle">
+        {fmt(v, formato)}
+      </text>
+    );
+  };
+  Conteudo.displayName = "RotuloPontos";
+  return Conteudo;
+}
+
+/**
+ * Rótulo no topo da barra, com altura escalonada por série.
+ *
+ * Barras vizinhas de um grupo ficam a ~37px de distância e um número tem
+ * ~42px: lado a lado eles se sobrepõem. Cada série ganha uma faixa de altura
+ * própria, então vizinhos nunca disputam o mesmo espaço.
+ */
+function rotuloTopo(formato: Formato, indiceSerie: number) {
+  const Conteudo = (props: unknown) => {
+    const { x, y, width, value } = props as PropsRotulo;
+    const v = num(value);
+    if (v === null || x === undefined || y === undefined || width === undefined) return null;
+    return (
+      <text
+        x={x + width / 2}
+        y={y - 6 - indiceSerie * 14}
+        textAnchor="middle"
+        fill="var(--ink-2)"
+        fontSize={10.5}
+        fontWeight={600}
+      >
+        {fmt(v, formato)}
+      </text>
+    );
+  };
+  Conteudo.displayName = "RotuloTopo";
+  return Conteudo;
+}
+
+
 // ------------------------------------------------------------------ tempo
 
 export interface SerieTempo {
@@ -182,7 +283,7 @@ export function AreaTempo({
 }) {
   return (
     <ResponsiveContainer width="100%" height={altura}>
-      <AreaChart data={dados} margin={{ top: 6, right: 8, left: 2, bottom: 0 }}>
+      <AreaChart data={dados} margin={{ top: 22, right: 14, left: 2, bottom: 0 }}>
         <defs>
           {series.map((s) => (
             <linearGradient key={s.chave} id={`g-${s.chave}`} x1="0" y1="0" x2="0" y2="1">
@@ -225,7 +326,12 @@ export function AreaTempo({
             dot={false}
             activeDot={{ r: 4.5, strokeWidth: 2, stroke: SURFACE }}
             isAnimationActive={false}
-          />
+          >
+            <LabelList
+              dataKey={s.chave}
+              content={rotuloPontos(dados.length, formato, s.cor)}
+            />
+          </Area>
         ))}
       </AreaChart>
     </ResponsiveContainer>
@@ -246,7 +352,7 @@ export function LinhasTempo({
 }) {
   return (
     <ResponsiveContainer width="100%" height={altura}>
-      <LineChart data={dados} margin={{ top: 6, right: 10, left: 2, bottom: 0 }}>
+      <LineChart data={dados} margin={{ top: 26, right: 16, left: 2, bottom: 0 }}>
         <CartesianGrid stroke={GRID} strokeDasharray="2 4" vertical={false} />
         <XAxis
           dataKey="date"
@@ -280,7 +386,9 @@ export function LinhasTempo({
             activeDot={{ r: 5, strokeWidth: 2, stroke: SURFACE }}
             connectNulls
             isAnimationActive={false}
-          />
+          >
+            <LabelList dataKey={s.chave} content={rotuloPico(dados, s.chave, formato, s.cor)} />
+          </Line>
         ))}
       </LineChart>
     </ResponsiveContainer>
@@ -409,7 +517,7 @@ export function BarrasAgrupadas({
 }) {
   return (
     <ResponsiveContainer width="100%" height={altura}>
-      <BarChart data={dados} margin={{ top: 8, right: 6, left: 0, bottom: 0 }} barGap={3}>
+      <BarChart data={dados} margin={{ top: 34, right: 6, left: 0, bottom: 0 }} barGap={3}>
         <CartesianGrid stroke={GRID} strokeDasharray="2 4" vertical={false} />
         <XAxis
           dataKey={chaveNome}
@@ -426,7 +534,7 @@ export function BarrasAgrupadas({
         />
         <Tooltip cursor={CURSOR_BARRA} content={dica(formato)} />
         {series.length > 1 && <Legend content={legenda()} />}
-        {series.map((s) => (
+        {series.map((s, i) => (
           <Bar
             key={s.chave}
             dataKey={s.chave}
@@ -435,7 +543,12 @@ export function BarrasAgrupadas({
             radius={[4, 4, 0, 0]}
             maxBarSize={34}
             isAnimationActive={false}
-          />
+          >
+            {/* Acima de ~12 barras os rótulos encostam uns nos outros. */}
+            {dados.length * series.length <= 12 && (
+              <LabelList dataKey={s.chave} content={rotuloTopo(formato, i)} />
+            )}
+          </Bar>
         ))}
       </BarChart>
     </ResponsiveContainer>
@@ -556,7 +669,8 @@ export function Piramide({
           tick={{ ...TICK, fontSize: 12.5 }}
           axisLine={false}
           tickLine={false}
-          width={48}
+          interval={0}
+          width={52}
         />
         <Tooltip cursor={CURSOR_BARRA} content={dica(formato)} />
         <Legend content={legenda()} />

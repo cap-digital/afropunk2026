@@ -19,7 +19,20 @@ const nfDec = new Intl.NumberFormat("pt-BR", {
   maximumFractionDigits: 2,
 });
 
+const nfBRL0 = new Intl.NumberFormat("pt-BR", {
+  style: "currency",
+  currency: "BRL",
+  maximumFractionDigits: 0,
+});
+
 export const brl = (n: number) => nfBRL.format(n || 0);
+
+/**
+ * Moeda para espaços estreitos (card de criativo): sem centavos, e compacto
+ * só a partir de 10 mil. Com centavos o valor estoura a coluna e trunca.
+ */
+export const brlCurto = (n: number) =>
+  Math.abs(n || 0) >= 10000 ? nfBRLCompact.format(n || 0) : nfBRL0.format(n || 0);
 export const brlCompact = (n: number) => nfBRLCompact.format(n || 0);
 export const int = (n: number) => nfInt.format(n || 0);
 export const compact = (n: number) => nfCompact.format(n || 0);

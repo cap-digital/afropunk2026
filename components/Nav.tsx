@@ -131,7 +131,7 @@ export function NavPlataformas({ escopo, cor }: { escopo: EscopoSlug; cor: strin
       {/* Consolidado dos canais — fica fora de Meta e Google de propósito. */}
       <div className="flex flex-col gap-0.5">
         <Item href={base} cor={cor}>
-          Visão geral
+          Overview
         </Item>
       </div>
 
