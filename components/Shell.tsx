@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { Moldura } from "./Moldura";
+import { NavAnalytics } from "./Nav";
 import { Etiqueta } from "./ui";
 import { ESCOPO_TODAS, nomeDoEscopo, PRACA_POR_SLUG, type EscopoSlug } from "@/lib/config";
 import { rotuloPeriodo } from "@/lib/periodo";
@@ -98,3 +100,61 @@ export function ErroMeta({ titulo, detalhe }: { titulo: string; detalhe: string 
 }
 
 export { Etiqueta, nomeDoEscopo };
+
+/**
+ * Shell do dashboard GA4. Reaproveita a mesma moldura, trocando a navegação
+ * por plataforma pela do Analytics e o seletor de praça por um retorno à capa
+ * — o GA4 é do site inteiro, não de uma praça.
+ */
+export function ShellAnalytics({
+  children,
+  titulo,
+  sub,
+  acoes,
+}: {
+  children: ReactNode;
+  titulo: string;
+  sub?: ReactNode;
+  acoes?: ReactNode;
+}) {
+  const cor = "var(--seq-3)";
+  return (
+    <Moldura
+      cor={cor}
+      uf="GA4"
+      titulo={titulo}
+      sub={sub}
+      acoes={acoes}
+      geradoEm={HORA.format(new Date())}
+      navegacao={<NavAnalytics cor={cor} />}
+      contexto={
+        <>
+          <p className="rotulo px-1 pb-2">Fonte</p>
+          <Link
+            href="/"
+            className="group flex items-center gap-2 rounded-lg border border-[var(--border-forte)] bg-[var(--surface-2)] px-2.5 py-2.5 transition-colors hover:bg-[var(--surface-3)]"
+          >
+            <span
+              aria-hidden="true"
+              className="block h-2.5 w-2.5 shrink-0 rotate-45"
+              style={{ background: cor }}
+            />
+            <span className="marca min-w-0 flex-1 truncate text-[14px] text-[var(--ink)]">
+              Site AFROPUNK
+            </span>
+            <span className="shrink-0 text-[10.5px] font-bold uppercase tracking-[0.14em] text-[var(--ink-muted)] transition-colors group-hover:text-[var(--ink)]">
+              sair
+            </span>
+          </Link>
+        </>
+      }
+    >
+      {children}
+    </Moldura>
+  );
+}
+
+/** Faixa de erro do GA4. */
+export function ErroGA4({ titulo, detalhe }: { titulo: string; detalhe: string }) {
+  return <ErroMeta titulo={titulo} detalhe={detalhe} />;
+}

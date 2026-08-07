@@ -5,8 +5,9 @@ import { MarcaAnimada } from "@/components/MarcaAnimada";
 import { Sparkline } from "@/components/charts";
 import { carregarEscopo, type FatiaBucket } from "@/lib/dados";
 import { explicarErroMeta, MetaError, REVALIDATE } from "@/lib/meta";
-import { brl, brlCompact, dec } from "@/lib/format";
+import { brl, brlCompact, compact, dec, pct } from "@/lib/format";
 import { ESCOPO_TODAS, NACIONAL, PRACAS } from "@/lib/config";
+import { carregarVisaoGeralGA4, type TotaisSite } from "@/lib/analytics";
 
 export const revalidate = REVALIDATE;
 
@@ -17,6 +18,15 @@ export default async function Capa() {
     dados = await carregarEscopo(ESCOPO_TODAS);
   } catch (e) {
     erro = e instanceof MetaError ? explicarErroMeta(e) : (e as Error).message;
+  }
+
+  // O GA4 é opcional na capa: se a credencial falhar, os cards de praça
+  // continuam. Por isso o try próprio, separado do carregamento do Meta.
+  let ga4: TotaisSite | null = null;
+  try {
+    ga4 = (await carregarVisaoGeralGA4("maximum")).totais;
+  } catch {
+    ga4 = null;
   }
 
   const fatia = (slug: string) => dados?.fatias.find((f) => f.bucket.slug === slug) ?? null;
@@ -76,6 +86,34 @@ export default async function Capa() {
             </div>
           )}
           <span className="text-[22px] leading-none transition-transform group-hover:translate-x-1">
+            →
+          </span>
+        </Link>
+
+        {/*
+          GA4 fica fora do escopo de praça: o site é uma página só com checkout
+          comum aos três eventos, então sessões e canais não se dividem por
+          cidade — só a receita, via itens de e-commerce.
+        */}
+        <Link
+          href="/analytics"
+          className="cartao group flex items-center gap-5 px-5 py-4 transition-colors hover:border-[var(--border-forte)] hover:bg-[var(--surface-2)]"
+        >
+          <Losangos qtd={4} cor="var(--seq-3)" />
+          <div className="min-w-0 flex-1">
+            <h3 className="marca text-[19px] leading-none">Analytics do site</h3>
+            <p className="mt-1.5 text-[12px] text-[var(--ink-muted)]">
+              Google Analytics · tráfego, funil de venda e receita por evento
+            </p>
+          </div>
+          {ga4 && (
+            <div className="hidden items-center gap-7 sm:flex">
+              <MiniStat rotulo="Sessões" valor={compact(ga4.sessoes)} />
+              <MiniStat rotulo="Receita" valor={brl(ga4.receita)} />
+              <MiniStat rotulo="Conversão" valor={pct(ga4.taxaConversao * 100, 2)} />
+            </div>
+          )}
+          <span className="text-[20px] leading-none text-[var(--ink-muted)] transition-transform group-hover:translate-x-1">
             →
           </span>
         </Link>

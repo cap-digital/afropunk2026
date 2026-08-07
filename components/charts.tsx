@@ -197,9 +197,21 @@ function rotuloPico(dados: PontoGrafico[], chave: string, formato: Formato, cor:
     const { x, y, value, index } = props as PropsRotulo;
     const v = num(value);
     if (v === null || x === undefined || y === undefined || index !== iPico) return null;
+    const cheio = fmt(v, formato);
+    const texto = cheio.length > 12 ? fmtEixo(v, formato) : cheio;
+    // Nas pontas o rótulo centralizado é cortado pela borda do gráfico.
+    const naDireita = index === dados.length - 1;
+    const naEsquerda = index === 0;
     return (
-      <text x={x} y={y - 10} fill={cor} fontSize={11.5} fontWeight={700} textAnchor="middle">
-        {fmt(v, formato)}
+      <text
+        x={naDireita ? x - 2 : naEsquerda ? x + 2 : x}
+        y={y - 10}
+        fill={cor}
+        fontSize={11.5}
+        fontWeight={700}
+        textAnchor={naDireita ? "end" : naEsquerda ? "start" : "middle"}
+      >
+        {texto}
       </text>
     );
   };
@@ -212,16 +224,46 @@ function rotuloPico(dados: PontoGrafico[], chave: string, formato: Formato, cor:
  * O limite evita que a série vire uma fileira de números conforme os dias
  * se acumulam.
  */
-function rotuloPontos(total: number, formato: Formato, cor: string, limite = 8) {
+function rotuloPontos(
+  dados: PontoGrafico[],
+  chave: string,
+  formato: Formato,
+  cor: string,
+  limite = 8,
+) {
+  const total = dados.length;
   const todos = total <= limite;
+  // Série longa: um rótulo só, no pico. O último dia costuma ser parcial e
+  // rotulá-lo dá a impressão errada de queda.
+  let iPico = -1;
+  let maior = 0;
+  dados.forEach((d, i) => {
+    const v = Number(d[chave]);
+    if (Number.isFinite(v) && v > maior) {
+      maior = v;
+      iPico = i;
+    }
+  });
+
   const Conteudo = (props: unknown) => {
     const { x, y, value, index } = props as PropsRotulo;
     const v = num(value);
     if (v === null || x === undefined || y === undefined) return null;
-    if (!todos && index !== total - 1) return null;
+    if (!todos && index !== iPico) return null;
+    const cheio = fmt(v, formato);
+    const texto = cheio.length > 12 ? fmtEixo(v, formato) : cheio;
+    const naDireita = index === total - 1;
+    const naEsquerda = index === 0;
     return (
-      <text x={x} y={y - 9} fill={cor} fontSize={11} fontWeight={700} textAnchor="middle">
-        {fmt(v, formato)}
+      <text
+        x={naDireita ? x - 2 : naEsquerda ? x + 2 : x}
+        y={y - 9}
+        fill={cor}
+        fontSize={11}
+        fontWeight={700}
+        textAnchor={naDireita ? "end" : naEsquerda ? "start" : "middle"}
+      >
+        {texto}
       </text>
     );
   };
@@ -329,7 +371,7 @@ export function AreaTempo({
           >
             <LabelList
               dataKey={s.chave}
-              content={rotuloPontos(dados.length, formato, s.cor)}
+              content={rotuloPontos(dados, s.chave, formato, s.cor)}
             />
           </Area>
         ))}
@@ -491,7 +533,12 @@ export function BarrasH({
             <LabelList
               dataKey={chaveValor}
               position="right"
-              formatter={(v: number) => fmt(v, formato)}
+              // Valor cheio muito longo é cortado pela margem: acima de 12
+              // caracteres cai para a forma compacta.
+              formatter={(v: number) => {
+                const cheio = fmt(v, formato);
+                return cheio.length > 12 ? fmtEixo(v, formato) : cheio;
+              }}
               style={{ fill: "var(--ink-2)", fontSize: 12, fontWeight: 600 }}
             />
           )}
@@ -864,15 +911,19 @@ export function MapaCalor({
 export function Funil({
   etapas,
   cor,
+  esticar = true,
 }: {
   etapas: { nome: string; valor: number }[];
   cor: string;
+  /** Distribui as etapas na altura do cartão. Com poucas etapas, desligue. */
+  esticar?: boolean;
 }) {
   const topo = etapas[0]?.valor || 1;
   return (
     // justify-between: as etapas ocupam toda a altura do cartão em vez de
-    // empilharem no topo e deixarem vazio embaixo em telas altas.
-    <div className="flex h-full flex-col justify-between gap-2">
+    // empilharem no topo e deixarem vazio embaixo em telas altas. Com três
+    // etapas isso abre buracos, então o chamador pode desligar.
+    <div className={`flex h-full flex-col gap-3 ${esticar ? "justify-between" : "justify-start"}`}>
       {etapas.map((e, i) => {
         const larg = Math.max((e.valor / topo) * 100, 0.6);
         const anterior = i > 0 ? etapas[i - 1].valor : null;
@@ -936,6 +987,73 @@ export function Medidor({
         <div className="h-full rounded-full" style={{ width: `${p}%`, background: cor }} />
       </div>
       <span className="tabular text-[11px] text-[var(--ink-muted)]">{dec(p)}% consumido</span>
+    </div>
+  );
+}
+
+/**
+ * Funil em trapézios: cada faixa estreita conforme o valor da etapa, e a base
+ * de uma encosta no topo da seguinte — a forma comunica a perda sem precisar
+ * ler os números.
+ *
+ * Feito com `clip-path` em HTML, não SVG: o texto fica dentro da faixa com a
+ * mesma nitidez e as mesmas regras tipográficas do resto do dashboard.
+ * Altura fixa e modesta: esticado na altura do cartão, vira um bloco pesado
+ * que domina a tela.
+ */
+export function FunilTrapezio({
+  etapas,
+  cor,
+  alturaBanda = 54,
+}: {
+  etapas: { nome: string; valor: number }[];
+  cor: string;
+  alturaBanda?: number;
+}) {
+  if (etapas.length === 0) return null;
+
+  /**
+   * Afunilamento CONSTANTE: cada faixa estreita o mesmo tanto, independentemente
+   * do valor. A largura proporcional deixava a última faixa minúscula e a forma
+   * ilegível — quem carrega a grandeza é o número, ao lado; a forma só diz que
+   * há uma sequência de etapas.
+   */
+  const LARGURA_MIN = 34;
+  const passo = (100 - LARGURA_MIN) / etapas.length;
+  const larguraNo = (i: number) => 100 - passo * i;
+
+  return (
+    // gap-2: separação visível entre os níveis, como no funil de referência.
+    <div className="flex w-full flex-col gap-2">
+      {etapas.map((e, i) => {
+        const cima = larguraNo(i);
+        const baixo = larguraNo(i + 1);
+        const anterior = i > 0 ? etapas[i - 1].valor : null;
+        const taxa = anterior && anterior > 0 ? (e.valor / anterior) * 100 : null;
+
+        return (
+          <div key={e.nome} className="relative" style={{ height: alturaBanda }}>
+            <div
+              className="flex h-full w-full items-center justify-center px-4"
+              style={{
+                background: cor,
+                opacity: 1 - i * 0.16,
+                clipPath: `polygon(${(100 - cima) / 2}% 0%, ${(100 + cima) / 2}% 0%, ${(100 + baixo) / 2}% 100%, ${(100 - baixo) / 2}% 100%)`,
+              }}
+            >
+              <span className="truncate text-[13px] font-bold uppercase tracking-[0.06em] text-[#0b0b0b]">
+                {e.nome}
+              </span>
+            </div>
+
+            {taxa !== null && (
+              <span className="tabular absolute right-1 top-1/2 -translate-y-1/2 text-[14px] font-bold text-[var(--ink-2)]">
+                {dec(taxa)}%
+              </span>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

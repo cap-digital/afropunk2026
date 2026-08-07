@@ -181,3 +181,23 @@ export function NavPlataformas({ escopo, cor }: { escopo: EscopoSlug; cor: strin
     </nav>
   );
 }
+
+/** Navegação do dashboard GA4 — fora do escopo de praça. */
+export function NavAnalytics({ cor }: { cor: string }) {
+  return (
+    <nav className="flex flex-1 flex-col gap-3 overflow-y-auto px-2 py-4">
+      <div className="flex flex-col gap-0.5">
+        <p className="rotulo px-2 pb-2">Google Analytics</p>
+        <Item href="/analytics" cor={cor}>
+          Visão geral
+        </Item>
+        <Item href="/analytics/aquisicao" cor={cor}>
+          Aquisição
+        </Item>
+        <Item href="/analytics/vendas" cor={cor}>
+          Vendas por evento
+        </Item>
+      </div>
+    </nav>
+  );
+}

@@ -22,15 +22,22 @@ export function Moldura({
   sub,
   acoes,
   geradoEm,
+  navegacao,
+  contexto,
   children,
 }: {
-  escopo: EscopoSlug;
+  /** Ausente em páginas fora do escopo de praça, como o GA4. */
+  escopo?: EscopoSlug;
   cor: string;
   uf: string;
   titulo: string;
   sub?: ReactNode;
   acoes?: ReactNode;
   geradoEm: string;
+  /** Substitui a navegação por plataforma. */
+  navegacao?: ReactNode;
+  /** Substitui o seletor de praça no topo da lateral. */
+  contexto?: ReactNode;
   children: ReactNode;
 }) {
   const [aberto, setAberto] = useState(false);
@@ -92,26 +99,30 @@ export function Moldura({
         </div>
 
         <div className="shrink-0 border-b border-[var(--border)] px-3 py-3.5">
-          <p className="rotulo px-1 pb-2">Praça</p>
-          <Link
-            href="/"
-            className="group flex items-center gap-2 rounded-lg border border-[var(--border-forte)] bg-[var(--surface-2)] px-2.5 py-2.5 transition-colors hover:bg-[var(--surface-3)]"
-          >
-            <span
-              aria-hidden="true"
-              className="block h-2.5 w-2.5 shrink-0 rotate-45"
-              style={{ background: cor }}
-            />
-            <span className="marca min-w-0 flex-1 truncate text-[14px] text-[var(--ink)]">
-              {nomeDoEscopo(escopo)}
-            </span>
-            <span className="shrink-0 text-[10.5px] font-bold uppercase tracking-[0.14em] text-[var(--ink-muted)] transition-colors group-hover:text-[var(--ink)]">
-              trocar
-            </span>
-          </Link>
+          {contexto ?? (
+            <>
+              <p className="rotulo px-1 pb-2">Praça</p>
+              <Link
+                href="/"
+                className="group flex items-center gap-2 rounded-lg border border-[var(--border-forte)] bg-[var(--surface-2)] px-2.5 py-2.5 transition-colors hover:bg-[var(--surface-3)]"
+              >
+                <span
+                  aria-hidden="true"
+                  className="block h-2.5 w-2.5 shrink-0 rotate-45"
+                  style={{ background: cor }}
+                />
+                <span className="marca min-w-0 flex-1 truncate text-[14px] text-[var(--ink)]">
+                  {escopo ? nomeDoEscopo(escopo) : ""}
+                </span>
+                <span className="shrink-0 text-[10.5px] font-bold uppercase tracking-[0.14em] text-[var(--ink-muted)] transition-colors group-hover:text-[var(--ink)]">
+                  trocar
+                </span>
+              </Link>
+            </>
+          )}
         </div>
 
-        <NavPlataformas escopo={escopo} cor={cor} />
+        {navegacao ?? (escopo ? <NavPlataformas escopo={escopo} cor={cor} /> : null)}
 
         <div className="shrink-0 border-t border-[var(--border)] px-4 py-3.5">
           <Losangos qtd={5} cor="var(--surface-3)" />

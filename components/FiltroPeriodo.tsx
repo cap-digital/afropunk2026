@@ -52,6 +52,10 @@ export function FiltroPeriodo() {
     }
     const s = q.toString();
     router.push(s ? `${pathname}?${s}` : pathname);
+    // `push` sozinho pode ser atendido pelo Router Cache do cliente e a página
+    // fica com os números do período anterior; o refresh força o servidor a
+    // renderizar de novo com os novos searchParams.
+    router.refresh();
     setAberto(false);
   };
 
