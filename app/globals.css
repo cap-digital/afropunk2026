@@ -12,11 +12,17 @@
 :root {
   color-scheme: dark;
 
-  /* superfícies */
+  /*
+    Superfícies em cinco camadas, como no design system da casa. A quinta é o
+    hover de item sobreposto (dropdown, opção de lista) — sem ela o hover tinha
+    de reusar --surface-3 e o elemento sumia dentro do próprio painel.
+    O plano de fundo continua preto puro: a identidade AFROPUNK é preta.
+  */
   --bg: #000000;
   --surface: #141413;
   --surface-2: #1c1c1a;
   --surface-3: #242422;
+  --surface-4: #2e2e2b;
 
   /* tinta */
   --ink: #ffffff;
@@ -26,10 +32,19 @@
   /* cromo de gráfico */
   --grid: #2c2c2a;
   --baseline: #383835;
+  /* Bordas em três degraus de opacidade: sutil, padrão, forte. */
+  --border-sutil: rgba(255, 255, 255, 0.06);
   --border: rgba(255, 255, 255, 0.1);
   --border-forte: rgba(255, 255, 255, 0.18);
 
-  /* praças (categórico — não reordene sem revalidar) */
+  /*
+    Cor de praça: a partir do design system da casa, ela vive DENTRO do gráfico
+    e na legenda que aponta para ele — nunca no cromo da interface. Botão,
+    navegação, KPI, faixa de seção e etiqueta são brancos e cinzas. O que
+    sobrou de cor na tabela é legenda: o marcador da linha carrega a mesma cor
+    da série, e é isso que amarra tabela e gráfico no comparativo.
+    (categórico — não reordene sem revalidar)
+  */
   --rio: #7f73e0;
   --recife: #1b9db2;
   --salvador: #c08a12;
@@ -50,11 +65,37 @@
   --par-a: #3e8fd9;
   --par-b: #d9772e;
 
-  /* status (fixo, nunca tematizado) */
+  /*
+    Status (fixo, nunca tematizado). Cada um com fundo e borda derivados, como
+    no design system da casa: badge e pill se montam com os três — tinta sobre
+    fundo translúcido com borda da mesma família — em vez de cor chapada.
+    O alfa é baixo de propósito: sobre preto, 0,12 já separa sem virar bloco.
+  */
   --good: #0ca30c;
+  --good-bg: rgba(12, 163, 12, 0.13);
+  --good-bdr: rgba(12, 163, 12, 0.32);
   --warning: #fab219;
+  --warning-bg: rgba(250, 178, 25, 0.12);
+  --warning-bdr: rgba(250, 178, 25, 0.3);
   --serious: #ec835a;
+  --serious-bg: rgba(236, 131, 90, 0.12);
+  --serious-bdr: rgba(236, 131, 90, 0.3);
   --critical: #d03b3b;
+  --critical-bg: rgba(208, 59, 59, 0.13);
+  --critical-bdr: rgba(208, 59, 59, 0.32);
+
+  /*
+    Acento de interface: substitui a cor de praça em tudo que é cromo. Branco
+    sobre preto é o acento da casa — o "vermelho" do design system original é
+    branco no tema escuro.
+  */
+  --ui: #ffffff;
+  --ui-bg: rgba(255, 255, 255, 0.1);
+  --ui-bdr: rgba(255, 255, 255, 0.26);
+
+  /* Gradiente da barra de meta — o único gradiente do sistema da casa. */
+  --meta-de: #3a99ac;
+  --meta-ate: #83becd;
 }
 
 html,
@@ -99,12 +140,25 @@ body::after {
   opacity: 0.025;
 }
 
-/* Tipografia de marca: caixa alta, pesada, tracking fechado — o pôster em Inter. */
-.marca {
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  text-transform: uppercase;
-  line-height: 0.92;
+/*
+  Tipografia de marca: caixa alta, pesada, tracking fechado — o pôster em Inter.
+
+  Dentro de `@layer components` porque fora dele esta regra é emitida DEPOIS de
+  `@tailwind utilities` e, com a mesma especificidade, vencia todo `leading-*`
+  escrito no JSX — os utilitários viravam letra morta. O sintoma era o título
+  perder o til: "SEGMENTAÇÃO" saía "SEGMENTACAO", porque com entrelinha 0,92 o
+  acento passa do topo da caixa da linha e o `truncate` (overflow hidden) corta.
+
+  O padrão segue 0,92 — mexer nele empurra a altura de todo KPI e cartão. Quem
+  recorta o texto pede `leading-[1.2]` no elemento, e agora é atendido.
+*/
+@layer components {
+  .marca {
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    line-height: 0.92;
+  }
 }
 
 .rotulo {

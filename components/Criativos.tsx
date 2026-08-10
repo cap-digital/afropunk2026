@@ -191,7 +191,7 @@ function MiniDestaque({
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <Etiqueta variante="contorno" cor={c.bucket?.cor}>
+          <Etiqueta variante="contorno">
             {rotulo}
           </Etiqueta>
         </div>

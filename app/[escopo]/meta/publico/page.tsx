@@ -40,7 +40,6 @@ export default async function MetaPublico({
         <Shell escopo={escopo} titulo="Meta Ads · Público" sub={subtituloEscopo(escopo, undefined, periodo)}>
           <div className="cartao h-full">
             <Vazio
-              cor={d.praca?.cor}
               titulo="Sem dados de público"
               descricao="O detalhamento por idade, gênero e dispositivo aparece assim que houver entrega registrada."
             />
@@ -115,7 +114,7 @@ export default async function MetaPublico({
         sub={subtituloEscopo(escopo, undefined, periodo)}
       >
         <Pagina>
-          <Secao cor={cor}>Quem está sendo alcançado</Secao>
+          <Secao>Quem está sendo alcançado</Secao>
 
           <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-4 py-4 sm:grid-cols-3 lg:grid-cols-5 lg:gap-5 lg:px-5">
             <Stat
@@ -124,7 +123,6 @@ export default async function MetaPublico({
               sub={
                 porFaixa[0] ? `${pct((porFaixa[0].total / totalImpr) * 100, 1)} das impressões` : undefined
               }
-              cor={cor}
             />
             <Stat rotulo="Feminino" valor={pct((totalF / totalGen) * 100, 1)} sub={`${compact(totalF)} impressões`} />
             <Stat rotulo="Masculino" valor={pct((totalM / totalGen) * 100, 1)} sub={`${compact(totalM)} impressões`} />
@@ -136,14 +134,13 @@ export default async function MetaPublico({
             />
           </div>
 
-          <Secao cor={cor}>Idade e gênero</Secao>
+          <Secao>Idade e gênero</Secao>
 
           <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-[1.15fr_1fr]">
             <Cartao
               titulo="Pirâmide etária"
               sub="Impressões por faixa e gênero — barras divergentes a partir do zero"
               className="h-full"
-              cor={cor}
             >
               <div className="h-[260px] lg:h-full">
                 <Piramide dados={piramide} corF="var(--par-a)" corM="var(--par-b)" formato="int" />
@@ -158,7 +155,6 @@ export default async function MetaPublico({
                   : "Parte do todo sobre as impressões entregues"
               }
               className="h-full"
-              cor="var(--par-a)"
             >
               {d.comparativo ? (
                 <div className="h-[260px] lg:h-full">
@@ -199,7 +195,7 @@ export default async function MetaPublico({
             </Cartao>
           </Linha>
 
-          <Secao cor={cor}>Onde o anúncio é visto</Secao>
+          <Secao>Onde o anúncio é visto</Secao>
 
           {/*
             Regiões só faz sentido no comparativo: no escopo de uma praça a
@@ -211,7 +207,6 @@ export default async function MetaPublico({
                 titulo="Regiões"
                 sub="Impressões por estado — a segmentação geográfica em prática"
                 className="h-full"
-                cor={cor}
               >
                 <div className="h-[260px] lg:h-full">
                   <BarrasH dados={regioes} formato="int" corUnica="var(--seq-2)" larguraRotulo={132} />
@@ -227,7 +222,6 @@ export default async function MetaPublico({
                   : `Aparelho usado para ver o anúncio · ${d.praca?.uf ?? ""} concentra toda a entrega`
               }
               className="h-full"
-              cor="var(--seq-3)"
             >
               <div className="h-[260px] lg:h-full">
                 <BarrasH dados={dispositivos} formato="int" corUnica="var(--seq-3)" larguraRotulo={120} />

@@ -1,18 +1,26 @@
 import type { ReactNode } from "react";
+import { IconInbox, IconPointFilled, type TablerIcon } from "@tabler/icons-react";
 
 /**
- * Faixa de seção — losango, rótulo em caixa alta e filete até a margem.
- * Serve para agrupar cartões em blocos nomeados e dar ritmo vertical à
- * página, no lugar de uma grade uniforme de caixas iguais.
+ * Primitivas de interface.
+ *
+ * Regra do design system da casa: o cromo é preto e branco. Nenhuma primitiva
+ * daqui aceita cor de marca — cor de praça só aparece dentro do gráfico e na
+ * legenda que aponta para ele. Status (bom/alerta/crítico) é exceção, porque
+ * ali a cor carrega significado próprio e vem sempre acompanhada de rótulo.
  */
-export function Secao({ children, cor }: { children: ReactNode; cor?: string }) {
+
+/** Tipo do ícone Tabler — os componentes são forwardRef, não função simples. */
+export type Icone = TablerIcon;
+
+/**
+ * Faixa de seção — ícone, rótulo em caixa alta e filete até a margem.
+ * Agrupa cartões em blocos nomeados e dá ritmo vertical à página.
+ */
+export function Secao({ children, icone: Ic = IconPointFilled }: { children: ReactNode; icone?: Icone }) {
   return (
     <div className="faixa-secao pt-0.5">
-      <span
-        aria-hidden="true"
-        className="block h-[7px] w-[7px] shrink-0 rotate-45"
-        style={{ background: cor ?? "var(--ink-muted)" }}
-      />
+      <Ic size={14} stroke={2} className="shrink-0 text-[var(--ink-muted)]" aria-hidden="true" />
       <h2 className="shrink-0 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--ink-2)]">
         {children}
       </h2>
@@ -26,25 +34,26 @@ export function Cartao({
   titulo,
   sub,
   acao,
-  cor,
+  icone: Ic,
 }: {
   children: ReactNode;
   className?: string;
   titulo?: string;
   sub?: string;
   acao?: ReactNode;
-  cor?: string;
+  icone?: Icone;
 }) {
   return (
     <section className={`cartao flex flex-col overflow-hidden ${className}`}>
       {(titulo || acao) && (
         <header className="cartao-cabecalho flex shrink-0 items-start justify-between gap-3 px-4 py-3">
           <div className="flex min-w-0 items-start gap-2">
-            {cor && (
-              <span
+            {Ic && (
+              <Ic
+                size={15}
+                stroke={1.8}
+                className="mt-[1px] shrink-0 text-[var(--ink-muted)]"
                 aria-hidden="true"
-                className="mt-[3px] block h-[6px] w-[6px] shrink-0 rotate-45"
-                style={{ background: cor }}
               />
             )}
             <div className="min-w-0">
@@ -76,25 +85,21 @@ export function Stat({
   rotulo,
   valor,
   sub,
-  cor,
+  icone: Ic,
   tamanho = "md",
 }: {
   rotulo: string;
   valor: string;
   sub?: string;
-  cor?: string;
+  icone?: Icone;
   tamanho?: "sm" | "md" | "lg";
 }) {
   const t = { sm: "text-[19px]", md: "text-[25px]", lg: "text-[34px]" }[tamanho];
   return (
     <div className="flex min-w-0 flex-col justify-center">
       <div className="flex items-center gap-1.5">
-        {cor && (
-          <span
-            aria-hidden="true"
-            className="block h-2 w-2 shrink-0 rotate-45"
-            style={{ background: cor }}
-          />
+        {Ic && (
+          <Ic size={13} stroke={1.9} className="shrink-0 text-[var(--ink-muted)]" aria-hidden="true" />
         )}
         <span className="rotulo truncate">{rotulo}</span>
       </div>
@@ -131,20 +136,35 @@ export function Hero({
   );
 }
 
+/**
+ * Etiqueta. `tom` escolhe entre o acento neutro da interface e os status, que
+ * se montam com a tríade tinta + fundo + borda da mesma família.
+ */
+export type TomEtiqueta = "neutro" | "bom" | "alerta" | "critico" | "apagado";
+
+const TOM: Record<TomEtiqueta, { cor: string; bg: string; bdr: string }> = {
+  neutro: { cor: "var(--ink)", bg: "var(--ui-bg)", bdr: "var(--ui-bdr)" },
+  bom: { cor: "var(--good)", bg: "var(--good-bg)", bdr: "var(--good-bdr)" },
+  alerta: { cor: "var(--warning)", bg: "var(--warning-bg)", bdr: "var(--warning-bdr)" },
+  critico: { cor: "var(--critical)", bg: "var(--critical-bg)", bdr: "var(--critical-bdr)" },
+  apagado: { cor: "var(--ink-muted)", bg: "transparent", bdr: "var(--border-forte)" },
+};
+
 export function Etiqueta({
   children,
-  cor,
+  tom = "neutro",
   variante = "solida",
 }: {
   children: ReactNode;
-  cor?: string;
+  tom?: TomEtiqueta;
   variante?: "solida" | "contorno";
 }) {
+  const t = TOM[tom];
   if (variante === "contorno") {
     return (
       <span
-        className="inline-flex items-center border px-1.5 py-[2px] text-[11px] font-bold uppercase tracking-[0.12em]"
-        style={{ borderColor: cor ?? "var(--border-forte)", color: cor ?? "var(--ink-2)" }}
+        className="inline-flex items-center gap-1.5 rounded-md border px-2 py-[3px] text-[10.5px] font-bold uppercase tracking-[0.1em]"
+        style={{ borderColor: t.bdr, background: t.bg, color: t.cor }}
       >
         {children}
       </span>
@@ -152,22 +172,22 @@ export function Etiqueta({
   }
   return (
     <span
-      className="inline-flex items-center px-1.5 py-[2px] text-[11px] font-bold uppercase tracking-[0.12em] text-black"
-      style={{ background: cor ?? "var(--ink)" }}
+      className="inline-flex items-center rounded-md px-2 py-[3px] text-[10.5px] font-bold uppercase tracking-[0.1em] text-black"
+      style={{ background: t.cor }}
     >
       {children}
     </span>
   );
 }
 
-/** Ponto de status com ícone + rótulo — cor nunca carrega o significado sozinha. */
+/** Status com ícone + rótulo — cor nunca carrega o significado sozinha. */
 export function StatusAtivo({ ativo }: { ativo: boolean }) {
   return (
     <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.12em]">
-      <span
+      <IconPointFilled
+        size={12}
         aria-hidden="true"
-        className="block h-1.5 w-1.5 rotate-45"
-        style={{ background: ativo ? "var(--good)" : "var(--ink-muted)" }}
+        style={{ color: ativo ? "var(--good)" : "var(--ink-muted)" }}
       />
       <span style={{ color: ativo ? "var(--good)" : "var(--ink-muted)" }}>
         {ativo ? "Ativa" : "Sem veiculação"}
@@ -176,31 +196,64 @@ export function StatusAtivo({ ativo }: { ativo: boolean }) {
   );
 }
 
-/** Estado vazio — usado por Salvador enquanto não há campanha ativa. */
+/** Estado vazio — praça sem campanha no canal, recorte sem linha. */
 export function Vazio({
   titulo,
   descricao,
-  cor,
+  icone: Ic = IconInbox,
 }: {
   titulo: string;
   descricao: string;
-  cor?: string;
+  icone?: Icone;
 }) {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-3 py-8 text-center">
-      <span className="flex items-center gap-1.5" aria-hidden="true">
-        {[0, 1, 2].map((i) => (
-          <span
-            key={i}
-            className="block h-2 w-2 rotate-45"
-            style={{ background: cor ?? "var(--ink-muted)", opacity: 0.35 + i * 0.25 }}
-          />
-        ))}
-      </span>
-      <p className="marca text-[17px] text-[var(--ink-2)]">{titulo}</p>
+      <Ic size={26} stroke={1.5} className="text-[var(--ink-muted)]" aria-hidden="true" />
+      <p className="marca text-[17px] leading-[1.15] text-[var(--ink-2)]">{titulo}</p>
       <p className="max-w-[46ch] text-[12.5px] leading-relaxed text-[var(--ink-muted)]">
         {descricao}
       </p>
+    </div>
+  );
+}
+
+/**
+ * Barra de meta/consumo. O gradiente é o único do sistema da casa e o único
+ * lugar de cor não-status no cromo — vem do design system, não da praça.
+ */
+export function BarraMeta({
+  valor,
+  limite,
+  rotulo,
+  formatar,
+}: {
+  valor: number;
+  limite: number;
+  rotulo: string;
+  formatar: (n: number) => string;
+}) {
+  const p = limite > 0 ? Math.min((valor / limite) * 100, 100) : 0;
+  return (
+    <div className="flex flex-col gap-1.5">
+      <div className="flex items-baseline justify-between gap-2">
+        <span className="rotulo truncate">{rotulo}</span>
+        <span className="tabular shrink-0 text-[12px] text-[var(--ink-2)]">
+          {formatar(valor)}{" "}
+          <span className="text-[var(--ink-muted)]">/ {formatar(limite)}</span>
+        </span>
+      </div>
+      <div className="h-[9px] w-full overflow-hidden rounded-md bg-[var(--surface-3)]">
+        <div
+          className="h-full rounded-md transition-[width] duration-500"
+          style={{
+            width: `${p}%`,
+            background: "linear-gradient(90deg, var(--meta-de), var(--meta-ate))",
+          }}
+        />
+      </div>
+      <span className="tabular text-[11px] text-[var(--ink-muted)]">
+        {p.toFixed(1).replace(".", ",")}% consumido
+      </span>
     </div>
   );
 }

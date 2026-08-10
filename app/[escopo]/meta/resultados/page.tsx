@@ -33,7 +33,6 @@ export default async function MetaResultados({
         <Shell escopo={escopo} titulo="Meta Ads · Resultados" sub={subtituloEscopo(escopo, undefined, periodo)}>
           <div className="cartao h-[600px]">
             <Vazio
-              cor={d.praca?.cor}
               titulo="Sem resultados registrados"
               descricao="Receita, ROAS, compras e CPA aparecem aqui assim que a primeira campanha de conversão começar a converter."
             />
@@ -91,7 +90,7 @@ export default async function MetaResultados({
         )}
       >
         <Pagina>
-          <Secao cor={cor}>Retorno</Secao>
+          <Secao>Retorno</Secao>
 
           <div className="cartao grid grid-cols-2 items-center gap-4 px-4 py-4 sm:grid-cols-3 lg:grid-cols-[minmax(250px,1.1fr)_repeat(5,1fr)] lg:gap-5 lg:px-5">
             <Hero
@@ -102,7 +101,6 @@ export default async function MetaResultados({
             <Stat
               rotulo="Investimento total"
               valor={brl(t.spend)}
-              cor={cor}
               sub={`${brl(t.spendConversao)} em conversão`}
             />
             <Stat
@@ -123,14 +121,13 @@ export default async function MetaResultados({
             />
           </div>
 
-          <Secao cor={cor}>Evolução</Secao>
+          <Secao>Evolução</Secao>
 
           <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-2">
             <Cartao
               titulo="Evolução do ROAS"
               sub="Receita do dia ÷ investimento em conversão do dia"
               className="h-full"
-              cor={cor}
             >
               <div className="h-[260px] lg:h-full">
                 <LinhasTempo dados={serieRoas} series={seriesRoas} formato="roas" />
@@ -141,7 +138,6 @@ export default async function MetaResultados({
               titulo="Receita × investimento por dia"
               sub="Mesma unidade (R$), então cabem no mesmo eixo"
               className="h-full"
-              cor="var(--par-a)"
             >
               <div className="h-[260px] lg:h-full">
                 <LinhasTempo dados={serieReceita} series={seriesReceita} formato="brl" />
@@ -149,7 +145,7 @@ export default async function MetaResultados({
             </Cartao>
           </Linha>
 
-          <Secao cor={cor}>Onde a receita nasce</Secao>
+          <Secao>Onde a receita nasce</Secao>
 
           <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-[1.25fr_1fr]">
             <Cartao
@@ -160,14 +156,12 @@ export default async function MetaResultados({
                   : "nenhum conjunto registrou venda no período"
               }
               className="h-full"
-              cor={cor}
             >
               <div className="h-[260px] lg:h-full">
                 {receitaPorConjunto.length > 0 ? (
                   <BarrasH dados={receitaPorConjunto} formato="brl" larguraRotulo={186} />
                 ) : (
                   <Vazio
-                    cor={cor}
                     titulo="Sem receita por conjunto"
                     descricao="As campanhas de alcance não geram venda direta. Quando as de conversão registrarem compras, a divisão por conjunto aparece aqui."
                   />
@@ -179,7 +173,6 @@ export default async function MetaResultados({
               titulo="Detalhamento por conjunto"
               sub="Ordenado por receita · ROAS em verde quando passa de 1×"
               className="h-full"
-              cor={cor}
             >
               <div className="max-h-[320px] overflow-auto lg:h-full lg:max-h-none">
               <table className="w-full text-[12.5px]">

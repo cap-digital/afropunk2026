@@ -4,12 +4,63 @@ import { Losangos } from "@/components/Marca";
 import { MarcaAnimada } from "@/components/MarcaAnimada";
 import { Sparkline } from "@/components/charts";
 import { carregarEscopo, type FatiaBucket } from "@/lib/dados";
+import { carregarAds, type DadosAds } from "@/lib/ads";
 import { explicarErroMeta, MetaError, REVALIDATE } from "@/lib/meta";
 import { brl, brlCompact, compact, dec, pct } from "@/lib/format";
 import { ESCOPO_TODAS, NACIONAL, PRACAS } from "@/lib/config";
 import { carregarVisaoGeralGA4, type TotaisSite } from "@/lib/analytics";
+import type { PontoGrafico } from "@/components/charts";
 
 export const revalidate = REVALIDATE;
+
+/**
+ * Números consolidados de uma praça — Meta + Google no mesmo card.
+ *
+ * A capa leva para a Overview, que soma os dois canais: se o card mostrasse só
+ * o Meta, o investimento mudaria de valor ao clicar. ROAS e CPA saem do recorte
+ * de conversão dos dois lados (no Google, todas as campanhas ativas são de
+ * venda, então o gasto entra inteiro).
+ */
+interface ResumoPraca {
+  investimento: number;
+  roas: number;
+  cpa: number;
+  investimentoConversao: number;
+  campanhas: number;
+  serie: PontoGrafico[];
+  ativa: boolean;
+}
+
+function consolidar(f: FatiaBucket | null, ads: DadosAds | null, slug: string): ResumoPraca {
+  const g = ads?.fatias.find((x) => x.bucket.slug === slug) ?? null;
+  const investimento = (f?.total.spend ?? 0) + (g?.total.custo ?? 0);
+  const invConv = (f?.total.spendConversao ?? 0) + (g?.total.custo ?? 0);
+  const receita = (f?.total.receitaConversao ?? 0) + (g?.total.receita ?? 0);
+  const compras = (f?.total.purchasesConversao ?? 0) + (g?.total.conversoes ?? 0);
+
+  // Série do Meta somada ao custo diário do Google daquela praça.
+  const custoAdsPorDia = new Map(
+    (ads?.serie ?? []).map((p) => [p.date, Number(p[`custo_${slug}`] ?? 0)] as const),
+  );
+  const datas = [
+    ...new Set([...(f?.serie ?? []).map((p) => p.date), ...custoAdsPorDia.keys()]),
+  ].sort();
+  const spendMeta = new Map((f?.serie ?? []).map((p) => [p.date, p.spend] as const));
+  const serie: PontoGrafico[] = datas.map((date) => ({
+    date,
+    spend: (spendMeta.get(date) ?? 0) + (custoAdsPorDia.get(date) ?? 0),
+  }));
+
+  return {
+    investimento,
+    roas: invConv > 0 ? receita / invConv : 0,
+    cpa: compras > 0 ? invConv / compras : 0,
+    investimentoConversao: invConv,
+    campanhas: (f?.campanhas.length ?? 0) + (g?.campanhas.length ?? 0),
+    serie,
+    ativa: (f?.ativa ?? false) || (g?.ativa ?? false),
+  };
+}
 
 export default async function Capa() {
   let dados: Awaited<ReturnType<typeof carregarEscopo>> | null = null;
@@ -20,8 +71,10 @@ export default async function Capa() {
     erro = e instanceof MetaError ? explicarErroMeta(e) : (e as Error).message;
   }
 
-  // O GA4 é opcional na capa: se a credencial falhar, os cards de praça
-  // continuam. Por isso o try próprio, separado do carregamento do Meta.
+  // Google e GA4 são opcionais na capa: se a credencial falhar, os cards de
+  // praça continuam com o Meta. Por isso cada um tem o seu próprio try.
+  const ads = await carregarAds(ESCOPO_TODAS, "maximum").catch((): DadosAds | null => null);
+
   let ga4: TotaisSite | null = null;
   try {
     ga4 = (await carregarVisaoGeralGA4("maximum")).totais;
@@ -31,6 +84,12 @@ export default async function Capa() {
 
   const fatia = (slug: string) => dados?.fatias.find((f) => f.bucket.slug === slug) ?? null;
   const nacional = fatia(NACIONAL.slug);
+
+  const totalInvestimento = (dados?.total.spend ?? 0) + (ads?.total.custo ?? 0);
+  const totalReceita = (dados?.total.purchaseValue ?? 0) + (ads?.total.receita ?? 0);
+  const totalInvConversao = (dados?.total.spendConversao ?? 0) + (ads?.total.custo ?? 0);
+  const totalReceitaConversao = (dados?.total.receitaConversao ?? 0) + (ads?.total.receita ?? 0);
+  const totalRoas = totalInvConversao > 0 ? totalReceitaConversao / totalInvConversao : 0;
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between overflow-hidden bg-[var(--bg)] px-8 py-8">
@@ -54,33 +113,39 @@ export default async function Capa() {
       <div className="flex w-full max-w-[1120px] shrink-0 flex-col gap-4">
         <div className="grid grid-cols-3 gap-4">
           {PRACAS.map((p) => (
-            <CartaoPraca key={p.slug} slug={p.slug} nome={p.nome} marca={p.marca} local={p.local} cor={p.cor} f={fatia(p.slug)} />
+            <CartaoPraca
+              key={p.slug}
+              slug={p.slug}
+              nome={p.nome}
+              marca={p.marca}
+              local={p.local}
+              cor={p.cor}
+              r={consolidar(fatia(p.slug), ads, p.slug)}
+            />
           ))}
         </div>
 
         {/* Botão para o comparativo consolidado */}
         <Link
-          href={`/${ESCOPO_TODAS}/meta`}
+          href={`/${ESCOPO_TODAS}`}
           className="group flex items-center gap-5 rounded-[6px] border-2 border-[var(--ink)] bg-[var(--ink)] px-5 py-4 text-black transition-colors hover:bg-[var(--ink-2)] hover:border-[var(--ink-2)]"
         >
           <Losangos qtd={4} cor="#000000" />
           <div className="min-w-0 flex-1">
             <h3 className="marca text-[23px] leading-none">Ver todas as praças juntas</h3>
             <p className="mt-1.5 text-[12px] font-medium opacity-70">
-              Comparativo entre Rio, Recife e Salvador — mais a campanha nacional
+              Meta e Google somados — Rio, Recife, Salvador e a campanha nacional
             </p>
           </div>
           {nacional && dados && (
             <div className="flex items-center gap-7">
-              <MiniStat rotulo="Investido" valor={brl(dados.total.spend)} />
-              <MiniStat rotulo="Receita" valor={brl(dados.total.purchaseValue)} />
+              <MiniStat rotulo="Investido" valor={brl(totalInvestimento)} />
+              <MiniStat rotulo="Receita" valor={brl(totalReceita)} />
               <MiniStat
                 rotulo="ROAS"
-                valor={dados.total.roas > 0 ? `${dec(dados.total.roas)}\u00d7` : "\u2014"}
+                valor={totalRoas > 0 ? `${dec(totalRoas)}\u00d7` : "\u2014"}
                 nota={
-                  dados.total.spendConversao > 0
-                    ? `sobre ${brlCompact(dados.total.spendConversao)}`
-                    : undefined
+                  totalInvConversao > 0 ? `sobre ${brlCompact(totalInvConversao)}` : undefined
                 }
               />
             </div>
@@ -123,18 +188,34 @@ export default async function Capa() {
         <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-[var(--ink-muted)]">
           Desenvolvido por
         </span>
-        {/*
-          Versão reversa do logo: o ".hub" do arquivo original é preto e
-          desapareceria no rodapé. O vermelho da marca é preservado.
-        */}
-        <Image
-          src="/graalhub-reverso.png"
-          alt="GRAAL.hub"
-          width={900}
-          height={127}
-          priority
-          className="h-[19px] w-auto opacity-90"
-        />
+        <div className="flex items-center gap-4">
+          {/*
+            CAP.CO recortado na caixa dos glifos: o arquivo original tem margem
+            transparente e, na mesma altura em CSS, a marca sairia menor que a
+            do GRAAL. Cortado, as duas alturas de caixa alta batem.
+          */}
+          <Image
+            src="/capco.png"
+            alt="CAP.CO"
+            width={1752}
+            height={536}
+            priority
+            className="h-[19px] w-auto opacity-90"
+          />
+          <span aria-hidden="true" className="h-4 w-px bg-[var(--border-forte)]" />
+          {/*
+            Versão reversa do logo: o ".hub" do arquivo original é preto e
+            desapareceria no rodapé. O vermelho da marca é preservado.
+          */}
+          <Image
+            src="/graalhub-reverso.png"
+            alt="GRAAL.hub"
+            width={900}
+            height={127}
+            priority
+            className="h-[19px] w-auto opacity-90"
+          />
+        </div>
       </footer>
     </main>
   );
@@ -166,20 +247,18 @@ function CartaoPraca({
   marca,
   local,
   cor,
-  f,
+  r,
 }: {
   slug: string;
   nome: string;
   marca: string;
   local: string;
   cor: string;
-  f: FatiaBucket | null;
+  r: ResumoPraca;
 }) {
-  const ativa = f?.ativa ?? false;
-
   return (
     <Link
-      href={`/${slug}/meta`}
+      href={`/${slug}`}
       className="cartao group relative flex flex-col overflow-hidden transition-all hover:border-[var(--border-forte)] hover:bg-[var(--surface-2)]"
     >
       <span
@@ -190,10 +269,10 @@ function CartaoPraca({
 
       <div className="flex flex-col gap-3 p-4 pt-5">
         <div className="min-w-0">
-          <p
-            className="text-[11px] font-bold uppercase tracking-[0.16em]"
-            style={{ color: cor }}
-          >
+          {/* Rótulo neutro: na capa, a cor da praça fica só no filete do topo
+              — que é a chave de legenda do sistema inteiro — e no sparkline,
+              que é gráfico. O resto do cartão é cromo. */}
+          <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--ink-muted)]">
             {marca}
           </p>
           <h3 className="marca mt-1.5 text-[31px] leading-[0.9]">{nome}</h3>
@@ -202,27 +281,24 @@ function CartaoPraca({
 
         <div className="h-px w-full bg-[var(--border)]" />
 
-        {ativa && f ? (
+        {r.ativa ? (
           <>
             <div className="grid grid-cols-3 gap-2">
-              <MiniStatEsq rotulo="Investido" valor={brlCompact(f.total.spend)} />
+              <MiniStatEsq rotulo="Investido" valor={brlCompact(r.investimento)} />
               <MiniStatEsq
                 rotulo="ROAS"
-                valor={f.total.roas > 0 ? `${dec(f.total.roas)}×` : "—"}
-                destaque={f.total.roas >= 1}
+                valor={r.roas > 0 ? `${dec(r.roas)}×` : "—"}
+                destaque={r.roas >= 1}
               />
-              <MiniStatEsq
-                rotulo="CPA"
-                valor={f.total.purchases > 0 ? brlCompact(f.total.cpa) : "—"}
-              />
+              <MiniStatEsq rotulo="CPA" valor={r.cpa > 0 ? brlCompact(r.cpa) : "—"} />
             </div>
-            {f.total.spendConversao > 0 && (
+            {r.investimentoConversao > 0 && (
               <p className="tabular -mt-1 text-[10px] leading-tight text-[var(--ink-muted)]">
-                ROAS e CPA sobre {brlCompact(f.total.spendConversao)} em conversão
+                ROAS e CPA sobre {brlCompact(r.investimentoConversao)} em conversão
               </p>
             )}
             <div className="-mx-1 h-[38px]">
-              <Sparkline dados={f.serie} chave="spend" cor={cor} altura={38} />
+              <Sparkline dados={r.serie} chave="spend" cor={cor} altura={38} />
             </div>
             <div className="flex items-center gap-1.5">
               <span
@@ -231,8 +307,8 @@ function CartaoPraca({
                 style={{ background: "var(--good)" }}
               />
               <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--good)]">
-                {f.campanhas.length} campanha{f.campanhas.length > 1 ? "s" : ""} ativa
-                {f.campanhas.length > 1 ? "s" : ""}
+                {r.campanhas} campanha{r.campanhas > 1 ? "s" : ""} ativa
+                {r.campanhas > 1 ? "s" : ""}
               </span>
             </div>
           </>

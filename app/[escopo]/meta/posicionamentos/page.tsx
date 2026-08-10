@@ -39,7 +39,6 @@ export default async function MetaPosicionamentos({
         <Shell escopo={escopo} titulo="Meta Ads · Posicionamentos" sub={subtituloEscopo(escopo, undefined, periodo)}>
           <div className="cartao h-[600px]">
             <Vazio
-              cor={d.praca?.cor}
               titulo="Sem dados de posicionamento"
               descricao="O mapa de plataformas e posicionamentos aparece assim que houver entrega registrada."
             />
@@ -107,7 +106,6 @@ export default async function MetaPosicionamentos({
               rotulo="Plataforma principal"
               valor={PLATAFORMA_LABEL[principal?.chave ?? ""] ?? "—"}
               sub={principal ? `${pct((principal.impressions / totalImpr) * 100, 1)} das impressões` : undefined}
-              cor={d.praca?.cor ?? "var(--todas)"}
             />
             <Stat rotulo="Plataformas" valor={String(bd.plataformas.length)} sub="com entrega" />
             <Stat rotulo="Posicionamentos" valor={String(bd.posicionamentos.length)} sub="combinações ativas" />

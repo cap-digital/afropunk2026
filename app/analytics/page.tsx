@@ -47,7 +47,7 @@ export default async function AnalyticsVisaoGeral({
         sub={`Site AFROPUNK · ${janela}${periodo === "maximum" ? ` · ${ROTULO_PADRAO}` : ""}`}
       >
         <Pagina>
-          <Secao cor="var(--seq-3)">Comportamento do site</Secao>
+          <Secao>Comportamento do site</Secao>
 
           <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-4 py-4 sm:grid-cols-3 lg:grid-cols-[minmax(250px,1.1fr)_repeat(5,1fr)] lg:gap-5 lg:px-5">
             <Hero
@@ -58,7 +58,6 @@ export default async function AnalyticsVisaoGeral({
             <Stat
               rotulo="Receita"
               valor={brlCompact(t.receita)}
-              cor="var(--seq-3)"
               sub={`${brl(t.receita)} · ${int(t.transacoes)} compras`}
             />
             <Stat
@@ -75,14 +74,13 @@ export default async function AnalyticsVisaoGeral({
             <Stat rotulo="Duração média" valor={duracao(t.duracaoMedia)} sub="por sessão" />
           </div>
 
-          <Secao cor="var(--seq-3)">Ritmo</Secao>
+          <Secao>Ritmo</Secao>
 
           <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-[1.4fr_1fr]">
             <Cartao
               titulo="Sessões por dia"
               sub="Os picos coincidem com as aberturas de venda"
               className="h-full"
-              cor="var(--seq-3)"
             >
               <div className="h-[260px] lg:h-full">
                 <AreaTempo
@@ -97,7 +95,6 @@ export default async function AnalyticsVisaoGeral({
               titulo="Funil do site"
               sub="Da sessão à compra · etapas do e-commerce"
               className="h-full"
-              cor="var(--seq-3)"
             >
               <div className="max-h-[320px] overflow-auto pr-1 lg:h-full lg:max-h-none">
                 {/* Etapa zerada fica fora: linha vazia não informa nada. */}
@@ -106,14 +103,13 @@ export default async function AnalyticsVisaoGeral({
             </Cartao>
           </Linha>
 
-          <Secao cor="var(--seq-3)">Receita</Secao>
+          <Secao>Receita</Secao>
 
           <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-[1.4fr_1fr]">
             <Cartao
               titulo="Receita por dia"
               sub="Valor transacionado no site"
               className="h-full"
-              cor="var(--par-a)"
             >
               <div className="h-[260px] lg:h-full">
                 <LinhasTempo
@@ -128,7 +124,6 @@ export default async function AnalyticsVisaoGeral({
               titulo="Compras por dia"
               sub="Quantidade de transações"
               className="h-full"
-              cor="var(--par-b)"
             >
               <div className="h-[260px] lg:h-full">
                 <AreaTempo

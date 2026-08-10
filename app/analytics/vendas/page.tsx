@@ -37,7 +37,7 @@ export default async function AnalyticsVendas({
         sub={`Itens de e-commerce · ${periodo === "maximum" ? ROTULO_PADRAO : rotuloPeriodo(periodo)}`}
       >
         <Pagina>
-          <Secao cor="var(--seq-3)">Receita do site</Secao>
+          <Secao>Receita do site</Secao>
 
           <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-4 py-4 sm:grid-cols-3 lg:grid-cols-[minmax(250px,1.1fr)_repeat(4,1fr)] lg:gap-5 lg:px-5">
             <Hero
@@ -50,7 +50,6 @@ export default async function AnalyticsVendas({
                 key={e.itemName}
                 rotulo={e.bucket?.nome ?? e.itemName}
                 valor={brlCompact(e.receita)}
-                cor={e.bucket?.cor}
                 sub={`${int(e.ingressos)} ingressos · ${pct((e.receita / (receitaTotal || 1)) * 100, 1)}`}
               />
             ))}
@@ -61,7 +60,7 @@ export default async function AnalyticsVendas({
             />
           </div>
 
-          <Secao cor="var(--seq-3)">Comparativo entre eventos</Secao>
+          <Secao>Comparativo entre eventos</Secao>
 
           <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-[1.25fr_1fr]">
             {/* Coluna esquerda: receita em cima, ingressos embaixo */}
@@ -70,7 +69,6 @@ export default async function AnalyticsVendas({
                 titulo="Receita por evento"
                 sub="Cor identifica a praça"
                 className="min-h-[200px] lg:min-h-0 lg:flex-1"
-                cor="var(--seq-3)"
               >
                 <div className="flex h-full flex-col justify-evenly gap-4">
                   <div className="h-[58%]">
@@ -91,7 +89,6 @@ export default async function AnalyticsVendas({
                 titulo="Ingressos e carrinho"
                 sub="Vendidos vs. adicionados ao carrinho"
                 className="min-h-[220px] lg:min-h-0 lg:flex-1"
-                cor="var(--par-a)"
               >
                 <div className="h-[200px] lg:h-full">
                   <BarrasAgrupadas
@@ -115,7 +112,6 @@ export default async function AnalyticsVendas({
               titulo="Funil de venda por praça"
               sub="Escolha o evento · começa no carrinho, o GA4 não rastreia visualização de item"
               className="h-full"
-              cor="var(--seq-3)"
             >
               <div className="h-[340px] lg:h-full">
                 <FunilEventos

@@ -1,110 +1,270 @@
 import { notFound } from "next/navigation";
-import { Etiqueta, Shell, subtituloEscopo } from "@/components/Shell";
-import { Cartao } from "@/components/ui";
-import { Losangos } from "@/components/Marca";
-import { ehEscopoValido, ESCOPOS, nomeDoEscopo, type EscopoSlug } from "@/lib/config";
+import { ErroMeta, Linha, Pagina, Shell, subtituloEscopo } from "@/components/Shell";
+import { Cartao, Etiqueta, Hero, Secao, Stat } from "@/components/ui";
+import { AreaTempo, Medidor, type SerieTempo } from "@/components/charts";
+import { carregarAds, CANAL_LABEL, type FatiaCanalAds } from "@/lib/ads";
+import { explicarErroAds, GoogleAdsError, REVALIDATE_ADS } from "@/lib/googleAds";
+import { ehControleNext } from "@/lib/erroNext";
+import { periodoDeParams, type ParamsBusca } from "@/lib/periodo";
+import { ehEscopoValido, ESCOPOS, type EscopoSlug } from "@/lib/config";
+import { brl, brlCompact, brlCurto, compact, dec, diaMesCurto, int, pct } from "@/lib/format";
 
-export const revalidate = 3600;
+export const revalidate = REVALIDATE_ADS;
 
 export function generateStaticParams() {
   return ESCOPOS.map((escopo) => ({ escopo }));
 }
 
-/**
- * Placeholder estrutural do Google Ads.
- * A organização espelha a do Meta — as mesmas subpáginas, no mesmo escopo de
- * praça. Falta apenas a credencial: quando ela chegar, a camada de dados é
- * ligada no mesmo padrão de lib/meta.ts e estas telas passam a ler dados reais.
- */
-const SUBPAGINAS = [
-  {
-    titulo: "Visão geral",
-    itens: ["Investimento e impressões por dia", "CTR, CPC e CPM médios", "Conversões e ROAS"],
-  },
-  {
-    titulo: "Campanhas",
-    itens: ["Search, Performance Max e YouTube", "Orçamento diário e consumo", "Parcela de impressões"],
-  },
-  {
-    titulo: "Criativos",
-    itens: ["Anúncios responsivos de pesquisa", "Ativos de imagem e vídeo", "Desempenho por ativo"],
-  },
-  {
-    titulo: "Público",
-    itens: ["Idade, gênero e afinidade", "Desktop, mobile e tablet", "Distribuição geográfica"],
-  },
-  {
-    titulo: "Palavras-chave",
-    itens: ["Termos de busca com maior volume", "Custo por palavra-chave", "Índice de qualidade"],
-  },
-  {
-    titulo: "Meta × Google",
-    itens: ["Mesma janela, mesmas métricas", "Custo por ingresso por canal", "Divisão do investimento"],
-  },
-];
+/** Nome curto da campanha: o canal já tem coluna própria. */
+function nomeCurto(nome: string): string {
+  const tags = nome.match(/\[([^\]]+)\]/g) ?? [];
+  const praca = tags.find((t) => /AFROPUNK/i.test(t));
+  return praca ? praca.replace(/[[\]]/g, "").replace(/AFROPUNK\s*-\s*/i, "").trim() : nome;
+}
 
-export default function GoogleAds({ params }: { params: { escopo: string } }) {
+export default async function GoogleAds({
+  params,
+  searchParams,
+}: {
+  params: { escopo: string };
+  searchParams: ParamsBusca;
+}) {
   if (!ehEscopoValido(params.escopo)) notFound();
   const escopo = params.escopo as EscopoSlug;
+  const periodo = periodoDeParams(searchParams);
 
-  return (
-    <Shell
-      escopo={escopo}
-      titulo="Google Ads"
-      sub={subtituloEscopo(escopo, "aguardando credencial da API")}
-      acoes={<Etiqueta variante="contorno">Não conectado</Etiqueta>}
-    >
-      <div className="flex flex-col gap-3">
-        <div className="cartao flex items-center gap-6 px-5 py-5">
-          <Losangos qtd={6} cor="var(--surface-3)" />
-          <div className="min-w-0 flex-1">
-            <h2 className="marca text-[25px] leading-none">Google Ads ainda não está rodando</h2>
-            <p className="mt-2 max-w-[92ch] text-[13px] leading-relaxed text-[var(--ink-2)]">
-              Não há campanha no ar nem acesso à API. O dashboard já está montado para receber
-              o canal com a mesma estrutura do Meta — escopo de praça na capa, subpáginas por
-              tipo de análise — então ligar os dados não muda layout nem navegação.
-            </p>
-          </div>
-          <div className="flex shrink-0 flex-col gap-1.5 border-l border-[var(--border)] pl-6">
-            <p className="rotulo">O que falta</p>
-            <ul className="flex flex-col gap-1 text-[12px] text-[var(--ink-2)]">
-              <li>· Developer token (nível básico)</li>
-              <li>· ID da conta do cliente</li>
-              <li>· OAuth 2.0 com refresh token</li>
-            </ul>
-          </div>
-        </div>
+  try {
+    const d = await carregarAds(escopo, periodo);
 
-        <Cartao
-          titulo={`Subpáginas previstas · ${nomeDoEscopo(escopo)}`}
-          sub="Mesma organização do Meta Ads, para que a leitura entre canais seja direta"
-        >
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {SUBPAGINAS.map((b) => (
-              <div
-                key={b.titulo}
-                className="flex flex-col gap-2 rounded-[4px] border border-dashed border-[var(--border)] bg-[var(--surface-2)] p-3"
-              >
-                <h3 className="text-[13px] font-semibold text-[var(--ink)]">{b.titulo}</h3>
-                <ul className="flex flex-col gap-1">
-                  {b.itens.map((i) => (
-                    <li
-                      key={i}
-                      className="flex items-start gap-1.5 text-[12px] text-[var(--ink-muted)]"
-                    >
-                      <span
-                        aria-hidden="true"
-                        className="mt-[5px] block h-1.5 w-1.5 shrink-0 rotate-45 bg-[var(--surface-3)]"
-                      />
-                      {i}
-                    </li>
-                  ))}
-                </ul>
+    /*
+     * Sem campanha, sem página: a rota some da lateral e o acesso direto cai em
+     * 404. Uma tela dizendo "não há nada aqui" é um beco — o Overview já
+     * informa que a praça não tem esse canal no ar.
+     */
+    if (!d.ativo) notFound();
+
+    const t = d.total;
+    const cor = d.praca?.cor ?? "var(--todas)";
+    const janela =
+      d.primeiroDia && d.ultimoDia
+        ? `${diaMesCurto(d.primeiroDia)} – ${diaMesCurto(d.ultimoDia)}`
+        : "sem dados";
+
+    const orcamentoDiario = d.campanhas.reduce((a, c) => a + c.orcamentoDiario, 0);
+
+    /**
+     * Nesta página, COR = CANAL. Pesquisa e Performance Max são produtos
+     * diferentes — intenção declarada contra descoberta automática — e rendem
+     * de forma muito distinta; pintar os dois igual convidaria a ler o Google
+     * como um bloco só. A praça é o escopo da página, então não disputa cor.
+     */
+    const CORES_CANAL = ["var(--par-a)", "var(--par-b)"];
+    const corDoCanal = (canal: string) =>
+      CORES_CANAL[d.canais.findIndex((c) => c.canal === canal)] ?? cor;
+
+    const seriesCusto: SerieTempo[] = d.canais.map((c) => ({
+      chave: `custo_${c.canal}`,
+      nome: c.nome,
+      cor: corDoCanal(c.canal),
+    }));
+    return (
+      <Shell
+        escopo={escopo}
+        titulo="Google Ads"
+        sub={subtituloEscopo(escopo, `${d.campanhas.length} campanhas ativas · ${janela}`)}
+        acoes={<Etiqueta variante="contorno">Conectado</Etiqueta>}
+      >
+        <Pagina>
+          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-4 py-4 sm:grid-cols-3 lg:grid-cols-[minmax(250px,1.1fr)_repeat(5,1fr)] lg:gap-5 lg:px-5">
+            <Hero rotulo="Investido" valor={brl(t.custo)} sub={`${janela} · BRL`} />
+            <Stat
+              rotulo="Receita"
+              valor={brlCompact(t.receita)}
+              sub={`${brl(t.receita)} · ${int(t.conversoes)} conversões`}
+            />
+            <Stat
+              rotulo="ROAS"
+              valor={t.roas > 0 ? `${dec(t.roas)}×` : "—"}
+              sub="média dos dois canais"
+            />
+            <Stat
+              rotulo="CPA"
+              valor={t.conversoes > 0 ? brl(t.cpa) : "—"}
+              sub={t.conversoes > 0 ? "custo por conversão" : undefined}
+            />
+            <Stat rotulo="Cliques" valor={compact(t.cliques)} sub={`CTR ${pct(t.ctr)}`} />
+            <Stat rotulo="CPC médio" valor={brl(t.cpc)} sub={`${compact(t.impressoes)} impressões`} />
+          </div>
+
+          <Secao>Pesquisa × Performance Max</Secao>
+
+          {/* Uma série por canal, empilhada: a pilha dá o total do dia sem
+              esconder que os dois produtos entram em ritmos diferentes. Ao
+              lado, cada canal com ROAS e CPA próprios — a média do Google
+              esconde que Pesquisa e PMax rendem em ordens distintas. */}
+          <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-[1fr_330px]">
+            <Cartao
+              titulo="Investimento por dia"
+              sub="Empilhado por canal — a pilha inteira é o total do dia"
+              className="h-full"
+            >
+              <div className="h-[230px] lg:h-full">
+                <AreaTempo dados={d.serie} series={seriesCusto} formato="brl" empilhar />
               </div>
-            ))}
+            </Cartao>
+
+            <Cartao className="flex flex-col justify-center gap-2.5">
+              {d.canais.map((c) => (
+                <ResumoCanal
+                  key={c.canal}
+                  fatia={c}
+                  cor={corDoCanal(c.canal)}
+                  share={t.custo > 0 ? (c.total.custo / t.custo) * 100 : 0}
+                />
+              ))}
+              {!d.comparativo && orcamentoDiario > 0 && (
+                <Medidor
+                  valor={t.custo}
+                  limite={orcamentoDiario * Math.max(d.serie.length, 1)}
+                  rotulo={`Verba (${brl(orcamentoDiario)}/dia)`}
+                  cor={cor}
+                />
+              )}
+            </Cartao>
+          </Linha>
+
+          <Secao>Campanhas ativas</Secao>
+
+          <div className="shrink-0">
+            <Cartao className="min-w-0">
+              <div className="overflow-x-auto">
+                <table className="w-full text-[12.5px]">
+                  <thead>
+                    <tr className="text-left text-[10.5px] uppercase tracking-[0.12em] text-[var(--ink-muted)]">
+                      <th className="pb-2 pr-3 font-bold">Canal</th>
+                      <th className="pb-2 pr-3 font-bold">Campanha</th>
+                      <th className="pb-2 pr-3 text-right font-bold">Investido</th>
+                      <th className="pb-2 pr-3 text-right font-bold">Receita</th>
+                      <th className="pb-2 pr-3 text-right font-bold">ROAS</th>
+                      <th className="pb-2 pr-3 text-right font-bold">Conv.</th>
+                      <th className="pb-2 pr-3 text-right font-bold">CPA</th>
+                      <th className="pb-2 text-right font-bold">CTR</th>
+                    </tr>
+                  </thead>
+                  <tbody className="tabular">
+                    {[...d.campanhas]
+                      .sort((a, b) => b.m.receita - a.m.receita)
+                      .map((c) => (
+                        <tr
+                          key={c.id}
+                          className="border-t border-[var(--border)] text-[var(--ink-2)]"
+                        >
+                          <td className="py-2 pr-3 font-medium text-[var(--ink)]">
+                            <span className="flex items-center gap-1.5 whitespace-nowrap">
+                              <span
+                                aria-hidden="true"
+                                className="block h-2 w-2 shrink-0 rotate-45"
+                                style={{ background: corDoCanal(c.canal) }}
+                              />
+                              {CANAL_LABEL[c.canal] ?? c.canal}
+                            </span>
+                          </td>
+                          <td className="py-2 pr-3 whitespace-nowrap" title={c.nome}>
+                            {nomeCurto(c.nome)}
+                          </td>
+                          <td className="py-2 pr-3 text-right">{brl(c.m.custo)}</td>
+                          <td className="py-2 pr-3 text-right font-semibold text-[var(--ink)]">
+                            {c.m.receita > 0 ? brl(c.m.receita) : "—"}
+                          </td>
+                          <td
+                            className="py-2 pr-3 text-right font-semibold"
+                            style={{ color: c.m.roas >= 1 ? "var(--good)" : "var(--ink-2)" }}
+                          >
+                            {c.m.roas > 0 ? `${dec(c.m.roas)}×` : "—"}
+                          </td>
+                          <td className="py-2 pr-3 text-right">{int(c.m.conversoes)}</td>
+                          <td className="py-2 pr-3 text-right">
+                            {c.m.conversoes > 0 ? brl(c.m.cpa) : "—"}
+                          </td>
+                          <td className="py-2 text-right">{pct(c.m.ctr)}</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            </Cartao>
           </div>
-        </Cartao>
+
+          <p className="shrink-0 text-[11px] leading-relaxed text-[var(--ink-muted)]">
+            A praça vem do nome da campanha, pelo mesmo mapeador usado no Meta. Hoje o Google Ads
+            cobre apenas Rio de Janeiro e Salvador — Recife não tem campanha no canal. Campanhas
+            pausadas de edições anteriores (Belém, São Paulo, 2025) ficam fora.
+          </p>
+        </Pagina>
+      </Shell>
+    );
+  } catch (e) {
+    // `notFound()` sinaliza por exceção — deixa passar antes de tratar falha.
+    if (ehControleNext(e)) throw e;
+    const msg = e instanceof GoogleAdsError ? explicarErroAds(e) : (e as Error).message;
+    return (
+      <Shell escopo={escopo} titulo="Google Ads" sub={subtituloEscopo(escopo)}>
+        <ErroMeta titulo="Falha ao carregar a Google Ads API" detalhe={msg} />
+      </Shell>
+    );
+  }
+}
+
+/** Linha de canal: ROAS e CPA próprios, para não somar Pesquisa com PMax. */
+function ResumoCanal({
+  fatia,
+  cor,
+  share,
+}: {
+  fatia: FatiaCanalAds;
+  cor: string;
+  share: number;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5 rounded-lg bg-[var(--surface-2)] px-3 py-2.5">
+      <div className="flex items-center gap-2">
+        <span
+          aria-hidden="true"
+          className="block h-2.5 w-2.5 shrink-0 rotate-45"
+          style={{ background: cor }}
+        />
+        <span className="min-w-0 flex-1 truncate text-[13px] font-bold">{fatia.nome}</span>
+        <span className="tabular shrink-0 text-[11px] text-[var(--ink-muted)]">
+          {pct(share, 0)} da verba
+        </span>
       </div>
-    </Shell>
+      <div className="flex items-end justify-between gap-2">
+        <MiniCanal rotulo="Investido" valor={brlCurto(fatia.total.custo)} />
+        <MiniCanal
+          rotulo="ROAS"
+          valor={fatia.total.roas > 0 ? `${dec(fatia.total.roas)}×` : "—"}
+          cor={cor}
+        />
+        <MiniCanal
+          rotulo="CPA"
+          valor={fatia.total.conversoes > 0 ? brl(fatia.total.cpa) : "—"}
+        />
+        <MiniCanal rotulo="CTR" valor={pct(fatia.total.ctr, 1)} />
+      </div>
+    </div>
+  );
+}
+
+function MiniCanal({ rotulo, valor, cor }: { rotulo: string; valor: string; cor?: string }) {
+  return (
+    <div className="flex min-w-0 flex-col">
+      <span className="rotulo">{rotulo}</span>
+      <span
+        className="tabular mt-1 truncate text-[15px] font-bold leading-none"
+        style={cor ? { color: cor } : undefined}
+      >
+        {valor}
+      </span>
+    </div>
   );
 }

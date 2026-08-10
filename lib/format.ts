@@ -40,6 +40,14 @@ export const dec = (n: number) => nfDec.format(n || 0);
 export const pct = (n: number, casas = 2) =>
   `${(n || 0).toFixed(casas).replace(".", ",")}%`;
 
+/**
+ * Conversões do Google Ads. A API devolve valor fracionário quando a conversão
+ * é rateada entre cliques (22,198341), mas a maioria vem inteira — mostrar
+ * "68,00" onde são 68 vendas só polui. Decimal só quando existe de verdade.
+ */
+export const conv = (n: number) =>
+  Number.isInteger(n || 0) ? nfInt.format(n || 0) : nfDec.format(n || 0);
+
 /** "2026-08-03" → "03/08" */
 export function diaMes(iso: string): string {
   const [, m, d] = iso.split("-");

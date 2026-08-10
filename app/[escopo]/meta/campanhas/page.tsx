@@ -48,7 +48,6 @@ export default async function MetaCampanhas({
         <Shell escopo={escopo} titulo="Meta Ads · Campanhas" sub={subtituloEscopo(escopo, undefined, periodo)}>
           <div className="cartao h-[600px]">
             <Vazio
-              cor={d.praca?.cor}
               titulo="Nenhuma campanha ativa"
               descricao="Assim que uma campanha entrar em veiculação, ela aparece aqui com investimento, entrega, orçamento e série diária."
             />
@@ -116,7 +115,7 @@ export default async function MetaCampanhas({
               return (
                 <div key={c.id} className="cartao flex flex-col gap-2.5 p-3">
                   <div className="flex items-start justify-between gap-2">
-                    <Etiqueta cor={cor}>{OBJETIVO_LABEL[c.objective] ?? c.objective}</Etiqueta>
+                    <Etiqueta>{OBJETIVO_LABEL[c.objective] ?? c.objective}</Etiqueta>
                     <StatusAtivo ativo={c.effective_status === "ACTIVE"} />
                   </div>
                   <p

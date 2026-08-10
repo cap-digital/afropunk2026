@@ -1,9 +1,11 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { IconWorldWww } from "@tabler/icons-react";
 import { Moldura } from "./Moldura";
 import { NavAnalytics } from "./Nav";
 import { Etiqueta } from "./ui";
 import { ESCOPO_TODAS, nomeDoEscopo, PRACA_POR_SLUG, type EscopoSlug } from "@/lib/config";
+import { canaisDoEscopo } from "@/lib/ads";
 import { rotuloPeriodo } from "@/lib/periodo";
 import type { Periodo } from "@/lib/meta";
 
@@ -13,7 +15,7 @@ const HORA = new Intl.DateTimeFormat("pt-BR", {
   timeZone: "America/Sao_Paulo",
 });
 
-export function Shell({
+export async function Shell({
   escopo,
   children,
   titulo,
@@ -27,19 +29,24 @@ export function Shell({
   acoes?: ReactNode;
 }) {
   const praca = escopo === ESCOPO_TODAS ? null : PRACA_POR_SLUG[escopo];
-  const cor = praca?.cor ?? "var(--todas)";
   // Renderizado no servidor: é o instante em que os dados foram lidos da API.
   const geradoEm = HORA.format(new Date());
+
+  /*
+   * A lateral só mostra o que existe. Se a Google Ads API falhar, o menu do
+   * Google some em vez de a página inteira cair — o Meta continua navegável.
+   */
+  const canaisGoogle = await canaisDoEscopo(escopo).catch((): string[] => []);
 
   return (
     <Moldura
       escopo={escopo}
-      cor={cor}
       uf={praca?.uf ?? "BR"}
       titulo={titulo}
       sub={sub}
       acoes={acoes}
       geradoEm={geradoEm}
+      canaisGoogle={canaisGoogle}
     >
       {children}
     </Moldura>
@@ -117,16 +124,14 @@ export function ShellAnalytics({
   sub?: ReactNode;
   acoes?: ReactNode;
 }) {
-  const cor = "var(--seq-3)";
   return (
     <Moldura
-      cor={cor}
       uf="GA4"
       titulo={titulo}
       sub={sub}
       acoes={acoes}
       geradoEm={HORA.format(new Date())}
-      navegacao={<NavAnalytics cor={cor} />}
+      navegacao={<NavAnalytics />}
       contexto={
         <>
           <p className="rotulo px-1 pb-2">Fonte</p>
@@ -134,10 +139,11 @@ export function ShellAnalytics({
             href="/"
             className="group flex items-center gap-2 rounded-lg border border-[var(--border-forte)] bg-[var(--surface-2)] px-2.5 py-2.5 transition-colors hover:bg-[var(--surface-3)]"
           >
-            <span
+            <IconWorldWww
+              size={15}
+              stroke={1.9}
               aria-hidden="true"
-              className="block h-2.5 w-2.5 shrink-0 rotate-45"
-              style={{ background: cor }}
+              className="shrink-0 text-[var(--ink-muted)]"
             />
             <span className="marca min-w-0 flex-1 truncate text-[14px] text-[var(--ink)]">
               Site AFROPUNK

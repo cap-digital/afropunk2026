@@ -54,7 +54,7 @@ export default async function AnalyticsAquisicao({
         sub={`De onde vem o tráfego · ${periodo === "maximum" ? ROTULO_PADRAO : rotuloPeriodo(periodo)}`}
       >
         <Pagina>
-          <Secao cor="var(--seq-3)">Origem do tráfego</Secao>
+          <Secao>Origem do tráfego</Secao>
 
           <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-4 py-4 sm:grid-cols-3 lg:grid-cols-[minmax(250px,1.1fr)_repeat(4,1fr)] lg:gap-5 lg:px-5">
             <Hero
@@ -65,7 +65,6 @@ export default async function AnalyticsAquisicao({
             <Stat
               rotulo="Canal líder"
               valor={d.canais[0]?.nome ?? "—"}
-              cor="var(--seq-3)"
               sub={
                 d.canais[0]
                   ? `${pct((d.canais[0].sessoes / (t.sessoes || 1)) * 100, 1)} das sessões`
@@ -94,14 +93,13 @@ export default async function AnalyticsAquisicao({
             />
           </div>
 
-          <Secao cor="var(--seq-3)">Canais</Secao>
+          <Secao>Canais</Secao>
 
           <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-2">
             <Cartao
               titulo="Sessões por canal"
               sub="Agrupamento padrão do GA4"
               className="h-full"
-              cor="var(--seq-3)"
             >
               <div className="h-[260px] lg:h-full">
                 <BarrasH dados={canaisSessoes} formato="int" larguraRotulo={132} />
@@ -112,7 +110,6 @@ export default async function AnalyticsAquisicao({
               titulo="Receita por canal"
               sub="Só canais que geraram venda"
               className="h-full"
-              cor="var(--par-a)"
             >
               <div className="h-[260px] lg:h-full">
                 {canaisReceita.length > 0 ? (
@@ -131,14 +128,13 @@ export default async function AnalyticsAquisicao({
             </Cartao>
           </Linha>
 
-          <Secao cor="var(--seq-3)">Origens e dispositivos</Secao>
+          <Secao>Origens e dispositivos</Secao>
 
           <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-[1.3fr_1fr]">
             <Cartao
               titulo="Origem e mídia"
               sub="A fonte exata, antes do agrupamento em canais"
               className="h-full"
-              cor="var(--seq-2)"
             >
               <div className="h-[260px] lg:h-full">
                 <BarrasH
@@ -154,7 +150,6 @@ export default async function AnalyticsAquisicao({
               titulo="Dispositivos"
               sub="Onde o público navega"
               className="h-full"
-              cor="var(--par-b)"
             >
               <div className="flex h-full flex-col justify-evenly gap-5">
                 <EmpilhadaTotal

@@ -369,9 +369,16 @@ export function AreaTempo({
             activeDot={{ r: 4.5, strokeWidth: 2, stroke: SURFACE }}
             isAnimationActive={false}
           >
+            {/* Com mais de uma série, rotular todo ponto sobrepõe os números
+                das séries vizinhas nos dias em que elas se aproximam — aí só o
+                pico de cada uma, que cai em dias diferentes. */}
             <LabelList
               dataKey={s.chave}
-              content={rotuloPontos(dados, s.chave, formato, s.cor)}
+              content={
+                series.length > 1
+                  ? rotuloPico(dados, s.chave, formato, s.cor)
+                  : rotuloPontos(dados, s.chave, formato, s.cor)
+              }
             />
           </Area>
         ))}
@@ -629,9 +636,12 @@ export function EmpilhadaTotal({
                 background: s.cor,
                 boxShadow: `inset -2px 0 0 0 ${"var(--surface)"}`,
               }}
-              className="group relative transition-opacity hover:opacity-85"
+              className="group relative overflow-hidden transition-opacity hover:opacity-85"
             >
-              {p > 9 && (
+              {/* Corte em 14%: abaixo disso a faixa fica mais estreita que o
+                  próprio número em cartões de coluna, e o rótulo vazava para o
+                  segmento vizinho. O valor exato está sempre na legenda. */}
+              {p >= 14 && (
                 <span className="absolute inset-0 flex items-center justify-center text-[11.5px] font-bold text-black/80">
                   {dec(p)}%
                 </span>
@@ -835,11 +845,16 @@ export function MapaCalor({
   colunas,
   valores,
   formato = "int",
+  alturaCelula = 36,
+  larguraRotulo = 104,
 }: {
   linhas: string[];
   colunas: string[];
   valores: Map<string, number>;
   formato?: Formato;
+  /** Grades com muitas linhas precisam de célula mais baixa para caber. */
+  alturaCelula?: number;
+  larguraRotulo?: number;
 }) {
   const max = Math.max(...[...valores.values()], 1);
   const passo = (v: number) => {
@@ -854,7 +869,9 @@ export function MapaCalor({
     <div className="flex h-full flex-col gap-1.5 overflow-auto">
       <div
         className="grid gap-[2px] text-[11.5px]"
-        style={{ gridTemplateColumns: `104px repeat(${colunas.length}, minmax(0,1fr))` }}
+        style={{
+          gridTemplateColumns: `${larguraRotulo}px repeat(${colunas.length}, minmax(0,1fr))`,
+        }}
       >
         <div />
         {colunas.map((c) => (
@@ -881,8 +898,8 @@ export function MapaCalor({
                 <div
                   key={`${l}-${c}`}
                   title={`${l} · ${c}: ${fmt(v, formato)}`}
-                  style={{ background: passo(v) }}
-                  className="flex h-9 items-center justify-center rounded-[3px] transition-opacity hover:opacity-80"
+                  style={{ background: passo(v), height: alturaCelula }}
+                  className="flex items-center justify-center rounded-[3px] transition-opacity hover:opacity-80"
                 >
                   <span
                     className="tabular text-[11.5px] font-semibold"

@@ -53,7 +53,6 @@ export default async function MetaVisaoGeral({
         <Shell escopo={escopo} titulo="Meta Ads" sub={subtituloEscopo(escopo, undefined, periodo)}>
           <div className="cartao h-[600px]">
             <Vazio
-              cor={d.praca?.cor}
               titulo={`${d.praca?.nome ?? "Este escopo"} ainda não tem campanha ativa no Meta`}
               descricao="O painel está pronto e conectado. Assim que a primeira campanha entrar no ar, investimento, entrega, público, posicionamentos e criativos aparecem aqui automaticamente."
             />
@@ -128,7 +127,7 @@ async function Comparativo({
       sub={subtituloEscopo(escopo, `${d.campanhas.length} campanhas ativas · ${janela}`, d.periodo)}
     >
       <Pagina>
-        <Secao cor="var(--todas)">Resumo consolidado</Secao>
+        <Secao>Resumo consolidado</Secao>
         <div className="cartao grid grid-cols-2 items-center gap-4 px-4 py-4 sm:grid-cols-3 lg:grid-cols-[minmax(250px,1.15fr)_repeat(5,1fr)] lg:gap-5 lg:px-5">
           <Hero rotulo="Investimento total" valor={brl(t.spend)} sub={`${janela} · ${d.conta.currency}`} />
           <Stat rotulo="Impressões" valor={compact(t.impressions)} sub={`freq. ${dec(t.frequency)}`} />
@@ -142,7 +141,7 @@ async function Comparativo({
           />
         </div>
 
-        <Secao cor="var(--todas)">Evolução</Secao>
+        <Secao>Evolução</Secao>
         <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-[1.3fr_1fr]">
           <Cartao
             titulo="Investimento diário por praça"
@@ -172,7 +171,7 @@ async function Comparativo({
           </Cartao>
         </Linha>
 
-        <Secao cor="var(--todas)">Praça a praça</Secao>
+        <Secao>Praça a praça</Secao>
         <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-[1fr_1.35fr]">
           <Cartao
             titulo="Divisão do investimento"
@@ -339,10 +338,10 @@ async function PracaUnica({
       sub={subtituloEscopo(escopo, `${d.campanhas.length} campanhas ativas · ${janela}`, d.periodo)}
     >
       <Pagina>
-        <Secao cor={praca.cor}>Resumo</Secao>
+        <Secao>Resumo</Secao>
         <div className="cartao grid grid-cols-2 items-center gap-4 px-4 py-4 sm:grid-cols-3 lg:grid-cols-[minmax(250px,1.15fr)_repeat(5,1fr)] lg:gap-5 lg:px-5">
           <Hero rotulo="Investido" valor={brl(t.spend)} sub={`${janela} · ${d.conta.currency}`} />
-          <Stat rotulo="Impressões" valor={compact(t.impressions)} cor={praca.cor} />
+          <Stat rotulo="Impressões" valor={compact(t.impressions)} />
           <Stat rotulo="Alcance" valor={compact(t.reach)} sub={`freq. ${dec(t.frequency)}`} />
           <Stat rotulo="CTR" valor={pct(t.ctr)} sub={`${compact(t.clicks)} cliques`} />
           <Stat rotulo="CPM" valor={brl(t.cpm)} sub={`CPC ${brl(t.cpc)}`} />
@@ -357,7 +356,7 @@ async function PracaUnica({
           />
         </div>
 
-        <Secao cor={praca.cor}>Ritmo e conversão</Secao>
+        <Secao>Ritmo e conversão</Secao>
         <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-[1.5fr_1fr]">
           <Cartao
             titulo="Investimento por dia"
@@ -384,7 +383,7 @@ async function PracaUnica({
           </Cartao>
         </Linha>
 
-        <Secao cor={praca.cor}>Entrega e verba</Secao>
+        <Secao>Entrega e verba</Secao>
         <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-3">
           <Cartao titulo="Onde as impressões acontecem" sub="Plataformas de veiculação" className="h-full">
             <div className="h-[260px] lg:h-full">
@@ -423,7 +422,6 @@ async function PracaUnica({
             titulo="Destaques por ROAS"
             sub="O que mais devolveu por real investido"
             className="h-full"
-            cor={praca.cor}
           >
             <div className="flex h-full flex-col justify-evenly gap-3">
               <Destaque

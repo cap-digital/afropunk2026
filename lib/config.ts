@@ -183,3 +183,23 @@ export const DISPOSITIVO_LABEL: Record<string, string> = {
   other: "Outros",
   unknown: "Não identificado",
 };
+
+/**
+ * Campos de ativo do Performance Max. Fica aqui, junto dos outros dicionários,
+ * porque a galeria é componente de cliente e `lib/adsDetalhe.ts` é `server-only`
+ * — rótulo é dado de apresentação, não de acesso à API.
+ * Nomes curtos: a legenda tem a largura de uma miniatura.
+ */
+export const CAMPO_ATIVO_LABEL: Record<string, string> = {
+  HEADLINE: "Título",
+  LONG_HEADLINE: "Título longo",
+  DESCRIPTION: "Descrição",
+  MARKETING_IMAGE: "Paisagem",
+  SQUARE_MARKETING_IMAGE: "Quadrada",
+  PORTRAIT_MARKETING_IMAGE: "Retrato",
+  LOGO: "Logo",
+  LANDSCAPE_LOGO: "Logo horizontal",
+  BUSINESS_NAME: "Nome do negócio",
+  YOUTUBE_VIDEO: "Vídeo",
+  CALL_TO_ACTION_SELECTION: "Chamada para ação",
+};

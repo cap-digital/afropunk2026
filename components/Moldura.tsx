@@ -2,8 +2,10 @@
 
 import { Suspense, useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Losangos, Marca } from "./Marca";
+import { IconChartBar, IconMapPin } from "@tabler/icons-react";
+import { Marca } from "./Marca";
 import { NavPlataformas } from "./Nav";
 import { BotaoAtualizar } from "./BotaoAtualizar";
 import { FiltroPeriodo } from "./FiltroPeriodo";
@@ -16,7 +18,6 @@ import { nomeDoEscopo, type EscopoSlug } from "@/lib/config";
  */
 export function Moldura({
   escopo,
-  cor,
   uf,
   titulo,
   sub,
@@ -24,11 +25,11 @@ export function Moldura({
   geradoEm,
   navegacao,
   contexto,
+  canaisGoogle,
   children,
 }: {
   /** Ausente em páginas fora do escopo de praça, como o GA4. */
   escopo?: EscopoSlug;
-  cor: string;
   uf: string;
   titulo: string;
   sub?: ReactNode;
@@ -38,6 +39,8 @@ export function Moldura({
   navegacao?: ReactNode;
   /** Substitui o seletor de praça no topo da lateral. */
   contexto?: ReactNode;
+  /** Canais do Google com campanha ativa — define o que a lateral mostra. */
+  canaisGoogle?: string[];
   children: ReactNode;
 }) {
   const [aberto, setAberto] = useState(false);
@@ -106,12 +109,16 @@ export function Moldura({
                 href="/"
                 className="group flex items-center gap-2 rounded-lg border border-[var(--border-forte)] bg-[var(--surface-2)] px-2.5 py-2.5 transition-colors hover:bg-[var(--surface-3)]"
               >
-                <span
+                <IconMapPin
+                  size={15}
+                  stroke={1.9}
                   aria-hidden="true"
-                  className="block h-2.5 w-2.5 shrink-0 rotate-45"
-                  style={{ background: cor }}
+                  className="shrink-0 text-[var(--ink-muted)]"
                 />
-                <span className="marca min-w-0 flex-1 truncate text-[14px] text-[var(--ink)]">
+                {/* `leading-[1.2]`: `truncate` recorta o que passar da caixa da
+                    linha, e em caixa alta o til do Ã e a cedilha do Ç saem dela
+                    com entrelinha fechada — "PRAÇAS" perdia a cedilha. */}
+                <span className="marca min-w-0 flex-1 truncate text-[14px] leading-[1.2] text-[var(--ink)]">
                   {escopo ? nomeDoEscopo(escopo) : ""}
                 </span>
                 <span className="shrink-0 text-[10.5px] font-bold uppercase tracking-[0.14em] text-[var(--ink-muted)] transition-colors group-hover:text-[var(--ink)]">
@@ -122,14 +129,29 @@ export function Moldura({
           )}
         </div>
 
-        {navegacao ?? (escopo ? <NavPlataformas escopo={escopo} cor={cor} /> : null)}
+        {navegacao ??
+          (escopo ? (
+            <NavPlataformas escopo={escopo} canaisGoogle={canaisGoogle ?? []} />
+          ) : null)}
 
-        <div className="shrink-0 border-t border-[var(--border)] px-4 py-3.5">
-          <Losangos qtd={5} cor="var(--surface-3)" />
-          {/* Sem `uppercase`: a grafia da marca tem o "hub" em caixa baixa. */}
-          <p className="mt-2 text-[10.5px] font-bold tracking-[0.14em] leading-tight text-[var(--ink-muted)]">
-            GRAAL.hub
-          </p>
+        {/* Assinatura: as duas marcas, com o mesmo filete que separa no rodapé
+            da capa. Recortadas na caixa dos glifos, então batem em altura. */}
+        <div className="flex shrink-0 items-center justify-center gap-2.5 border-t border-[var(--border)] px-4 py-3.5">
+          <Image
+            src="/capco.png"
+            alt="CAP.CO"
+            width={1752}
+            height={536}
+            className="h-[14px] w-auto opacity-85"
+          />
+          <span aria-hidden="true" className="h-3 w-px bg-[var(--border-forte)]" />
+          <Image
+            src="/graalhub-reverso.png"
+            alt="GRAAL.hub"
+            width={900}
+            height={127}
+            className="h-[14px] w-auto opacity-85"
+          />
         </div>
       </aside>
 
@@ -148,13 +170,16 @@ export function Moldura({
                 <path d="M4 7h16M4 12h16M4 17h16" />
               </svg>
             </button>
-            <span
+            <IconChartBar
+              size={18}
+              stroke={1.9}
               aria-hidden="true"
-              className="hidden h-4 w-4 shrink-0 rotate-45 lg:block"
-              style={{ background: cor }}
+              className="hidden shrink-0 text-[var(--ink-muted)] lg:block"
             />
             <div className="min-w-0">
-              <h1 className="marca truncate text-[18px] leading-none lg:text-[21px]">{titulo}</h1>
+              {/* Mesma razão da praça na lateral: com `leading-none`, "SEGMENTAÇÃO"
+                  e "VISÃO GERAL" perdiam o til dentro do `truncate`. */}
+              <h1 className="marca truncate text-[18px] leading-[1.2] lg:text-[21px]">{titulo}</h1>
               {sub && (
                 <div className="mt-1.5 truncate text-[10.5px] uppercase tracking-[0.1em] leading-none text-[var(--ink-muted)] lg:text-[11px]">
                   {sub}

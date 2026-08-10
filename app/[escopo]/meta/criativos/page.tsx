@@ -35,7 +35,6 @@ export default async function MetaCriativos({
         <Shell escopo={escopo} titulo="Meta Ads · Criativos" sub={subtituloEscopo(escopo, undefined, periodo)}>
           <div className="cartao h-[600px]">
             <Vazio
-              cor={d.praca?.cor}
               titulo="Nenhum criativo em veiculação"
               descricao="Os anúncios aparecem aqui com preview, métricas e botão direto para o post no Instagram assim que a campanha entrar no ar."
             />
@@ -58,7 +57,7 @@ export default async function MetaCriativos({
         <Pagina>
           <div className="grid shrink-0 grid-cols-1 gap-3.5 lg:grid-cols-[1.05fr_1fr]">
             <div className="cartao grid grid-cols-2 items-center gap-4 px-4 py-4 lg:grid-cols-4 lg:gap-5 lg:px-5">
-              <Stat rotulo="Anúncios" valor={String(criativos.length)} cor={d.praca?.cor} />
+              <Stat rotulo="Anúncios" valor={String(criativos.length)} />
               <Stat rotulo="Investido" valor={brl(total.spend)} />
               <Stat rotulo="Impressões" valor={compact(total.impressions)} />
               <Stat rotulo="CTR médio" valor={pct(total.ctr)} />
