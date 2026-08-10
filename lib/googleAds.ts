@@ -21,6 +21,16 @@ const ESCOPO = "https://www.googleapis.com/auth/adwords";
 
 export const REVALIDATE_ADS = 300;
 
+/**
+ * Credencial ausente é erro de ambiente, não de dado. A mensagem diz onde
+ * configurar porque o sintoma — dashboard sem Google — é idêntico ao de uma
+ * praça que de fato não roda o canal, e sem isso o diagnóstico é adivinhação.
+ */
+const CREDENCIAL_AUSENTE = (nome: string) =>
+  `${nome} não está definida. Em desenvolvimento ela vem do .env.local; ` +
+  "na hospedagem precisa ser cadastrada nas variáveis de ambiente do projeto — " +
+  "o .env.local não vai para o repositório.";
+
 /** IDs vão sem hífen para a API. */
 const soDigitos = (v?: string) => (v ?? "").replace(/\D/g, "");
 
@@ -64,7 +74,7 @@ interface ContaServico {
 
 function contaServico(): ContaServico {
   const b64 = process.env.GOOGLE_ADS_SA_KEY_BASE64;
-  if (!b64) throw new GoogleAdsError("GOOGLE_ADS_SA_KEY_BASE64 ausente no .env.local", 0);
+  if (!b64) throw new GoogleAdsError(CREDENCIAL_AUSENTE("GOOGLE_ADS_SA_KEY_BASE64"), 0);
 
   let json: ContaServico;
   try {
@@ -92,7 +102,7 @@ export async function tokenAds(): Promise<string> {
 
   const sa = contaServico();
   const usuario = process.env.GOOGLE_ADS_IMPERSONATED_USER;
-  if (!usuario) throw new GoogleAdsError("GOOGLE_ADS_IMPERSONATED_USER ausente", 0);
+  if (!usuario) throw new GoogleAdsError(CREDENCIAL_AUSENTE("GOOGLE_ADS_IMPERSONATED_USER"), 0);
 
   const cliente = new JWT({
     email: sa.client_email,
@@ -155,7 +165,7 @@ export async function consultarAds(gaql: string): Promise<Record<string, unknown
   const token = await tokenAds();
   const cliente = soDigitos(process.env.GOOGLE_ADS_CUSTOMER_ID);
   const login = soDigitos(process.env.GOOGLE_ADS_LOGIN_CUSTOMER_ID);
-  if (!cliente) throw new GoogleAdsError("GOOGLE_ADS_CUSTOMER_ID ausente", 0);
+  if (!cliente) throw new GoogleAdsError(CREDENCIAL_AUSENTE("GOOGLE_ADS_CUSTOMER_ID"), 0);
 
   const cabecalhos: Record<string, string> = {
     Authorization: `Bearer ${token}`,

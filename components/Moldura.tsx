@@ -26,6 +26,7 @@ export function Moldura({
   navegacao,
   contexto,
   canaisGoogle,
+  googleIndisponivel,
   children,
 }: {
   /** Ausente em páginas fora do escopo de praça, como o GA4. */
@@ -41,6 +42,8 @@ export function Moldura({
   contexto?: ReactNode;
   /** Canais do Google com campanha ativa — define o que a lateral mostra. */
   canaisGoogle?: string[];
+  /** A leitura do Google falhou: mostrar o grupo com aviso, não escondê-lo. */
+  googleIndisponivel?: boolean;
   children: ReactNode;
 }) {
   const [aberto, setAberto] = useState(false);
@@ -131,7 +134,11 @@ export function Moldura({
 
         {navegacao ??
           (escopo ? (
-            <NavPlataformas escopo={escopo} canaisGoogle={canaisGoogle ?? []} />
+            <NavPlataformas
+              escopo={escopo}
+              canaisGoogle={canaisGoogle ?? []}
+              googleIndisponivel={googleIndisponivel ?? false}
+            />
           ) : null)}
 
         {/* Assinatura: as duas marcas, com o mesmo filete que separa no rodapé

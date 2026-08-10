@@ -4,7 +4,7 @@ import { Losangos } from "@/components/Marca";
 import { MarcaAnimada } from "@/components/MarcaAnimada";
 import { Sparkline } from "@/components/charts";
 import { carregarEscopo, type FatiaBucket } from "@/lib/dados";
-import { carregarAds, type DadosAds } from "@/lib/ads";
+import { carregarAds, tentarAds, type DadosAds } from "@/lib/ads";
 import { explicarErroMeta, MetaError, REVALIDATE } from "@/lib/meta";
 import { brl, brlCompact, compact, dec, pct } from "@/lib/format";
 import { ESCOPO_TODAS, NACIONAL, PRACAS } from "@/lib/config";
@@ -72,8 +72,10 @@ export default async function Capa() {
   }
 
   // Google e GA4 são opcionais na capa: se a credencial falhar, os cards de
-  // praça continuam com o Meta. Por isso cada um tem o seu próprio try.
-  const ads = await carregarAds(ESCOPO_TODAS, "maximum").catch((): DadosAds | null => null);
+  // praça continuam com o Meta. Mas a falha é dita — sem isso, o investimento
+  // aparece menor do que é e ninguém sabe que está faltando metade da conta.
+  const google = await tentarAds(carregarAds(ESCOPO_TODAS, "maximum"));
+  const ads = google.dados;
 
   let ga4: TotaisSite | null = null;
   try {
@@ -100,6 +102,15 @@ export default async function Capa() {
           Dashboard de mídia · Selecione a praça
         </p>
       </header>
+
+      {google.erro && (
+        <div className="cartao max-w-[76ch] px-4 py-3 text-center">
+          <p className="text-[12.5px] font-semibold text-[var(--warning)]">
+            Google Ads fora: os números abaixo trazem só o Meta
+          </p>
+          <p className="mt-1 text-[12px] leading-relaxed text-[var(--ink-2)]">{google.erro}</p>
+        </div>
+      )}
 
       {erro && (
         <div className="cartao max-w-[70ch] p-4 text-center">

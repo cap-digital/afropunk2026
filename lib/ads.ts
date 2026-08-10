@@ -1,5 +1,5 @@
 import "server-only";
-import { consultarAds, intervaloAds } from "./googleAds";
+import { consultarAds, explicarErroAds, GoogleAdsError, intervaloAds } from "./googleAds";
 import {
   BUCKETS,
   bucketDaCampanha,
@@ -121,6 +121,31 @@ const ORDEM_CANAL = [
 ];
 
 export const nomeCanal = (canal: string) => CANAL_LABEL[canal] ?? canal;
+
+/**
+ * Resultado de uma leitura do Google que a página não pode deixar derrubar a
+ * tela inteira, mas também não pode confundir com ausência de dado.
+ *
+ * "Não há campanha" e "não consegui perguntar" levam a ações opostas — a
+ * primeira é informação, a segunda é chamado para configurar credencial. Antes
+ * as duas caíam no mesmo `catch` e viravam a mesma tela vazia, e uma variável
+ * de ambiente faltando na hospedagem passava por "esta praça não roda Google".
+ */
+export interface LeituraAds<T> {
+  dados: T | null;
+  /** Mensagem pronta para exibição quando a leitura falhou. */
+  erro: string | null;
+}
+
+export async function tentarAds<T>(p: Promise<T>): Promise<LeituraAds<T>> {
+  try {
+    return { dados: await p, erro: null };
+  } catch (e) {
+    const erro =
+      e instanceof GoogleAdsError ? explicarErroAds(e) : ((e as Error).message ?? "Falha desconhecida");
+    return { dados: null, erro };
+  }
+}
 
 /**
  * Quais canais do Google existem neste escopo.

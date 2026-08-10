@@ -4,7 +4,7 @@ import { ErroMeta, Linha, Pagina, Shell, subtituloEscopo } from "@/components/Sh
 import { Cartao, Etiqueta, Hero, Secao, Stat } from "@/components/ui";
 import { AreaTempo, EmpilhadaTotal, type PontoGrafico } from "@/components/charts";
 import { carregarEscopo } from "@/lib/dados";
-import { carregarAds, METRICAS_ADS_ZERO, type DadosAds } from "@/lib/ads";
+import { carregarAds, METRICAS_ADS_ZERO, tentarAds } from "@/lib/ads";
 import { periodoDeParams, type ParamsBusca } from "@/lib/periodo";
 import { explicarErroMeta, MetaError, REVALIDATE } from "@/lib/meta";
 import { ehEscopoValido, ESCOPOS, type EscopoSlug } from "@/lib/config";
@@ -55,13 +55,15 @@ export default async function VisaoGeralGlobal({
   const periodo = periodoDeParams(searchParams);
 
   try {
-    // O Google não pode derrubar a página: se a API falhar ou a praça não tiver
-    // campanha no canal, o consolidado continua de pé só com o Meta.
-    const [d, ads] = await Promise.all([
+    // O Google não pode derrubar a página, mas também não pode sumir em
+    // silêncio: falha de leitura vira aviso, não "praça sem campanha".
+    const [d, leitura] = await Promise.all([
       carregarEscopo(escopo, periodo),
-      carregarAds(escopo, periodo).catch((): DadosAds | null => null),
+      tentarAds(carregarAds(escopo, periodo)),
     ]);
 
+    const ads = leitura.dados;
+    const googleIndisponivel = leitura.erro !== null;
     const g = ads?.total ?? METRICAS_ADS_ZERO;
     const googleAtivo = Boolean(ads?.ativo);
 
@@ -197,13 +199,31 @@ export default async function VisaoGeralGlobal({
                       style={{ background: c.cor, opacity: c.conectado ? 1 : 0.4 }}
                     />
                     <h3 className="marca shrink-0 text-[19px] leading-none">{c.nome}</h3>
-                    <Etiqueta variante="contorno">
-                      {c.conectado ? "Ativo" : "Sem campanha"}
+                    {/* "Sem campanha" e "indisponível" levam a ações opostas:
+                        a primeira é informação, a segunda é credencial para
+                        configurar. Nunca podem usar o mesmo rótulo. */}
+                    <Etiqueta
+                      variante="contorno"
+                      tom={
+                        c.conectado
+                          ? "neutro"
+                          : c.slug === "google" && googleIndisponivel
+                            ? "critico"
+                            : "apagado"
+                      }
+                    >
+                      {c.conectado
+                        ? "Ativo"
+                        : c.slug === "google" && googleIndisponivel
+                          ? "Indisponível"
+                          : "Sem campanha"}
                     </Etiqueta>
                     <span className="min-w-0 flex-1 truncate text-right text-[11.5px] text-[var(--ink-muted)]">
                       {c.conectado
                         ? `${pct(share, 1)} do investimento · ${int(c.conversoes)} compras`
-                        : "Sem campanha desta praça no canal"}
+                        : c.slug === "google" && googleIndisponivel
+                          ? "Credencial não configurada — veja o detalhe na capa"
+                          : "Sem campanha desta praça no canal"}
                     </span>
                     <span className="shrink-0 text-[18px] leading-none text-[var(--ink-muted)] transition-transform group-hover:translate-x-1">
                       →

@@ -70,12 +70,15 @@ function Grupo({
   id,
   titulo,
   icone: Ic,
+  estado,
   contemRotaAtiva,
   children,
 }: {
   id: string;
   titulo: string;
   icone: Icone;
+  /** Aviso curto ao lado do título — hoje só "indisponível". */
+  estado?: string;
   contemRotaAtiva: boolean;
   children: React.ReactNode;
 }) {
@@ -108,6 +111,14 @@ function Grupo({
       >
         <Ic size={15} stroke={1.9} className="shrink-0" aria-hidden="true" />
         <span className="rotulo flex-1">{titulo}</span>
+        {estado && (
+          <span
+            className="shrink-0 text-[9px] font-bold uppercase tracking-[0.1em]"
+            style={{ color: "var(--critical)" }}
+          >
+            {estado}
+          </span>
+        )}
         <IconChevronDown
           size={13}
           stroke={2.4}
@@ -127,17 +138,24 @@ function Grupo({
 export function NavPlataformas({
   escopo,
   canaisGoogle,
+  googleIndisponivel = false,
 }: {
   escopo: EscopoSlug;
   /** Canais com campanha ativa; item sem dado não entra no menu. */
   canaisGoogle: string[];
+  /** Leitura do Google falhou — mostra tudo, para a página exibir o motivo. */
+  googleIndisponivel?: boolean;
 }) {
   const base = `/${escopo}`;
   const path = usePathname();
 
-  const temPesquisa = canaisGoogle.includes("SEARCH");
-  const temPmax = canaisGoogle.includes("PERFORMANCE_MAX");
-  const temGoogle = canaisGoogle.length > 0;
+  /*
+   * Sem saber o que existe, mostra tudo: esconder itens por causa de uma falha
+   * de leitura faria o dashboard mentir que a praça não roda o canal.
+   */
+  const temPesquisa = googleIndisponivel || canaisGoogle.includes("SEARCH");
+  const temPmax = googleIndisponivel || canaisGoogle.includes("PERFORMANCE_MAX");
+  const temGoogle = googleIndisponivel || canaisGoogle.length > 0;
 
   return (
     <nav className="flex flex-1 flex-col gap-3 overflow-y-auto px-2 py-4">
@@ -183,6 +201,7 @@ export function NavPlataformas({
           id="google"
           titulo="Google Ads"
           icone={IconBrandGoogle}
+          estado={googleIndisponivel ? "indisponível" : undefined}
           contemRotaAtiva={path.startsWith(`${base}/google`)}
         >
           <Item href={`${base}/google`} icone={IconChartAreaLine}>

@@ -5,7 +5,7 @@ import { Moldura } from "./Moldura";
 import { NavAnalytics } from "./Nav";
 import { Etiqueta } from "./ui";
 import { ESCOPO_TODAS, nomeDoEscopo, PRACA_POR_SLUG, type EscopoSlug } from "@/lib/config";
-import { canaisDoEscopo } from "@/lib/ads";
+import { canaisDoEscopo, tentarAds } from "@/lib/ads";
 import { rotuloPeriodo } from "@/lib/periodo";
 import type { Periodo } from "@/lib/meta";
 
@@ -33,10 +33,11 @@ export async function Shell({
   const geradoEm = HORA.format(new Date());
 
   /*
-   * A lateral só mostra o que existe. Se a Google Ads API falhar, o menu do
-   * Google some em vez de a página inteira cair — o Meta continua navegável.
+   * A lateral só mostra o que existe — mas falha de credencial não pode virar
+   * "não existe". Quando a leitura quebra, o grupo do Google aparece inteiro
+   * com aviso, e cada página mostra o erro real da API. O Meta segue navegável.
    */
-  const canaisGoogle = await canaisDoEscopo(escopo).catch((): string[] => []);
+  const google = await tentarAds(canaisDoEscopo(escopo));
 
   return (
     <Moldura
@@ -46,7 +47,8 @@ export async function Shell({
       sub={sub}
       acoes={acoes}
       geradoEm={geradoEm}
-      canaisGoogle={canaisGoogle}
+      canaisGoogle={google.dados ?? []}
+      googleIndisponivel={google.erro !== null}
     >
       {children}
     </Moldura>
