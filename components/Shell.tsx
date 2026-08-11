@@ -77,7 +77,15 @@ export function subtituloEscopo(
  * uma pilha que rola.
  */
 export function Pagina({ children }: { children: ReactNode }) {
-  return <div className="flex flex-col gap-3 lg:min-h-full">{children}</div>;
+    /*
+   * `h-full`, não `min-h-full`. O ResponsiveContainer do Recharts resolve a
+   * própria altura a partir do pai: se o pai é dimensionado PELO CONTEÚDO, ele
+   * mede, desenha, o pai cresce, ele mede de novo — e o gráfico derrete para
+   * baixo indefinidamente (18px por ciclo, medido). Com altura definida aqui, o
+   * `flex-1` da Linha resolve em pixel e a corrente inteira fica estável.
+   * O que não couber transborda e o `main` rola — sem cortar nem derreter.
+   */
+  return <div className="flex flex-col gap-3 lg:h-full">{children}</div>;
 }
 
 /** Linha que cresce para ocupar a altura restante, com piso próprio. */

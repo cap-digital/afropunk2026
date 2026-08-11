@@ -90,7 +90,7 @@ export default async function AnalyticsVendas({
                 sub="Vendidos vs. adicionados ao carrinho"
                 className="min-h-[220px] lg:min-h-0 lg:flex-1"
               >
-                <div className="h-[200px] lg:h-full">
+                <div className="h-[230px] lg:h-full">
                   <BarrasAgrupadas
                     dados={d.eventos.map((e) => ({
                       nome: e.bucket?.nome ?? e.itemName,
@@ -113,7 +113,7 @@ export default async function AnalyticsVendas({
               sub="Escolha o evento · começa no carrinho, o GA4 não rastreia visualização de item"
               className="h-full"
             >
-              <div className="h-[340px] lg:h-full">
+              <div className="h-[230px] lg:h-full">
                 <FunilEventos
                   eventos={d.eventos.map((e) => ({
                     itemName: e.itemName,

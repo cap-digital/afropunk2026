@@ -135,13 +135,13 @@ export default async function Segmentacao({
               sub="Faixas de 3 horas — só dias com entrega"
               className="min-h-0"
             >
-              <div className="h-full min-h-[190px]">
+              <div className="h-full">
                 <MapaCalor
                   linhas={diasComDado}
                   colunas={FAIXAS.map((f) => f.rotulo)}
                   valores={valores}
                   formato="int"
-                  alturaCelula={26}
+                  alturaCelula={22}
                   larguraRotulo={44}
                 />
               </div>
@@ -152,7 +152,7 @@ export default async function Segmentacao({
               sub="Localização de quem viu o anúncio"
               className="min-h-0"
             >
-              <div className="h-full min-h-[190px]">
+              <div className="h-full">
                 <BarrasH
                   dados={cidadesGrafico}
                   formato="brl"

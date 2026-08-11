@@ -21,6 +21,9 @@ const ESCOPO = "https://www.googleapis.com/auth/adwords";
 
 export const REVALIDATE_ADS = 300;
 
+/** Estrutura da conta: canais por praça. Muda de mês em mês, não de minuto. */
+export const REVALIDATE_ESTRUTURA = 1800;
+
 /**
  * Credencial ausente é erro de ambiente, não de dado. A mensagem diz onde
  * configurar porque o sintoma — dashboard sem Google — é idêntico ao de uma
@@ -161,7 +164,15 @@ const espera = (ms: number) => new Promise((r) => setTimeout(r, ms));
  * ficava servida pelos cinco minutos seguintes. O blip vira meia hora de
  * dashboard quebrado para quem abrir depois.
  */
-export async function consultarAds(gaql: string): Promise<Record<string, unknown>[]> {
+export async function consultarAds(
+  gaql: string,
+  /**
+   * Janela de cache própria. O padrão serve a dado de desempenho, que muda o
+   * tempo todo; consulta ESTRUTURAL — quais canais a praça tem — muda uma vez
+   * por mês e não deveria custar uma ida à API a cada navegação.
+   */
+  revalidar: number = REVALIDATE_ADS,
+): Promise<Record<string, unknown>[]> {
   const token = await tokenAds();
   const cliente = soDigitos(process.env.GOOGLE_ADS_CUSTOMER_ID);
   const login = soDigitos(process.env.GOOGLE_ADS_LOGIN_CUSTOMER_ID);
@@ -180,7 +191,7 @@ export async function consultarAds(gaql: string): Promise<Record<string, unknown
   let guarda = 0;
 
   do {
-    const json = await buscarPagina(cliente, cabecalhos, gaql, pageToken);
+    const json = await buscarPagina(cliente, cabecalhos, gaql, pageToken, revalidar);
     linhas.push(...(json.results ?? []));
     pageToken = json.nextPageToken;
   } while (pageToken && guarda++ < 20);
@@ -194,6 +205,7 @@ async function buscarPagina(
   cabecalhos: Record<string, string>,
   gaql: string,
   pageToken: string | undefined,
+  revalidar: number,
 ): Promise<RespostaBusca & { nextPageToken?: string }> {
   const TENTATIVAS = 3;
   let ultimo: GoogleAdsError | null = null;
@@ -207,7 +219,7 @@ async function buscarPagina(
       body: JSON.stringify({ query: gaql, pageToken }),
       // A resposta com erro não entra no cache de dados: guardá-la faria a
       // falha transitória sobreviver à própria tentativa seguinte.
-      next: res0k(tentativa) ? { revalidate: REVALIDATE_ADS } : undefined,
+      next: res0k(tentativa) ? { revalidate: revalidar } : undefined,
       cache: res0k(tentativa) ? undefined : "no-store",
     });
 

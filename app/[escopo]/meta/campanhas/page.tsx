@@ -146,7 +146,7 @@ export default async function MetaCampanhas({
               sub="Compara o ritmo de gasto entre as campanhas ativas"
               className="h-full"
             >
-              <div className="h-[260px] lg:h-full">
+              <div className="h-[230px] lg:h-full">
                 <LinhasTempo dados={serieCampanhas} series={seriesCfg} formato="brl" />
               </div>
             </Cartao>
@@ -171,7 +171,11 @@ export default async function MetaCampanhas({
             </Cartao>
           </Linha>
 
-          <Cartao titulo="Detalhamento" sub="Todas as métricas por campanha ativa">
+          <Cartao
+            titulo="Detalhamento"
+            sub="Todas as métricas por campanha ativa"
+            className="shrink-0"
+          >
             <div className="overflow-auto">
               <table className="w-full text-[11.5px]">
                 <thead>

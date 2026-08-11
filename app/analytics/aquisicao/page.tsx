@@ -101,7 +101,7 @@ export default async function AnalyticsAquisicao({
               sub="Agrupamento padrão do GA4"
               className="h-full"
             >
-              <div className="h-[260px] lg:h-full">
+              <div className="h-[230px] lg:h-full">
                 <BarrasH dados={canaisSessoes} formato="int" larguraRotulo={132} />
               </div>
             </Cartao>
@@ -111,7 +111,7 @@ export default async function AnalyticsAquisicao({
               sub="Só canais que geraram venda"
               className="h-full"
             >
-              <div className="h-[260px] lg:h-full">
+              <div className="h-[230px] lg:h-full">
                 {canaisReceita.length > 0 ? (
                   <BarrasH
                     dados={canaisReceita}
@@ -136,7 +136,7 @@ export default async function AnalyticsAquisicao({
               sub="A fonte exata, antes do agrupamento em canais"
               className="h-full"
             >
-              <div className="h-[260px] lg:h-full">
+              <div className="h-[230px] lg:h-full">
                 <BarrasH
                   dados={origens}
                   formato="int"

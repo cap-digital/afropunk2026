@@ -129,7 +129,7 @@ export default async function MetaResultados({
               sub="Receita do dia ÷ investimento em conversão do dia"
               className="h-full"
             >
-              <div className="h-[260px] lg:h-full">
+              <div className="h-[230px] lg:h-full">
                 <LinhasTempo dados={serieRoas} series={seriesRoas} formato="roas" />
               </div>
             </Cartao>
@@ -139,7 +139,7 @@ export default async function MetaResultados({
               sub="Mesma unidade (R$), então cabem no mesmo eixo"
               className="h-full"
             >
-              <div className="h-[260px] lg:h-full">
+              <div className="h-[230px] lg:h-full">
                 <LinhasTempo dados={serieReceita} series={seriesReceita} formato="brl" />
               </div>
             </Cartao>
@@ -157,7 +157,7 @@ export default async function MetaResultados({
               }
               className="h-full"
             >
-              <div className="h-[260px] lg:h-full">
+              <div className="h-[230px] lg:h-full">
                 {receitaPorConjunto.length > 0 ? (
                   <BarrasH dados={receitaPorConjunto} formato="brl" larguraRotulo={186} />
                 ) : (

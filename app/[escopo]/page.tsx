@@ -262,7 +262,7 @@ export default async function VisaoGeralGlobal({
               }
               className="h-full"
             >
-              <div className="h-[260px] lg:h-full">
+              <div className="h-[230px] lg:h-full">
                 <AreaTempo
                   dados={serie}
                   series={[

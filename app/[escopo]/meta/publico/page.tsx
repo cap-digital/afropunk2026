@@ -142,7 +142,7 @@ export default async function MetaPublico({
               sub="Impressões por faixa e gênero — barras divergentes a partir do zero"
               className="h-full"
             >
-              <div className="h-[260px] lg:h-full">
+              <div className="h-[230px] lg:h-full">
                 <Piramide dados={piramide} corF="var(--par-a)" corM="var(--par-b)" formato="int" />
               </div>
             </Cartao>
@@ -157,11 +157,11 @@ export default async function MetaPublico({
               className="h-full"
             >
               {d.comparativo ? (
-                <div className="h-[260px] lg:h-full">
+                <div className="h-[230px] lg:h-full">
                   <BarrasAgrupadas dados={perfilPorBucket} series={seriesBuckets} formato="pct" />
                 </div>
               ) : (
-                <div className="flex h-full flex-col justify-center gap-7">
+                <div className="flex h-full flex-col justify-center gap-5">
                   <EmpilhadaTotal
                     segmentos={[
                       { nome: "Feminino", valor: totalF, cor: "var(--par-a)" },
@@ -172,8 +172,8 @@ export default async function MetaPublico({
                     ]}
                     formato="int"
                   />
-                  <div className="flex flex-col gap-2.5">
-                    {porFaixa.slice(0, 5).map((f) => (
+                  <div className="flex flex-col gap-2">
+                    {porFaixa.slice(0, 4).map((f) => (
                       <div key={f.faixa} className="flex items-center gap-3">
                         <span className="tabular w-[44px] shrink-0 text-[12.5px] text-[var(--ink-2)]">
                           {f.faixa}
@@ -208,7 +208,7 @@ export default async function MetaPublico({
                 sub="Impressões por estado — a segmentação geográfica em prática"
                 className="h-full"
               >
-                <div className="h-[260px] lg:h-full">
+                <div className="h-[230px] lg:h-full">
                   <BarrasH dados={regioes} formato="int" corUnica="var(--seq-2)" larguraRotulo={132} />
                 </div>
               </Cartao>
@@ -223,7 +223,7 @@ export default async function MetaPublico({
               }
               className="h-full"
             >
-              <div className="h-[260px] lg:h-full">
+              <div className="h-[230px] lg:h-full">
                 <BarrasH dados={dispositivos} formato="int" corUnica="var(--seq-3)" larguraRotulo={120} />
               </div>
             </Cartao>

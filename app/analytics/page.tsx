@@ -82,7 +82,7 @@ export default async function AnalyticsVisaoGeral({
               sub="Os picos coincidem com as aberturas de venda"
               className="h-full"
             >
-              <div className="h-[260px] lg:h-full">
+              <div className="h-[230px] lg:h-full">
                 <AreaTempo
                   dados={serieSessoes}
                   series={[{ chave: "sessoes", nome: "Sessões", cor: "var(--seq-3)" }]}
@@ -111,7 +111,7 @@ export default async function AnalyticsVisaoGeral({
               sub="Valor transacionado no site"
               className="h-full"
             >
-              <div className="h-[260px] lg:h-full">
+              <div className="h-[230px] lg:h-full">
                 <LinhasTempo
                   dados={serieReceita}
                   series={[{ chave: "receita", nome: "Receita", cor: "var(--par-a)" }]}
@@ -125,7 +125,7 @@ export default async function AnalyticsVisaoGeral({
               sub="Quantidade de transações"
               className="h-full"
             >
-              <div className="h-[260px] lg:h-full">
+              <div className="h-[230px] lg:h-full">
                 <AreaTempo
                   dados={serieReceita}
                   series={[{ chave: "transacoes", nome: "Compras", cor: "var(--par-b)" }]}

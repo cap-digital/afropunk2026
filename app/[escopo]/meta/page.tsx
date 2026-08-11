@@ -148,7 +148,7 @@ async function Comparativo({
             sub="Campanhas iniciadas em 31/07 e 03/08 — a série cresce a cada dia"
             className="h-full"
           >
-            <div className="h-[260px] lg:h-full">
+            <div className="h-[230px] lg:h-full">
               <LinhasTempo dados={serie} series={series} formato="brl" />
             </div>
           </Cartao>
@@ -158,7 +158,7 @@ async function Comparativo({
             sub="Impressões vs. alcance — a distância entre as barras é a repetição"
             className="h-full"
           >
-            <div className="h-[260px] lg:h-full">
+            <div className="h-[230px] lg:h-full">
               <BarrasAgrupadas
                 dados={volumes}
                 series={[
@@ -363,7 +363,7 @@ async function PracaUnica({
             sub="Ritmo de gasto desde o início da veiculação"
             className="h-full"
           >
-            <div className="h-[260px] lg:h-full">
+            <div className="h-[230px] lg:h-full">
               <AreaTempo
                 dados={d.serie}
                 series={[{ chave: "spend", nome: "Investimento", cor: praca.cor }]}
@@ -386,7 +386,7 @@ async function PracaUnica({
         <Secao>Entrega e verba</Secao>
         <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-3">
           <Cartao titulo="Onde as impressões acontecem" sub="Plataformas de veiculação" className="h-full">
-            <div className="h-[260px] lg:h-full">
+            <div className="h-[230px] lg:h-full">
               <BarrasH dados={plataformas} formato="int" corUnica="var(--seq-2)" larguraRotulo={104} />
             </div>
           </Cartao>

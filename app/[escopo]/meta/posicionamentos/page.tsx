@@ -118,14 +118,14 @@ export default async function MetaPosicionamentos({
             sub="Impressões por combinação — rampa sequencial, mais claro é mais volume"
             className="h-full"
           >
-            <div className="h-[260px] lg:h-full">
+            <div className="h-[230px] lg:h-full">
               <MapaCalor linhas={linhas} colunas={colunas} valores={valores} formato="int" />
             </div>
           </Cartao>
 
           <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-2">
             <Cartao titulo="Top posicionamentos" sub="Onde o volume realmente acontece" className="h-full">
-              <div className="h-[260px] lg:h-full">
+              <div className="h-[230px] lg:h-full">
                 <BarrasH dados={porPosicionamento} formato="int" corUnica="var(--seq-2)" larguraRotulo={128} />
               </div>
             </Cartao>
@@ -136,7 +136,7 @@ export default async function MetaPosicionamentos({
                 sub="% das impressões de cada praça em cada plataforma"
                 className="h-full"
               >
-                <div className="h-[260px] lg:h-full">
+                <div className="h-[230px] lg:h-full">
                   <BarrasAgrupadas dados={mixPorBucket} series={seriesBuckets} formato="pct" />
                 </div>
               </Cartao>
@@ -147,7 +147,7 @@ export default async function MetaPosicionamentos({
                 className="h-full"
               >
                 <div className="flex h-full flex-col justify-between">
-                  <div className="h-[260px] lg:h-full">
+                  <div className="h-[230px] lg:h-full">
                     <BarrasH dados={cpmPorPlataforma} formato="brl" corUnica="var(--seq-3)" larguraRotulo={128} />
                   </div>
                   <EmpilhadaTotal

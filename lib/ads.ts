@@ -1,5 +1,11 @@
 import "server-only";
-import { consultarAds, explicarErroAds, GoogleAdsError, intervaloAds } from "./googleAds";
+import {
+  consultarAds,
+  explicarErroAds,
+  GoogleAdsError,
+  intervaloAds,
+  REVALIDATE_ESTRUTURA,
+} from "./googleAds";
 import {
   BUCKETS,
   bucketDaCampanha,
@@ -156,10 +162,11 @@ export async function tentarAds<T>(p: Promise<T>): Promise<LeituraAds<T>> {
  * um link que leva a uma tela explicando que não há nada.
  */
 export async function canaisDoEscopo(escopo: EscopoSlug): Promise<string[]> {
-  const linhas = (await consultarAds(`
-    SELECT campaign.name, campaign.advertising_channel_type
-    FROM campaign WHERE campaign.status = 'ENABLED'
-  `)) as LinhaCampanha[];
+  const linhas = (await consultarAds(
+    `SELECT campaign.name, campaign.advertising_channel_type
+     FROM campaign WHERE campaign.status = 'ENABLED'`,
+    REVALIDATE_ESTRUTURA,
+  )) as LinhaCampanha[];
 
   const canais = new Set<string>();
   for (const r of linhas) {

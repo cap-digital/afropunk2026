@@ -299,3 +299,18 @@ body::after {
     text-wrap: balance;
   }
 }
+
+/* Pulso do esqueleto de carregamento — respeitando quem pediu menos movimento. */
+@keyframes pulsa {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 0.85; }
+}
+.pulsa {
+  animation: pulsa 1.4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pulsa {
+    animation: none;
+    opacity: 0.6;
+  }
+}
