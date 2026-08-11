@@ -77,10 +77,10 @@ export function subtituloEscopo(
  * uma pilha que rola.
  */
 export function Pagina({ children }: { children: ReactNode }) {
-  return <div className="flex flex-col gap-3.5 lg:h-full">{children}</div>;
+  return <div className="flex flex-col gap-3 lg:min-h-full">{children}</div>;
 }
 
-/** Linha que cresce para ocupar a altura restante (só no desktop). */
+/** Linha que cresce para ocupar a altura restante, com piso próprio. */
 export function Linha({
   children,
   className = "",
@@ -88,7 +88,14 @@ export function Linha({
   children: ReactNode;
   className?: string;
 }) {
-  return <div className={`min-h-[320px] lg:min-h-0 lg:flex-1 ${className}`}>{children}</div>;
+    /*
+   * Piso de 236px no desktop: com `min-h-0` a linha podia ser espremida a zero
+   * e o gráfico dentro dela desaparecia — o ResponsiveContainer resolvia a
+   * altura para 0 e desenhava nada. Com piso, ou cabe, ou a página rola.
+   */
+  return (
+    <div className={`min-h-[300px] lg:min-h-[236px] lg:flex-1 ${className}`}>{children}</div>
+  );
 }
 
 /** Faixa de erro da Marketing API — mostra o que fazer. */
@@ -150,7 +157,7 @@ export function ShellAnalytics({
             <span className="marca min-w-0 flex-1 truncate text-[14px] text-[var(--ink)]">
               Site AFROPUNK
             </span>
-            <span className="shrink-0 text-[10.5px] font-bold uppercase tracking-[0.14em] text-[var(--ink-muted)] transition-colors group-hover:text-[var(--ink)]">
+            <span className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--ink-muted)] transition-colors group-hover:text-[var(--ink)]">
               sair
             </span>
           </Link>

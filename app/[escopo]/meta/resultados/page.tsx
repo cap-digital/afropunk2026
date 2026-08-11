@@ -175,14 +175,14 @@ export default async function MetaResultados({
               className="h-full"
             >
               <div className="max-h-[320px] overflow-auto lg:h-full lg:max-h-none">
-              <table className="w-full text-[12.5px]">
+              <table className="w-full text-[11.5px]">
                 <thead className="sticky top-0 bg-[var(--surface)]">
-                  <tr className="text-left text-[10.5px] uppercase tracking-[0.12em] text-[var(--ink-muted)]">
-                    <th className="pb-2 pr-3 font-bold">Conjunto</th>
-                    <th className="pb-2 pr-3 text-right font-bold">Investido</th>
-                    <th className="pb-2 pr-3 text-right font-bold">Receita</th>
-                    <th className="pb-2 pr-3 text-right font-bold">ROAS</th>
-                    <th className="pb-2 text-right font-bold">Compras</th>
+                  <tr className="text-left text-[10px] uppercase tracking-[0.1em] text-[var(--ink-muted)]">
+                    <th className="pb-2 pr-3 font-semibold">Conjunto</th>
+                    <th className="pb-2 pr-3 text-right font-semibold">Investido</th>
+                    <th className="pb-2 pr-3 text-right font-semibold">Receita</th>
+                    <th className="pb-2 pr-3 text-right font-semibold">ROAS</th>
+                    <th className="pb-2 text-right font-semibold">Compras</th>
                   </tr>
                 </thead>
                 <tbody className="tabular">

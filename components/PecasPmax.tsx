@@ -89,7 +89,7 @@ export function PecasPmax({ pecas }: { pecas: AtivoPmax[] }) {
               type="button"
               onClick={() => setOrdem(m.chave)}
               aria-pressed={ativo}
-              className={`rounded-md border px-2 py-[5px] text-[11px] font-bold uppercase tracking-[0.1em] transition-colors ${
+              className={`rounded-md border px-2 py-[5px] text-[11px] font-semibold uppercase tracking-[0.1em] transition-colors ${
                 ativo
                   ? "border-[var(--ink)] bg-[var(--ink)] text-black"
                   : "border-[var(--border-forte)] text-[var(--ink-2)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
@@ -141,13 +141,13 @@ function CartaoPeca({
           loading="lazy"
           className="h-full w-full object-cover"
         />
-        <span className="tabular absolute bottom-1.5 right-1.5 flex h-5 min-w-[20px] items-center justify-center rounded bg-black/80 px-1 text-[10px] font-bold text-[var(--ink)]">
+        <span className="tabular absolute bottom-1.5 right-1.5 flex h-5 min-w-[20px] items-center justify-center rounded bg-black/80 px-1 text-[10px] font-semibold text-[var(--ink)]">
           {posicao}
         </span>
       </div>
 
       <figcaption className="flex flex-col gap-1.5 px-2.5 pb-2.5 pt-2">
-        <span className="truncate text-[9.5px] font-bold uppercase tracking-[0.08em] text-[var(--ink-muted)]">
+        <span className="truncate text-[9.5px] font-semibold uppercase tracking-[0.08em] text-[var(--ink-muted)]">
           {CAMPO_ATIVO_LABEL[a.campo] ?? a.campo}
         </span>
 

@@ -20,8 +20,8 @@ export type Icone = TablerIcon;
 export function Secao({ children, icone: Ic = IconPointFilled }: { children: ReactNode; icone?: Icone }) {
   return (
     <div className="faixa-secao pt-0.5">
-      <Ic size={14} stroke={2} className="shrink-0 text-[var(--ink-muted)]" aria-hidden="true" />
-      <h2 className="shrink-0 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--ink-2)]">
+      <Ic size={13} stroke={2} className="shrink-0 text-[var(--ink-muted)]" aria-hidden="true" />
+      <h2 className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ink-2)]">
         {children}
       </h2>
     </div>
@@ -46,7 +46,7 @@ export function Cartao({
   return (
     <section className={`cartao flex flex-col overflow-hidden ${className}`}>
       {(titulo || acao) && (
-        <header className="cartao-cabecalho flex shrink-0 items-start justify-between gap-3 px-4 py-3">
+        <header className="cartao-cabecalho flex shrink-0 items-start justify-between gap-3 px-3.5 py-2.5">
           <div className="flex min-w-0 items-start gap-2">
             {Ic && (
               <Ic
@@ -58,12 +58,12 @@ export function Cartao({
             )}
             <div className="min-w-0">
               {titulo && (
-                <h3 className="truncate text-[13.5px] font-semibold leading-tight tracking-tight text-[var(--ink)]">
+                <h3 className="truncate text-[12.5px] font-semibold leading-tight tracking-tight text-[var(--ink)]">
                   {titulo}
                 </h3>
               )}
               {sub && (
-                <p className="mt-0.5 truncate text-[11.5px] leading-tight text-[var(--ink-muted)]">
+                <p className="mt-0.5 truncate text-[10.5px] leading-tight text-[var(--ink-muted)]">
                   {sub}
                 </p>
               )}
@@ -72,7 +72,7 @@ export function Cartao({
           {acao && <div className="shrink-0">{acao}</div>}
         </header>
       )}
-      <div className="min-h-0 flex-1 px-4 pb-4 pt-3.5">{children}</div>
+      <div className="min-h-0 flex-1 px-3.5 pb-3.5 pt-3">{children}</div>
     </section>
   );
 }
@@ -94,7 +94,8 @@ export function Stat({
   icone?: Icone;
   tamanho?: "sm" | "md" | "lg";
 }) {
-  const t = { sm: "text-[19px]", md: "text-[25px]", lg: "text-[34px]" }[tamanho];
+  // Escala reduzida: a anterior foi calibrada em 1366 e estourava em 1280.
+  const t = { sm: "text-[16px]", md: "text-[21px]", lg: "text-[28px]" }[tamanho];
   return (
     <div className="flex min-w-0 flex-col justify-center">
       <div className="flex items-center gap-1.5">
@@ -107,7 +108,7 @@ export function Stat({
         {valor}
       </div>
       {sub && (
-        <div className="mt-1 truncate text-[12px] leading-tight text-[var(--ink-muted)]">
+        <div className="mt-1 truncate text-[11px] leading-tight text-[var(--ink-muted)]">
           {sub}
         </div>
       )}
@@ -126,12 +127,12 @@ export function Hero({
   sub?: string;
 }) {
   return (
-    <div className="flex flex-col justify-center border-r border-[var(--border)] pr-5">
+    <div className="flex flex-col justify-center border-r border-[var(--border)] pr-4">
       <span className="rotulo">{rotulo}</span>
-      <div className="mt-1.5 whitespace-nowrap text-[30px] font-black leading-none tracking-[-0.035em] text-[var(--ink)] xl:text-[36px]">
+      <div className="mt-1.5 whitespace-nowrap text-[25px] font-bold leading-none tracking-[-0.03em] text-[var(--ink)] xl:text-[29px]">
         {valor}
       </div>
-      {sub && <div className="mt-1.5 truncate text-[11.5px] text-[var(--ink-2)]">{sub}</div>}
+      {sub && <div className="mt-1.5 truncate text-[10.5px] text-[var(--ink-2)]">{sub}</div>}
     </div>
   );
 }
@@ -163,7 +164,7 @@ export function Etiqueta({
   if (variante === "contorno") {
     return (
       <span
-        className="inline-flex items-center gap-1.5 rounded-md border px-2 py-[3px] text-[10.5px] font-bold uppercase tracking-[0.1em]"
+        className="inline-flex items-center gap-1.5 rounded-md border px-2 py-[2px] text-[9.5px] font-semibold uppercase tracking-[0.1em]"
         style={{ borderColor: t.bdr, background: t.bg, color: t.cor }}
       >
         {children}
@@ -172,7 +173,7 @@ export function Etiqueta({
   }
   return (
     <span
-      className="inline-flex items-center rounded-md px-2 py-[3px] text-[10.5px] font-bold uppercase tracking-[0.1em] text-black"
+      className="inline-flex items-center rounded-md px-2 py-[2px] text-[9.5px] font-semibold uppercase tracking-[0.1em] text-black"
       style={{ background: t.cor }}
     >
       {children}
@@ -183,7 +184,7 @@ export function Etiqueta({
 /** Status com ícone + rótulo — cor nunca carrega o significado sozinha. */
 export function StatusAtivo({ ativo }: { ativo: boolean }) {
   return (
-    <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.12em]">
+    <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.12em]">
       <IconPointFilled
         size={12}
         aria-hidden="true"
@@ -209,8 +210,8 @@ export function Vazio({
   return (
     <div className="flex h-full flex-col items-center justify-center gap-3 py-8 text-center">
       <Ic size={26} stroke={1.5} className="text-[var(--ink-muted)]" aria-hidden="true" />
-      <p className="marca text-[17px] leading-[1.15] text-[var(--ink-2)]">{titulo}</p>
-      <p className="max-w-[46ch] text-[12.5px] leading-relaxed text-[var(--ink-muted)]">
+      <p className="marca text-[15px] leading-[1.15] text-[var(--ink-2)]">{titulo}</p>
+      <p className="max-w-[46ch] text-[11.5px] leading-relaxed text-[var(--ink-muted)]">
         {descricao}
       </p>
     </div>

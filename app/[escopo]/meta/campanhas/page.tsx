@@ -173,7 +173,7 @@ export default async function MetaCampanhas({
 
           <Cartao titulo="Detalhamento" sub="Todas as métricas por campanha ativa">
             <div className="overflow-auto">
-              <table className="w-full text-[12.5px]">
+              <table className="w-full text-[11.5px]">
                 <thead>
                   <tr className="text-left text-[11px] uppercase tracking-[0.1em] text-[var(--ink-muted)]">
                     <th className="pb-2 pr-3 font-semibold">Campanha</th>

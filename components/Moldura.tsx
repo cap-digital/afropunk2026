@@ -80,7 +80,7 @@ export function Moldura({
           aberto ? "translate-x-0" : "-translate-x-[115%] lg:translate-x-0"
         } ${colapsada ? "lg:hidden" : ""}`}
       >
-        <div className="relative flex h-[66px] shrink-0 items-center justify-center border-b border-[var(--border)] px-3">
+        <div className="relative flex h-[60px] shrink-0 items-center justify-center border-b border-[var(--border)] px-3">
           <Marca tamanho="sm" href="/" />
           <button
             type="button"
@@ -121,10 +121,10 @@ export function Moldura({
                 {/* `leading-[1.2]`: `truncate` recorta o que passar da caixa da
                     linha, e em caixa alta o til do Ã e a cedilha do Ç saem dela
                     com entrelinha fechada — "PRAÇAS" perdia a cedilha. */}
-                <span className="marca min-w-0 flex-1 truncate text-[14px] leading-[1.2] text-[var(--ink)]">
+                <span className="marca min-w-0 flex-1 truncate text-[13px] leading-[1.2] text-[var(--ink)]">
                   {escopo ? nomeDoEscopo(escopo) : ""}
                 </span>
-                <span className="shrink-0 text-[10.5px] font-bold uppercase tracking-[0.14em] text-[var(--ink-muted)] transition-colors group-hover:text-[var(--ink)]">
+                <span className="shrink-0 text-[9.5px] font-semibold uppercase tracking-[0.12em] text-[var(--ink-muted)] transition-colors group-hover:text-[var(--ink)]">
                   trocar
                 </span>
               </Link>
@@ -163,7 +163,7 @@ export function Moldura({
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col gap-3 lg:gap-4">
-        <header className="painel flex min-h-[62px] shrink-0 flex-wrap items-center justify-between gap-3 px-3.5 py-2.5 lg:h-[62px] lg:flex-nowrap lg:px-5 lg:py-0">
+        <header className="painel flex min-h-[56px] shrink-0 flex-wrap items-center justify-between gap-3 px-3.5 py-2.5 lg:h-[56px] lg:flex-nowrap lg:px-5 lg:py-0">
           <div className="flex min-w-0 items-center gap-2.5">
             <button
               type="button"
@@ -186,9 +186,9 @@ export function Moldura({
             <div className="min-w-0">
               {/* Mesma razão da praça na lateral: com `leading-none`, "SEGMENTAÇÃO"
                   e "VISÃO GERAL" perdiam o til dentro do `truncate`. */}
-              <h1 className="marca truncate text-[18px] leading-[1.2] lg:text-[21px]">{titulo}</h1>
+              <h1 className="marca truncate text-[16px] leading-[1.2] lg:text-[19px]">{titulo}</h1>
               {sub && (
-                <div className="mt-1.5 truncate text-[10.5px] uppercase tracking-[0.1em] leading-none text-[var(--ink-muted)] lg:text-[11px]">
+                <div className="mt-1.5 truncate text-[9.5px] uppercase tracking-[0.1em] leading-none text-[var(--ink-muted)] lg:text-[10px]">
                   {sub}
                 </div>
               )}
@@ -208,7 +208,11 @@ export function Moldura({
           </div>
         </header>
 
-        <main className="relative min-h-0 flex-1">
+        {/* `overflow-y-auto`, não `hidden`: quando o conteúdo não cabe — e em
+            1280×720 ele não cabe — cortar em silêncio some com metade do
+            cartão sem avisar ninguém. Rolar é a única falha honesta, e é o que
+            o design system da casa faz na área de conteúdo. */}
+        <main className="relative min-h-0 flex-1 lg:overflow-y-auto">
           <span aria-hidden="true" className="marca-dagua hidden text-[15rem] lg:block">
             {uf}
           </span>

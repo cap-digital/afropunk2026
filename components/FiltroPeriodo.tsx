@@ -72,7 +72,7 @@ export function FiltroPeriodo() {
         type="button"
         onClick={() => setAberto((v) => !v)}
         aria-expanded={aberto}
-        className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-[7px] text-[11.5px] font-bold uppercase tracking-[0.12em] transition-colors ${
+        className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-[7px] text-[11.5px] font-semibold uppercase tracking-[0.12em] transition-colors ${
           temIntervalo
             ? "border-[var(--ink)] text-[var(--ink)]"
             : "border-[var(--border-forte)] text-[var(--ink-2)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
@@ -109,7 +109,7 @@ export function FiltroPeriodo() {
                     navegar(i?.de, i?.ate);
                   }}
                   aria-pressed={selecionado}
-                  className={`rounded-md border px-2 py-[7px] text-[11px] font-bold uppercase tracking-[0.08em] transition-colors ${
+                  className={`rounded-md border px-2 py-[7px] text-[11px] font-semibold uppercase tracking-[0.08em] transition-colors ${
                     p.chave === "tudo" || p.chave === "mes-passado" ? "col-span-2" : ""
                   } ${
                     selecionado
@@ -153,7 +153,7 @@ export function FiltroPeriodo() {
             type="button"
             onClick={() => navegar(de, ate)}
             disabled={!de || !ate}
-            className="mt-3 w-full rounded-lg bg-[var(--ink)] px-3 py-2 text-[11.5px] font-bold uppercase tracking-[0.12em] text-black transition-opacity hover:opacity-85 disabled:opacity-40"
+            className="mt-3 w-full rounded-lg bg-[var(--ink)] px-3 py-2 text-[11.5px] font-semibold uppercase tracking-[0.12em] text-black transition-opacity hover:opacity-85 disabled:opacity-40"
           >
             Aplicar intervalo
           </button>

@@ -25,7 +25,8 @@ import { brl, brlCompact, compact, dec, diaMesCurto, int, pct } from "@/lib/form
 
 const GRID = "var(--grid)";
 const EIXO = "var(--baseline)";
-const TICK = { fill: "var(--ink-muted)", fontSize: 12 };
+// 11px nos eixos: 12 competia com o número do próprio dado.
+const TICK = { fill: "var(--ink-muted)", fontSize: 11 };
 const SURFACE = "var(--surface)";
 
 export type Formato = "brl" | "int" | "pct" | "dec" | "roas";
@@ -87,13 +88,13 @@ function DicaPadrao({ active, payload, label, formato = "int", rotuloEixo }: Dic
   return (
     <Caixa>
       {label !== undefined && (
-        <div className="mb-1.5 text-[11.5px] font-bold uppercase tracking-[0.1em] text-[var(--ink-muted)]">
+        <div className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--ink-muted)]">
           {rotuloEixo ? rotuloEixo(String(label)) : label}
         </div>
       )}
       <div className="flex flex-col gap-1">
         {payload.map((p, i) => (
-          <div key={i} className="flex items-center justify-between gap-4 text-[13px]">
+          <div key={i} className="flex items-center justify-between gap-4 text-[12px]">
             <span className="flex items-center gap-1.5 text-[var(--ink-2)]">
               <span
                 aria-hidden="true"
@@ -134,7 +135,7 @@ function LegendaChips({ payload }: { payload?: ItemLegenda[] }) {
   return (
     <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 pt-1.5">
       {payload.map((p, i) => (
-        <span key={i} className="flex items-center gap-1.5 text-[12px] text-[var(--ink-2)]">
+        <span key={i} className="flex items-center gap-1.5 text-[11px] text-[var(--ink-2)]">
           <span
             aria-hidden="true"
             className="block h-2 w-2 rotate-45"
@@ -207,8 +208,8 @@ function rotuloPico(dados: PontoGrafico[], chave: string, formato: Formato, cor:
         x={naDireita ? x - 2 : naEsquerda ? x + 2 : x}
         y={y - 10}
         fill={cor}
-        fontSize={11.5}
-        fontWeight={700}
+        fontSize={10.5}
+        fontWeight={600}
         textAnchor={naDireita ? "end" : naEsquerda ? "start" : "middle"}
       >
         {texto}
@@ -259,8 +260,8 @@ function rotuloPontos(
         x={naDireita ? x - 2 : naEsquerda ? x + 2 : x}
         y={y - 9}
         fill={cor}
-        fontSize={11}
-        fontWeight={700}
+        fontSize={10.5}
+        fontWeight={600}
         textAnchor={naDireita ? "end" : naEsquerda ? "start" : "middle"}
       >
         {texto}
@@ -289,7 +290,7 @@ function rotuloTopo(formato: Formato, indiceSerie: number) {
         y={y - 6 - indiceSerie * 14}
         textAnchor="middle"
         fill="var(--ink-2)"
-        fontSize={10.5}
+        fontSize={10}
         fontWeight={600}
       >
         {fmt(v, formato)}
@@ -623,7 +624,7 @@ export function EmpilhadaTotal({
   const total = segmentos.reduce((a, s) => a + s.valor, 0) || 1;
   return (
     <div className="flex flex-col gap-2.5">
-      <div className="flex h-7 w-full overflow-hidden rounded-[4px]">
+      <div className="flex h-6 w-full overflow-hidden rounded-[4px]">
         {segmentos.map((s) => {
           const p = (s.valor / total) * 100;
           if (p <= 0) return null;
@@ -642,7 +643,7 @@ export function EmpilhadaTotal({
                   próprio número em cartões de coluna, e o rótulo vazava para o
                   segmento vizinho. O valor exato está sempre na legenda. */}
               {p >= 14 && (
-                <span className="absolute inset-0 flex items-center justify-center text-[11.5px] font-bold text-black/80">
+                <span className="absolute inset-0 flex items-center justify-center text-[10.5px] font-semibold text-black/80">
                   {dec(p)}%
                 </span>
               )}
@@ -652,7 +653,7 @@ export function EmpilhadaTotal({
       </div>
       <div className="flex flex-wrap gap-x-4 gap-y-1">
         {segmentos.map((s) => (
-          <span key={s.nome} className="flex items-center gap-1.5 text-[12px]">
+          <span key={s.nome} className="flex items-center gap-1.5 text-[11px]">
             <span
               aria-hidden="true"
               className="block h-2 w-2 rotate-45"
@@ -868,7 +869,7 @@ export function MapaCalor({
   return (
     <div className="flex h-full flex-col gap-1.5 overflow-auto">
       <div
-        className="grid gap-[2px] text-[11.5px]"
+        className="grid gap-[2px] text-[11px]"
         style={{
           gridTemplateColumns: `${larguraRotulo}px repeat(${colunas.length}, minmax(0,1fr))`,
         }}
@@ -877,7 +878,7 @@ export function MapaCalor({
         {colunas.map((c) => (
           <div
             key={c}
-            className="truncate pb-1 text-center text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--ink-muted)]"
+            className="truncate pb-1 text-center text-[10px] font-semibold uppercase tracking-[0.06em] text-[var(--ink-muted)]"
             title={c}
           >
             {c}
@@ -886,7 +887,7 @@ export function MapaCalor({
         {linhas.map((l) => (
           <Fragment key={l}>
             <div
-              className="flex items-center truncate pr-2 text-[12px] text-[var(--ink-2)]"
+              className="flex items-center truncate pr-2 text-[11px] text-[var(--ink-2)]"
               title={l}
             >
               {l}
@@ -902,7 +903,7 @@ export function MapaCalor({
                   className="flex items-center justify-center rounded-[3px] transition-opacity hover:opacity-80"
                 >
                   <span
-                    className="tabular text-[11.5px] font-semibold"
+                    className="tabular text-[10.5px] font-semibold"
                     style={{ color: v <= 0 ? "var(--ink-muted)" : claro ? "#0b0b0b" : "#ffffff" }}
                   >
                     {v > 0 ? compact(v) : "–"}
@@ -913,7 +914,7 @@ export function MapaCalor({
           </Fragment>
         ))}
       </div>
-      <div className="mt-auto flex items-center gap-2 pt-1 text-[11px] text-[var(--ink-muted)]">
+      <div className="mt-auto flex items-center gap-2 pt-1 text-[10px] text-[var(--ink-muted)]">
         <span>Menos</span>
         {["var(--seq-1)", "var(--seq-2)", "var(--seq-3)", "var(--seq-4)"].map((c) => (
           <span key={c} className="block h-2.5 w-6 rounded-[2px]" style={{ background: c }} />
@@ -1058,7 +1059,7 @@ export function FunilTrapezio({
                 clipPath: `polygon(${(100 - cima) / 2}% 0%, ${(100 + cima) / 2}% 0%, ${(100 + baixo) / 2}% 100%, ${(100 - baixo) / 2}% 100%)`,
               }}
             >
-              <span className="truncate text-[13px] font-bold uppercase tracking-[0.06em] text-[#0b0b0b]">
+              <span className="truncate text-[13px] font-semibold uppercase tracking-[0.06em] text-[#0b0b0b]">
                 {e.nome}
               </span>
             </div>

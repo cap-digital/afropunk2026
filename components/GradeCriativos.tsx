@@ -38,7 +38,7 @@ export function GradeCriativos({ criativos }: { criativos: Criativo[] }) {
               type="button"
               onClick={() => setOrdem(m.chave)}
               aria-pressed={ativo}
-              className={`rounded-md border px-2 py-[5px] text-[11px] font-bold uppercase tracking-[0.1em] transition-colors ${
+              className={`rounded-md border px-2 py-[5px] text-[11px] font-semibold uppercase tracking-[0.1em] transition-colors ${
                 ativo
                   ? "border-[var(--ink)] bg-[var(--ink)] text-black"
                   : "border-[var(--border-forte)] text-[var(--ink-2)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
@@ -88,7 +88,7 @@ export function GradeCriativos({ criativos }: { criativos: Criativo[] }) {
                 type="button"
                 onClick={() => setPagina(n)}
                 aria-current={n === pagina ? "page" : undefined}
-                className={`h-7 min-w-[28px] rounded-md border px-1.5 text-[11px] font-bold tabular transition-colors ${
+                className={`h-7 min-w-[28px] rounded-md border px-1.5 text-[11px] font-semibold tabular transition-colors ${
                   n === pagina
                     ? "border-[var(--ink)] bg-[var(--ink)] text-black"
                     : "border-[var(--border-forte)] text-[var(--ink-2)] hover:border-[var(--ink)] hover:text-[var(--ink)]"

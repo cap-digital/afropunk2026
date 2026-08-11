@@ -222,7 +222,7 @@ async function Comparativo({
             className="h-full"
           >
             <div className="max-h-[320px] overflow-auto lg:h-full lg:max-h-none">
-              <table className="w-full text-[12.5px]">
+              <table className="w-full text-[11.5px]">
                 <thead className="sticky top-0 bg-[var(--surface)]">
                   <tr className="text-left text-[11px] uppercase tracking-[0.1em] text-[var(--ink-muted)]">
                     <th className="pb-2 pr-2 font-semibold">Praça</th>
@@ -499,7 +499,7 @@ function Destaque({
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5">
           <span className="rotulo">{rotulo}</span>
-          <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--ink-muted)]">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--ink-muted)]">
             · {plataforma}
           </span>
         </div>

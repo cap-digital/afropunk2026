@@ -138,17 +138,17 @@ export default async function GoogleAds({
           <div className="shrink-0">
             <Cartao className="min-w-0">
               <div className="overflow-x-auto">
-                <table className="w-full text-[12.5px]">
+                <table className="w-full text-[11.5px]">
                   <thead>
-                    <tr className="text-left text-[10.5px] uppercase tracking-[0.12em] text-[var(--ink-muted)]">
-                      <th className="pb-2 pr-3 font-bold">Canal</th>
-                      <th className="pb-2 pr-3 font-bold">Campanha</th>
-                      <th className="pb-2 pr-3 text-right font-bold">Investido</th>
-                      <th className="pb-2 pr-3 text-right font-bold">Receita</th>
-                      <th className="pb-2 pr-3 text-right font-bold">ROAS</th>
-                      <th className="pb-2 pr-3 text-right font-bold">Conv.</th>
-                      <th className="pb-2 pr-3 text-right font-bold">CPA</th>
-                      <th className="pb-2 text-right font-bold">CTR</th>
+                    <tr className="text-left text-[10px] uppercase tracking-[0.1em] text-[var(--ink-muted)]">
+                      <th className="pb-2 pr-3 font-semibold">Canal</th>
+                      <th className="pb-2 pr-3 font-semibold">Campanha</th>
+                      <th className="pb-2 pr-3 text-right font-semibold">Investido</th>
+                      <th className="pb-2 pr-3 text-right font-semibold">Receita</th>
+                      <th className="pb-2 pr-3 text-right font-semibold">ROAS</th>
+                      <th className="pb-2 pr-3 text-right font-semibold">Conv.</th>
+                      <th className="pb-2 pr-3 text-right font-semibold">CPA</th>
+                      <th className="pb-2 text-right font-semibold">CTR</th>
                     </tr>
                   </thead>
                   <tbody className="tabular">

@@ -52,7 +52,7 @@ export function FunilEventos({ eventos }: { eventos: EventoFunil[] }) {
               type="button"
               onClick={() => setAtivo(i)}
               aria-pressed={selecionado}
-              className="flex items-center gap-1.5 rounded-md border px-2 py-[5px] text-[11px] font-bold uppercase tracking-[0.08em] transition-colors"
+              className="flex items-center gap-1.5 rounded-md border px-2 py-[5px] text-[11px] font-semibold uppercase tracking-[0.08em] transition-colors"
               style={
                 selecionado
                   ? { borderColor: x.cor, background: x.cor, color: "#0b0b0b" }

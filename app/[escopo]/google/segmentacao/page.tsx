@@ -174,16 +174,16 @@ export default async function Segmentacao({
             </Cartao>
 
             <Cartao className="min-w-0">
-              <table className="w-full text-[12.5px]">
+              <table className="w-full text-[11.5px]">
                 <thead>
-                  <tr className="text-left text-[10.5px] uppercase tracking-[0.12em] text-[var(--ink-muted)]">
-                    <th className="pb-2 pr-3 font-bold">Aparelho</th>
-                    <th className="pb-2 pr-3 text-right font-bold">Investido</th>
-                    <th className="pb-2 pr-3 text-right font-bold">Cliques</th>
-                    <th className="pb-2 pr-3 text-right font-bold">CTR</th>
-                    <th className="pb-2 pr-3 text-right font-bold">Conv.</th>
-                    <th className="pb-2 pr-3 text-right font-bold">CPA</th>
-                    <th className="pb-2 text-right font-bold">ROAS</th>
+                  <tr className="text-left text-[10px] uppercase tracking-[0.1em] text-[var(--ink-muted)]">
+                    <th className="pb-2 pr-3 font-semibold">Aparelho</th>
+                    <th className="pb-2 pr-3 text-right font-semibold">Investido</th>
+                    <th className="pb-2 pr-3 text-right font-semibold">Cliques</th>
+                    <th className="pb-2 pr-3 text-right font-semibold">CTR</th>
+                    <th className="pb-2 pr-3 text-right font-semibold">Conv.</th>
+                    <th className="pb-2 pr-3 text-right font-semibold">CPA</th>
+                    <th className="pb-2 text-right font-semibold">ROAS</th>
                   </tr>
                 </thead>
                 <tbody className="tabular">

@@ -53,7 +53,7 @@ export function MarcaAnimada({ largura = 196 }: { largura?: number }) {
       </span>
 
       <span
-        className="marca-entra text-[11.5px] font-bold leading-none tracking-[0.42em] text-[var(--ink-2)] pl-[0.42em]"
+        className="marca-entra text-[11.5px] font-semibold leading-none tracking-[0.42em] text-[var(--ink-2)] pl-[0.42em]"
         style={{ animation: `surgir 0.5s ease-out ${FIM_PREENCHIMENTO + 0.1}s both` }}
       >
         2026

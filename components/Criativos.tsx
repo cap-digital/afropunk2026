@@ -28,7 +28,7 @@ export function CartaoCriativo({
     <article className="cartao group flex flex-col overflow-hidden transition-colors hover:border-[var(--border-forte)]">
       <div className="relative aspect-square w-full overflow-hidden bg-[var(--surface-2)]">
         {posicao !== undefined && (
-          <span className="absolute bottom-2 right-2 z-[2] flex h-5 min-w-[19px] items-center justify-center bg-black/80 px-1 text-[10px] font-bold tabular text-[var(--ink)]">
+          <span className="absolute bottom-2 right-2 z-[2] flex h-5 min-w-[19px] items-center justify-center bg-black/80 px-1 text-[10px] font-semibold tabular text-[var(--ink)]">
             {posicao}
           </span>
         )}
@@ -47,7 +47,7 @@ export function CartaoCriativo({
 
         {c.bucket && (
           <span
-            className="absolute left-2 top-2 rounded-[3px] px-1.5 py-[3px] text-[9.5px] font-bold uppercase tracking-[0.08em] text-black"
+            className="absolute left-2 top-2 rounded-[3px] px-1.5 py-[3px] text-[9.5px] font-semibold uppercase tracking-[0.08em] text-black"
             style={{ background: c.bucket.cor }}
           >
             {c.bucket.nome}
@@ -55,7 +55,7 @@ export function CartaoCriativo({
         )}
 
         {!ativo && (
-          <span className="absolute right-1.5 top-1.5 rounded-[3px] bg-black/75 px-1 py-[2px] text-[8.5px] font-bold uppercase tracking-[0.08em] text-[var(--ink-2)]">
+          <span className="absolute right-1.5 top-1.5 rounded-[3px] bg-black/75 px-1 py-[2px] text-[8.5px] font-semibold uppercase tracking-[0.08em] text-[var(--ink-2)]">
             Pausado
           </span>
         )}
@@ -80,7 +80,7 @@ export function CartaoCriativo({
             return (
               <div key={m.chave} className="min-w-0">
                 <dt
-                  className="truncate text-[9.5px] font-bold uppercase tracking-[0.08em]"
+                  className="truncate text-[9.5px] font-semibold uppercase tracking-[0.08em]"
                   style={{ color: destacada ? "var(--ink)" : "var(--ink-muted)" }}
                 >
                   {m.curto}
@@ -120,7 +120,7 @@ export function CartaoCriativo({
             target="_blank"
             rel="noopener noreferrer"
             title="Ver no Instagram"
-            className="mt-auto flex items-center justify-center gap-1 border border-[var(--border-forte)] px-2 py-[5px] text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--ink-2)] transition-colors hover:border-[var(--ink)] hover:text-[var(--ink)]"
+            className="mt-auto flex items-center justify-center gap-1 border border-[var(--border-forte)] px-2 py-[5px] text-[10px] font-semibold uppercase tracking-[0.08em] text-[var(--ink-2)] transition-colors hover:border-[var(--ink)] hover:text-[var(--ink)]"
           >
             <IconeInstagram />
             Instagram

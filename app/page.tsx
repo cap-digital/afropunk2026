@@ -98,7 +98,7 @@ export default async function Capa() {
       <header className="flex shrink-0 flex-col items-center gap-3">
         <MarcaAnimada />
         <Losangos qtd={9} cor="var(--surface-3)" />
-        <p className="surgir text-[12px] font-bold uppercase tracking-[0.32em] text-[var(--ink-muted)] [animation-delay:2.4s]">
+        <p className="surgir text-[11px] font-semibold uppercase tracking-[0.32em] text-[var(--ink-muted)] [animation-delay:2.4s]">
           Dashboard de mídia · Selecione a praça
         </p>
       </header>
@@ -196,7 +196,7 @@ export default async function Capa() {
       </div>
 
       <footer className="flex shrink-0 flex-col items-center gap-1.5">
-        <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-[var(--ink-muted)]">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[var(--ink-muted)]">
           Desenvolvido por
         </span>
         <div className="flex items-center gap-4">
@@ -243,7 +243,7 @@ function MiniStat({
 }) {
   return (
     <div className="flex flex-col items-end">
-      <span className="text-[10.5px] font-bold uppercase tracking-[0.14em] opacity-60">
+      <span className="text-[10px] font-semibold uppercase tracking-[0.14em] opacity-60">
         {rotulo}
       </span>
       <span className="tabular mt-0.5 text-[17px] font-bold leading-none">{valor}</span>
@@ -283,7 +283,7 @@ function CartaoPraca({
           {/* Rótulo neutro: na capa, a cor da praça fica só no filete do topo
               — que é a chave de legenda do sistema inteiro — e no sparkline,
               que é gráfico. O resto do cartão é cromo. */}
-          <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--ink-muted)]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ink-muted)]">
             {marca}
           </p>
           <h3 className="marca mt-1.5 text-[31px] leading-[0.9]">{nome}</h3>
@@ -329,7 +329,7 @@ function CartaoPraca({
             <p className="text-[12px] leading-relaxed text-[var(--ink-muted)]">
               O painel já está montado esperando a Campanha de {nome} entrar no ar
             </p>
-            <span className="mt-1 inline-flex w-fit items-center rounded-[3px] border border-[var(--border-forte)] px-2 py-1 text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--ink-muted)]">
+            <span className="mt-1 inline-flex w-fit items-center rounded-[3px] border border-[var(--border-forte)] px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--ink-muted)]">
               Em breve
             </span>
           </div>
