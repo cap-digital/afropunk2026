@@ -113,15 +113,20 @@ export default async function MetaPosicionamentos({
             <Stat rotulo="CPM médio" valor={brl(d.total.cpm)} sub={`CPC ${brl(d.total.cpc)}`} />
           </div>
 
-          <Cartao
-            titulo="Mapa de entrega: plataforma × posicionamento"
-            sub="Impressões por combinação — rampa sequencial, mais claro é mais volume"
-            className="h-full"
-          >
-            <div className="h-[230px] lg:h-full">
-              <MapaCalor linhas={linhas} colunas={colunas} valores={valores} formato="int" />
-            </div>
-          </Cartao>
+          {/* Dentro de `Linha`, não solto na coluna: `h-full` num filho direto
+              da página pede a altura inteira para si, o flex encolhe de volta e
+              sobra buraco embaixo. `Linha` distribui o espaço de verdade. */}
+          <Linha>
+            <Cartao
+              titulo="Mapa de entrega: plataforma × posicionamento"
+              sub="Impressões por combinação — rampa sequencial, mais claro é mais volume"
+              className="h-full"
+            >
+              <div className="h-[230px] lg:h-full">
+                <MapaCalor linhas={linhas} colunas={colunas} valores={valores} formato="int" />
+              </div>
+            </Cartao>
+          </Linha>
 
           <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-2">
             <Cartao titulo="Top posicionamentos" sub="Onde o volume realmente acontece" className="h-full">

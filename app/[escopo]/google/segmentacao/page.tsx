@@ -141,7 +141,6 @@ export default async function Segmentacao({
                   colunas={FAIXAS.map((f) => f.rotulo)}
                   valores={valores}
                   formato="int"
-                  alturaCelula={22}
                   larguraRotulo={44}
                 />
               </div>

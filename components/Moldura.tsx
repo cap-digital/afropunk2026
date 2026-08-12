@@ -162,7 +162,15 @@ export function Moldura({
         </div>
       </aside>
 
-      <div className="flex min-w-0 flex-1 flex-col gap-3 lg:gap-4">
+      {/* `relative` aqui e não no <main>: a marca d'água sangra para fora da
+          caixa de propósito, e dentro de um container rolável essa sangria
+          conta como conteúdo — era o que criava barra horizontal e vertical
+          numa página que cabia inteira. Fora do scroller, o
+          `overflow-hidden` do shell apara e nada rola. */}
+      <div className="relative flex min-w-0 flex-1 flex-col gap-3 lg:gap-4">
+        <span aria-hidden="true" className="marca-dagua hidden text-[15rem] lg:block">
+          {uf}
+        </span>
         <header className="painel flex min-h-[56px] shrink-0 flex-wrap items-center justify-between gap-3 px-3.5 py-2.5 lg:h-[56px] lg:flex-nowrap lg:px-5 lg:py-0">
           <div className="flex min-w-0 items-center gap-2.5">
             <button
@@ -212,11 +220,11 @@ export function Moldura({
             1280×720 ele não cabe — cortar em silêncio some com metade do
             cartão sem avisar ninguém. Rolar é a única falha honesta, e é o que
             o design system da casa faz na área de conteúdo. */}
-        <main className="relative min-h-0 flex-1 lg:overflow-y-auto">
-          <span aria-hidden="true" className="marca-dagua hidden text-[15rem] lg:block">
-            {uf}
-          </span>
-          <div className="relative z-[1] lg:h-full">{children}</div>
+        {/* `overflow-x-hidden`: nada deve rolar na horizontal, nunca. O eixo
+            vertical rola só como rede de segurança — se tudo couber, e é o
+            caso hoje, nenhuma barra aparece. */}
+        <main className="relative z-[1] min-h-0 flex-1 lg:overflow-y-auto lg:overflow-x-hidden">
+          <div className="lg:h-full">{children}</div>
         </main>
       </div>
     </div>

@@ -846,15 +846,12 @@ export function MapaCalor({
   colunas,
   valores,
   formato = "int",
-  alturaCelula = 36,
   larguraRotulo = 104,
 }: {
   linhas: string[];
   colunas: string[];
   valores: Map<string, number>;
   formato?: Formato;
-  /** Grades com muitas linhas precisam de célula mais baixa para caber. */
-  alturaCelula?: number;
   larguraRotulo?: number;
 }) {
   const max = Math.max(...[...valores.values()], 1);
@@ -867,11 +864,18 @@ export function MapaCalor({
     return "var(--seq-1)";
   };
   return (
-    <div className="flex h-full flex-col gap-1.5 overflow-auto">
+    <div className="flex h-full min-h-0 flex-col gap-1.5">
+      {/* As linhas esticam para preencher o cartão: com altura fixa, o mapa
+          terminava no meio e a legenda ia para o rodapé, deixando um vão que
+          parecia dado faltando. `minmax` mantém o piso legível. */}
       <div
-        className="grid gap-[2px] text-[11px]"
+        className="grid min-h-0 flex-1 gap-[2px] text-[11px]"
         style={{
           gridTemplateColumns: `${larguraRotulo}px repeat(${colunas.length}, minmax(0,1fr))`,
+          // `minmax(0, 1fr)`: as linhas esticam quando sobra altura e comprimem
+          // quando falta. Com piso fixo elas não cediam e o mapa rolava dentro
+          // do cartão, escondendo o próprio cabeçalho em tela de 720px.
+          gridTemplateRows: `auto repeat(${linhas.length}, minmax(0, 1fr))`,
         }}
       >
         <div />
@@ -899,8 +903,8 @@ export function MapaCalor({
                 <div
                   key={`${l}-${c}`}
                   title={`${l} · ${c}: ${fmt(v, formato)}`}
-                  style={{ background: passo(v), height: alturaCelula }}
-                  className="flex items-center justify-center rounded-[3px] transition-opacity hover:opacity-80"
+                  style={{ background: passo(v) }}
+                  className="flex h-full min-h-0 items-center justify-center rounded-[3px] transition-opacity hover:opacity-80"
                 >
                   <span
                     className="tabular text-[10.5px] font-semibold"
