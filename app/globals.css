@@ -117,6 +117,10 @@
   --fs-corpo: clamp(10px, 0.66vw, 11.5px);
   --fs-rotulo: clamp(8.5px, 0.35vw + 4px, 10px);
   --fs-micro: clamp(8.5px, 0.55vw, 10px);
+  --fs-corpo-2: clamp(10.5px, 0.78vw, 13px);
+  --fs-md: clamp(12px, 0.95vw, 16px);
+  --fs-lg: clamp(15px, 1.25vw, 23px);
+  --fs-display: clamp(20px, 2vw, 34px);
 
   /*
     Ritmo vertical fluido, atrelado à ALTURA da janela. Em 720px de altura a
@@ -139,8 +143,8 @@
     Agora o gráfico tem altura própria, que cresce com a janela mas nunca depende
     do que está em volta. A página empilha e rola, como qualquer painel.
   */
-  --h-grafico: clamp(168px, 24vh, 280px);
-  --h-tabela: clamp(220px, 40vh, 440px);
+  --h-grafico: clamp(172px, 31vh, 430px);
+  --h-tabela: clamp(220px, 48vh, 660px);
 }
 
 html,

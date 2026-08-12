@@ -89,7 +89,7 @@ export function PecasPmax({ pecas }: { pecas: AtivoPmax[] }) {
               type="button"
               onClick={() => setOrdem(m.chave)}
               aria-pressed={ativo}
-              className={`rounded-md border px-2 py-[5px] text-[11px] font-semibold uppercase tracking-[0.1em] transition-colors ${
+              className={`rounded-md border px-2 py-[5px] text-[var(--fs-corpo)] font-semibold uppercase tracking-[0.1em] transition-colors ${
                 ativo
                   ? "border-[var(--ink)] bg-[var(--ink)] text-black"
                   : "border-[var(--border-forte)] text-[var(--ink-2)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
@@ -141,31 +141,31 @@ function CartaoPeca({
           loading="lazy"
           className="h-full w-full object-cover"
         />
-        <span className="tabular absolute bottom-1.5 right-1.5 flex h-5 min-w-[20px] items-center justify-center rounded bg-black/80 px-1 text-[10px] font-semibold text-[var(--ink)]">
+        <span className="tabular absolute bottom-1.5 right-1.5 flex h-5 min-w-[20px] items-center justify-center rounded bg-black/80 px-1 text-[var(--fs-rotulo)] font-semibold text-[var(--ink)]">
           {posicao}
         </span>
       </div>
 
       <figcaption className="flex flex-col gap-1.5 px-2.5 pb-2.5 pt-2">
-        <span className="truncate text-[9.5px] font-semibold uppercase tracking-[0.08em] text-[var(--ink-muted)]">
+        <span className="truncate text-[var(--fs-micro)] font-semibold uppercase tracking-[0.08em] text-[var(--ink-muted)]">
           {CAMPO_ATIVO_LABEL[a.campo] ?? a.campo}
         </span>
 
         <div className="flex items-baseline justify-between gap-1.5">
-          <span className="tabular truncate text-[15px] font-bold leading-none text-[var(--ink)]">
+          <span className="tabular truncate text-[var(--fs-md)] font-bold leading-none text-[var(--ink)]">
             {principal.valor(a)}
           </span>
-          <span className="shrink-0 text-[9.5px] uppercase tracking-[0.06em] text-[var(--ink-muted)]">
+          <span className="shrink-0 text-[var(--fs-micro)] uppercase tracking-[0.06em] text-[var(--ink-muted)]">
             {principal.curto}
           </span>
         </div>
 
         {/* As outras três continuam visíveis: a ordenação muda o destaque, não
             o que se pode conferir sem trocar de ordenação. */}
-        <div className="tabular flex items-baseline justify-between gap-2 text-[10.5px] text-[var(--ink-muted)]">
+        <div className="tabular flex items-baseline justify-between gap-2 text-[var(--fs-rotulo)] text-[var(--ink-muted)]">
           {secundarias.map((m) => (
             <span key={m.chave} className="whitespace-nowrap">
-              <span className="text-[9px] uppercase tracking-[0.05em]">{m.curto} </span>
+              <span className="text-[var(--fs-micro)] uppercase tracking-[0.05em]">{m.curto} </span>
               <span className="text-[var(--ink-2)]">{m.valor(a)}</span>
             </span>
           ))}

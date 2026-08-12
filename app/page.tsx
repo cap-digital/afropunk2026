@@ -98,26 +98,26 @@ export default async function Capa() {
       <header className="flex shrink-0 flex-col items-center gap-3">
         <MarcaAnimada />
         <Losangos qtd={9} cor="var(--surface-3)" />
-        <p className="surgir text-[11px] font-semibold uppercase tracking-[0.32em] text-[var(--ink-muted)] [animation-delay:2.4s]">
+        <p className="surgir text-[var(--fs-corpo)] font-semibold uppercase tracking-[0.32em] text-[var(--ink-muted)] [animation-delay:2.4s]">
           Dashboard de mídia · Selecione a praça
         </p>
       </header>
 
       {google.erro && (
         <div className="cartao max-w-[76ch] px-4 py-3 text-center">
-          <p className="text-[12.5px] font-semibold text-[var(--warning)]">
+          <p className="text-[var(--fs-corpo-2)] font-semibold text-[var(--warning)]">
             Google Ads fora: os números abaixo trazem só o Meta
           </p>
-          <p className="mt-1 text-[12px] leading-relaxed text-[var(--ink-2)]">{google.erro}</p>
+          <p className="mt-1 text-[var(--fs-corpo-2)] leading-relaxed text-[var(--ink-2)]">{google.erro}</p>
         </div>
       )}
 
       {erro && (
         <div className="cartao max-w-[70ch] p-4 text-center">
-          <p className="text-[13.5px] font-semibold text-[var(--critical)]">
+          <p className="text-[var(--fs-corpo-2)] font-semibold text-[var(--critical)]">
             Não foi possível carregar os dados do Meta
           </p>
-          <p className="mt-1.5 text-[12.5px] leading-relaxed text-[var(--ink-2)]">{erro}</p>
+          <p className="mt-1.5 text-[var(--fs-corpo-2)] leading-relaxed text-[var(--ink-2)]">{erro}</p>
         </div>
       )}
 
@@ -143,8 +143,8 @@ export default async function Capa() {
         >
           <Losangos qtd={4} cor="#000000" />
           <div className="min-w-0 flex-1">
-            <h3 className="marca text-[23px] leading-none">Ver todas as praças juntas</h3>
-            <p className="mt-1.5 text-[12px] font-medium opacity-70">
+            <h3 className="marca text-[var(--fs-lg)] leading-none">Ver todas as praças juntas</h3>
+            <p className="mt-1.5 text-[var(--fs-corpo-2)] font-medium opacity-70">
               Meta e Google somados — Rio, Recife, Salvador e a campanha nacional
             </p>
           </div>
@@ -161,7 +161,7 @@ export default async function Capa() {
               />
             </div>
           )}
-          <span className="text-[22px] leading-none transition-transform group-hover:translate-x-1">
+          <span className="text-[var(--fs-lg)] leading-none transition-transform group-hover:translate-x-1">
             →
           </span>
         </Link>
@@ -177,8 +177,8 @@ export default async function Capa() {
         >
           <Losangos qtd={4} cor="var(--seq-3)" />
           <div className="min-w-0 flex-1">
-            <h3 className="marca text-[19px] leading-none">Analytics do site</h3>
-            <p className="mt-1.5 text-[12px] text-[var(--ink-muted)]">
+            <h3 className="marca text-[var(--fs-kpi)] leading-none">Analytics do site</h3>
+            <p className="mt-1.5 text-[var(--fs-corpo-2)] text-[var(--ink-muted)]">
               Google Analytics · tráfego, funil de venda e receita por evento
             </p>
           </div>
@@ -189,14 +189,14 @@ export default async function Capa() {
               <MiniStat rotulo="Conversão" valor={pct(ga4.taxaConversao * 100, 2)} />
             </div>
           )}
-          <span className="text-[20px] leading-none text-[var(--ink-muted)] transition-transform group-hover:translate-x-1">
+          <span className="text-[var(--fs-kpi)] leading-none text-[var(--ink-muted)] transition-transform group-hover:translate-x-1">
             →
           </span>
         </Link>
       </div>
 
       <footer className="flex shrink-0 flex-col items-center gap-1.5">
-        <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[var(--ink-muted)]">
+        <span className="text-[var(--fs-rotulo)] font-semibold uppercase tracking-[0.24em] text-[var(--ink-muted)]">
           Desenvolvido por
         </span>
         <div className="flex items-center gap-4">
@@ -243,7 +243,7 @@ function MiniStat({
 }) {
   return (
     <div className="flex min-w-0 flex-col items-end">
-      <span className="text-[10px] font-semibold uppercase tracking-[0.14em] opacity-60">
+      <span className="text-[var(--fs-rotulo)] font-semibold uppercase tracking-[0.14em] opacity-60">
         {rotulo}
       </span>
       <span
@@ -253,7 +253,7 @@ function MiniStat({
       >
         {valor}
       </span>
-      {nota && <span className="tabular mt-0.5 text-[9px] opacity-50">{nota}</span>}
+      {nota && <span className="tabular mt-0.5 text-[var(--fs-micro)] opacity-50">{nota}</span>}
     </div>
   );
 }
@@ -289,11 +289,11 @@ function CartaoPraca({
           {/* Rótulo neutro: na capa, a cor da praça fica só no filete do topo
               — que é a chave de legenda do sistema inteiro — e no sparkline,
               que é gráfico. O resto do cartão é cromo. */}
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ink-muted)]">
+          <p className="text-[var(--fs-corpo)] font-semibold uppercase tracking-[0.16em] text-[var(--ink-muted)]">
             {marca}
           </p>
-          <h3 className="marca mt-1.5 text-[31px] leading-[0.9]">{nome}</h3>
-          <p className="mt-2 text-[12px] text-[var(--ink-muted)]">{local}</p>
+          <h3 className="marca mt-1.5 text-[var(--fs-display)] leading-[0.9]">{nome}</h3>
+          <p className="mt-2 text-[var(--fs-corpo-2)] text-[var(--ink-muted)]">{local}</p>
         </div>
 
         <div className="h-px w-full bg-[var(--border)]" />
@@ -310,7 +310,7 @@ function CartaoPraca({
               <MiniStatEsq rotulo="CPA" valor={r.cpa > 0 ? brlCompact(r.cpa) : "—"} />
             </div>
             {r.investimentoConversao > 0 && (
-              <p className="tabular -mt-1 text-[10px] leading-tight text-[var(--ink-muted)]">
+              <p className="tabular -mt-1 text-[var(--fs-rotulo)] leading-tight text-[var(--ink-muted)]">
                 ROAS e CPA sobre {brlCompact(r.investimentoConversao)} em conversão
               </p>
             )}
@@ -323,7 +323,7 @@ function CartaoPraca({
                 className="block h-1.5 w-1.5 rounded-full"
                 style={{ background: "var(--good)" }}
               />
-              <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--good)]">
+              <span className="text-[var(--fs-corpo)] font-semibold uppercase tracking-[0.1em] text-[var(--good)]">
                 {r.campanhas} campanha{r.campanhas > 1 ? "s" : ""} ativa
                 {r.campanhas > 1 ? "s" : ""}
               </span>
@@ -331,11 +331,11 @@ function CartaoPraca({
           </>
         ) : (
           <div className="flex min-h-[118px] flex-col justify-center gap-2">
-            <p className="marca text-[17px] text-[var(--ink-2)]">Sem Campanha Ativa</p>
-            <p className="text-[12px] leading-relaxed text-[var(--ink-muted)]">
+            <p className="marca text-[var(--fs-kpi)] text-[var(--ink-2)]">Sem Campanha Ativa</p>
+            <p className="text-[var(--fs-corpo-2)] leading-relaxed text-[var(--ink-muted)]">
               O painel já está montado esperando a Campanha de {nome} entrar no ar
             </p>
-            <span className="mt-1 inline-flex w-fit items-center rounded-[3px] border border-[var(--border-forte)] px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--ink-muted)]">
+            <span className="mt-1 inline-flex w-fit items-center rounded-[3px] border border-[var(--border-forte)] px-2 py-1 text-[var(--fs-corpo)] font-semibold uppercase tracking-[0.1em] text-[var(--ink-muted)]">
               Em breve
             </span>
           </div>

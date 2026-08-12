@@ -173,7 +173,7 @@ export default async function MetaPublico({
                   <div className="flex flex-col gap-2">
                     {porFaixa.slice(0, 4).map((f) => (
                       <div key={f.faixa} className="flex items-center gap-3">
-                        <span className="tabular w-[44px] shrink-0 text-[12.5px] text-[var(--ink-2)]">
+                        <span className="tabular min-w-[44px] shrink-0 whitespace-nowrap text-[var(--fs-corpo-2)] text-[var(--ink-2)]">
                           {f.faixa}
                         </span>
                         <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[var(--surface-2)]">
@@ -182,7 +182,7 @@ export default async function MetaPublico({
                             style={{ width: `${(f.total / totalImpr) * 100}%`, background: cor }}
                           />
                         </div>
-                        <span className="tabular w-[48px] shrink-0 text-right text-[12.5px] text-[var(--ink-muted)]">
+                        <span className="tabular min-w-[48px] shrink-0 whitespace-nowrap text-right text-[var(--fs-corpo-2)] text-[var(--ink-muted)]">
                           {pct((f.total / totalImpr) * 100, 1)}
                         </span>
                       </div>

@@ -192,7 +192,7 @@ async function Comparativo({
                       className="block h-2 w-2 shrink-0 rotate-45"
                       style={{ background: f.bucket.cor }}
                     />
-                    <span className="w-[118px] shrink-0 truncate text-[12px] text-[var(--ink-2)]">
+                    <span className="w-[118px] shrink-0 truncate text-[var(--fs-corpo-2)] text-[var(--ink-2)]">
                       {f.bucket.nome}
                     </span>
                     <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[var(--surface-2)]">
@@ -204,7 +204,7 @@ async function Comparativo({
                         }}
                       />
                     </div>
-                    <span className="tabular w-[52px] shrink-0 text-right text-[11.5px] text-[var(--ink-muted)]">
+                    <span className="tabular min-w-[52px] shrink-0 whitespace-nowrap text-right text-[var(--fs-corpo)] text-[var(--ink-muted)]">
                       {compact(f.total.impressions)}
                     </span>
                   </div>
@@ -220,7 +220,7 @@ async function Comparativo({
             <div className="max-h-[var(--h-tabela)] overflow-auto">
               <table className="w-full" style={{ fontSize: "var(--fs-corpo)" }}>
                 <thead className="sticky top-0 bg-[var(--surface)]">
-                  <tr className="text-left text-[11px] uppercase tracking-[0.1em] text-[var(--ink-muted)]">
+                  <tr className="text-left text-[var(--fs-corpo)] uppercase tracking-[0.1em] text-[var(--ink-muted)]">
                     <th className="pb-2 pr-2 font-semibold">Praça</th>
                     <th className="pb-2 pr-2 text-right font-semibold">Investido</th>
                     <th className="pb-2 pr-2 text-right font-semibold">Impressões</th>
@@ -257,7 +257,7 @@ async function Comparativo({
                           <td className="py-2 text-right">{int(f.total.purchases)}</td>
                         </>
                       ) : (
-                        <td colSpan={7} className="py-2 text-right text-[12px] italic text-[var(--ink-muted)]">
+                        <td colSpan={7} className="py-2 text-right text-[var(--fs-corpo-2)] italic text-[var(--ink-muted)]">
                           sem campanha ativa
                         </td>
                       )}
@@ -399,7 +399,7 @@ async function PracaUnica({
                   </div>
                 </>
               ) : (
-                <p className="text-[12px] leading-relaxed text-[var(--ink-muted)]">
+                <p className="text-[var(--fs-corpo-2)] leading-relaxed text-[var(--ink-muted)]">
                   As campanhas desta praça não usam orçamento vitalício no nível da campanha — o
                   controle está no conjunto de anúncios.
                 </p>
@@ -474,7 +474,7 @@ function Destaque({
     return (
       <div className="flex flex-col gap-1">
         <span className="rotulo">{rotulo}</span>
-        <p className="text-[12px] leading-relaxed text-[var(--ink-muted)]">
+        <p className="text-[var(--fs-corpo-2)] leading-relaxed text-[var(--ink-muted)]">
           Nenhum registrou receita no período selecionado.
         </p>
       </div>
@@ -491,19 +491,19 @@ function Destaque({
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5">
           <span className="rotulo">{rotulo}</span>
-          <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--ink-muted)]">
+          <span className="text-[var(--fs-rotulo)] font-semibold uppercase tracking-[0.12em] text-[var(--ink-muted)]">
             · {plataforma}
           </span>
         </div>
-        <p className="mt-0.5 truncate text-[13px] font-semibold text-[var(--ink)]" title={nome}>
+        <p className="mt-0.5 truncate text-[var(--fs-corpo-2)] font-semibold text-[var(--ink)]" title={nome}>
           {nome}
         </p>
-        <p className="tabular text-[11px] text-[var(--ink-muted)]">
+        <p className="tabular text-[var(--fs-corpo)] text-[var(--ink-muted)]">
           {brl(investido ?? 0)} investido · {brl(receita ?? 0)} de receita
         </p>
       </div>
       <span
-        className="tabular shrink-0 text-[21px] font-bold leading-none"
+        className="tabular shrink-0 text-[var(--fs-kpi)] font-bold leading-none"
         style={{ color: roas >= 1 ? "var(--good)" : cor }}
       >
         {dec(roas)}×

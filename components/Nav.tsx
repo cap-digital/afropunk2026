@@ -49,7 +49,7 @@ function Item({
     <Link
       href={href}
       aria-current={ativo ? "page" : undefined}
-      className={`flex items-center gap-2.5 rounded-lg px-3 py-[7px] text-[12.5px] font-semibold transition-colors ${
+      className={`flex items-center gap-2.5 rounded-lg px-3 py-[7px] text-[var(--fs-corpo-2)] font-semibold transition-colors ${
         ativo
           ? "nav-ativo border border-[var(--ui-bdr)] bg-[var(--ui-bg)] text-[var(--ink)]"
           : "border border-transparent text-[var(--ink-2)] hover:bg-[var(--surface-2)] hover:text-[var(--ink)]"
@@ -113,7 +113,7 @@ function Grupo({
         <span className="rotulo flex-1">{titulo}</span>
         {estado && (
           <span
-            className="shrink-0 text-[9px] font-semibold uppercase tracking-[0.1em]"
+            className="shrink-0 text-[var(--fs-micro)] font-semibold uppercase tracking-[0.1em]"
             style={{ color: "var(--critical)" }}
           >
             {estado}

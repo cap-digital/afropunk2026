@@ -85,7 +85,7 @@ export function Moldura({
           <button
             type="button"
             onClick={() => setAberto(false)}
-            className="absolute right-3 text-[20px] leading-none text-[var(--ink-muted)] lg:hidden"
+            className="absolute right-3 text-[var(--fs-kpi)] leading-none text-[var(--ink-muted)] lg:hidden"
             aria-label="Fechar menu"
           >
             ×
@@ -121,10 +121,10 @@ export function Moldura({
                 {/* `leading-[1.2]`: `truncate` recorta o que passar da caixa da
                     linha, e em caixa alta o til do Ã e a cedilha do Ç saem dela
                     com entrelinha fechada — "PRAÇAS" perdia a cedilha. */}
-                <span className="marca min-w-0 flex-1 truncate text-[13px] leading-[1.2] text-[var(--ink)]">
+                <span className="marca min-w-0 flex-1 truncate text-[var(--fs-corpo-2)] leading-[1.2] text-[var(--ink)]">
                   {escopo ? nomeDoEscopo(escopo) : ""}
                 </span>
-                <span className="shrink-0 text-[9.5px] font-semibold uppercase tracking-[0.12em] text-[var(--ink-muted)] transition-colors group-hover:text-[var(--ink)]">
+                <span className="shrink-0 text-[var(--fs-micro)] font-semibold uppercase tracking-[0.12em] text-[var(--ink-muted)] transition-colors group-hover:text-[var(--ink)]">
                   trocar
                 </span>
               </Link>
@@ -201,9 +201,9 @@ export function Moldura({
             <div className="min-w-0">
               {/* Mesma razão da praça na lateral: com `leading-none`, "SEGMENTAÇÃO"
                   e "VISÃO GERAL" perdiam o til dentro do `truncate`. */}
-              <h1 className="marca truncate text-[16px] leading-[1.2] lg:text-[19px]">{titulo}</h1>
+              <h1 className="marca truncate text-[var(--fs-md)] leading-[1.2] lg:text-[var(--fs-kpi)]">{titulo}</h1>
               {sub && (
-                <div className="mt-1.5 truncate text-[9.5px] uppercase tracking-[0.1em] leading-none text-[var(--ink-muted)] lg:text-[10px]">
+                <div className="mt-1.5 truncate text-[var(--fs-micro)] uppercase tracking-[0.1em] leading-none text-[var(--ink-muted)] lg:text-[var(--fs-rotulo)]">
                   {sub}
                 </div>
               )}

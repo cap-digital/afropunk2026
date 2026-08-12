@@ -28,7 +28,7 @@ export function BotaoAtualizar({ geradoEm }: { geradoEm: string }) {
 
   return (
     <div className="flex items-center gap-2.5">
-      <span className="hidden text-[11px] uppercase tracking-[0.12em] text-[var(--ink-muted)] xl:inline">
+      <span className="hidden text-[var(--fs-corpo)] uppercase tracking-[0.12em] text-[var(--ink-muted)] xl:inline">
         Dados de {geradoEm}
       </span>
       <button
@@ -36,7 +36,7 @@ export function BotaoAtualizar({ geradoEm }: { geradoEm: string }) {
         onClick={atualizar}
         disabled={ocupado}
         aria-label="Atualizar dados"
-        className="group flex items-center gap-1.5 border border-[var(--border-forte)] px-2.5 py-[6px] text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--ink-2)] transition-colors hover:border-[var(--ink)] hover:text-[var(--ink)] disabled:opacity-50"
+        className="group flex items-center gap-1.5 border border-[var(--border-forte)] px-2.5 py-[6px] text-[var(--fs-corpo)] font-semibold uppercase tracking-[0.12em] text-[var(--ink-2)] transition-colors hover:border-[var(--ink)] hover:text-[var(--ink)] disabled:opacity-50"
       >
         <svg
           width="11"

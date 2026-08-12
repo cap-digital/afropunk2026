@@ -220,7 +220,7 @@ export default async function Segmentacao({
             </Cartao>
           </div>
 
-          <p className="shrink-0 text-[11px] leading-relaxed text-[var(--ink-muted)]">
+          <p className="shrink-0 text-[var(--fs-corpo)] leading-relaxed text-[var(--ink-muted)]">
             Cidade é a localização de quem viu o anúncio, não o alvo configurado na campanha — por
             isso aparecem cidades vizinhas ao evento. O relatório geográfico do Google não aceita
             filtro por status de campanha, então as pausadas são descartadas aqui pelo nome.

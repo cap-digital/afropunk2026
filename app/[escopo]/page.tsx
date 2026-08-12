@@ -198,7 +198,7 @@ export default async function VisaoGeralGlobal({
                       className="block h-3.5 w-3.5 shrink-0 rotate-45"
                       style={{ background: c.cor, opacity: c.conectado ? 1 : 0.4 }}
                     />
-                    <h3 className="marca shrink-0 text-[19px] leading-none">{c.nome}</h3>
+                    <h3 className="marca shrink-0 text-[var(--fs-kpi)] leading-none">{c.nome}</h3>
                     {/* "Sem campanha" e "indisponível" levam a ações opostas:
                         a primeira é informação, a segunda é credencial para
                         configurar. Nunca podem usar o mesmo rótulo. */}
@@ -218,14 +218,14 @@ export default async function VisaoGeralGlobal({
                           ? "Indisponível"
                           : "Sem campanha"}
                     </Etiqueta>
-                    <span className="min-w-0 flex-1 truncate text-right text-[11.5px] text-[var(--ink-muted)]">
+                    <span className="min-w-0 flex-1 truncate text-right text-[var(--fs-corpo)] text-[var(--ink-muted)]">
                       {c.conectado
                         ? `${pct(share, 1)} do investimento · ${int(c.conversoes)} compras`
                         : c.slug === "google" && googleIndisponivel
                           ? "Credencial não configurada — veja o detalhe na capa"
                           : "Sem campanha desta praça no canal"}
                     </span>
-                    <span className="shrink-0 text-[18px] leading-none text-[var(--ink-muted)] transition-transform group-hover:translate-x-1">
+                    <span className="shrink-0 text-[var(--fs-kpi)] leading-none text-[var(--ink-muted)] transition-transform group-hover:translate-x-1">
                       →
                     </span>
                   </div>

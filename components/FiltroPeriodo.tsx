@@ -72,7 +72,7 @@ export function FiltroPeriodo() {
         type="button"
         onClick={() => setAberto((v) => !v)}
         aria-expanded={aberto}
-        className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-[7px] text-[11.5px] font-semibold uppercase tracking-[0.12em] transition-colors ${
+        className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-[7px] text-[var(--fs-corpo)] font-semibold uppercase tracking-[0.12em] transition-colors ${
           temIntervalo
             ? "border-[var(--ink)] text-[var(--ink)]"
             : "border-[var(--border-forte)] text-[var(--ink-2)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
@@ -109,7 +109,7 @@ export function FiltroPeriodo() {
                     navegar(i?.de, i?.ate);
                   }}
                   aria-pressed={selecionado}
-                  className={`rounded-md border px-2 py-[7px] text-[11px] font-semibold uppercase tracking-[0.08em] transition-colors ${
+                  className={`rounded-md border px-2 py-[7px] text-[var(--fs-corpo)] font-semibold uppercase tracking-[0.08em] transition-colors ${
                     p.chave === "tudo" || p.chave === "mes-passado" ? "col-span-2" : ""
                   } ${
                     selecionado
@@ -128,23 +128,23 @@ export function FiltroPeriodo() {
           <p className="rotulo pb-2.5">Intervalo livre</p>
           <div className="flex flex-col gap-2.5">
             <label className="flex flex-col gap-1">
-              <span className="text-[11.5px] text-[var(--ink-muted)]">De</span>
+              <span className="text-[var(--fs-corpo)] text-[var(--ink-muted)]">De</span>
               <input
                 type="date"
                 value={de}
                 max={ate || undefined}
                 onChange={(e) => setDe(e.target.value)}
-                className="rounded-lg border border-[var(--border-forte)] bg-[var(--surface-2)] px-2.5 py-2 text-[13.5px] text-[var(--ink)] outline-none focus:border-[var(--ink)]"
+                className="rounded-lg border border-[var(--border-forte)] bg-[var(--surface-2)] px-2.5 py-2 text-[var(--fs-corpo-2)] text-[var(--ink)] outline-none focus:border-[var(--ink)]"
               />
             </label>
             <label className="flex flex-col gap-1">
-              <span className="text-[11.5px] text-[var(--ink-muted)]">Até</span>
+              <span className="text-[var(--fs-corpo)] text-[var(--ink-muted)]">Até</span>
               <input
                 type="date"
                 value={ate}
                 min={de || undefined}
                 onChange={(e) => setAte(e.target.value)}
-                className="rounded-lg border border-[var(--border-forte)] bg-[var(--surface-2)] px-2.5 py-2 text-[13.5px] text-[var(--ink)] outline-none focus:border-[var(--ink)]"
+                className="rounded-lg border border-[var(--border-forte)] bg-[var(--surface-2)] px-2.5 py-2 text-[var(--fs-corpo-2)] text-[var(--ink)] outline-none focus:border-[var(--ink)]"
               />
             </label>
           </div>
@@ -153,12 +153,12 @@ export function FiltroPeriodo() {
             type="button"
             onClick={() => navegar(de, ate)}
             disabled={!de || !ate}
-            className="mt-3 w-full rounded-lg bg-[var(--ink)] px-3 py-2 text-[11.5px] font-semibold uppercase tracking-[0.12em] text-black transition-opacity hover:opacity-85 disabled:opacity-40"
+            className="mt-3 w-full rounded-lg bg-[var(--ink)] px-3 py-2 text-[var(--fs-corpo)] font-semibold uppercase tracking-[0.12em] text-black transition-opacity hover:opacity-85 disabled:opacity-40"
           >
             Aplicar intervalo
           </button>
 
-          <p className="mt-2.5 text-[11px] leading-relaxed text-[var(--ink-muted)]">
+          <p className="mt-2.5 text-[var(--fs-corpo)] leading-relaxed text-[var(--ink-muted)]">
             As campanhas ativas começaram em 31/07 — recortes anteriores a isso
             voltam vazios.
           </p>

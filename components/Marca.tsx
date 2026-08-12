@@ -9,10 +9,10 @@ export function Marca({
   href?: string | null;
 }) {
   const escala = {
-    sm: { txt: "text-[14.5px]", pad: "px-2 py-[3px]", ano: "text-[9.5px]", gap: "gap-[3px]" },
-    md: { txt: "text-[21px]", pad: "px-2.5 py-1", ano: "text-[11.5px]", gap: "gap-1" },
-    lg: { txt: "text-[40px]", pad: "px-4 py-1.5", ano: "text-[14.5px]", gap: "gap-1.5" },
-    xl: { txt: "text-[54px]", pad: "px-6 py-2.5", ano: "text-[21px]", gap: "gap-2" },
+    sm: { txt: "text-[var(--fs-md)]", pad: "px-2 py-[3px]", ano: "text-[var(--fs-micro)]", gap: "gap-[3px]" },
+    md: { txt: "text-[var(--fs-kpi)]", pad: "px-2.5 py-1", ano: "text-[var(--fs-corpo)]", gap: "gap-1" },
+    lg: { txt: "text-[var(--fs-display)]", pad: "px-4 py-1.5", ano: "text-[var(--fs-md)]", gap: "gap-1.5" },
+    xl: { txt: "text-[var(--fs-display)]", pad: "px-6 py-2.5", ano: "text-[var(--fs-kpi)]", gap: "gap-2" },
   }[tamanho];
 
   const conteudo = (

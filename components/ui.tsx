@@ -21,7 +21,7 @@ export function Secao({ children, icone: Ic = IconPointFilled }: { children: Rea
   return (
     <div className="faixa-secao pt-0.5">
       <Ic size={13} stroke={2} className="shrink-0 text-[var(--ink-muted)]" aria-hidden="true" />
-      <h2 className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ink-2)]">
+      <h2 className="shrink-0 text-[var(--fs-rotulo)] font-semibold uppercase tracking-[0.18em] text-[var(--ink-2)]">
         {children}
       </h2>
     </div>
@@ -205,7 +205,7 @@ export function Etiqueta({
   if (variante === "contorno") {
     return (
       <span
-        className="inline-flex items-center gap-1.5 rounded-md border px-2 py-[2px] text-[9.5px] font-semibold uppercase tracking-[0.1em]"
+        className="inline-flex items-center gap-1.5 rounded-md border px-2 py-[2px] text-[var(--fs-micro)] font-semibold uppercase tracking-[0.1em]"
         style={{ borderColor: t.bdr, background: t.bg, color: t.cor }}
       >
         {children}
@@ -214,7 +214,7 @@ export function Etiqueta({
   }
   return (
     <span
-      className="inline-flex items-center rounded-md px-2 py-[2px] text-[9.5px] font-semibold uppercase tracking-[0.1em] text-black"
+      className="inline-flex items-center rounded-md px-2 py-[2px] text-[var(--fs-micro)] font-semibold uppercase tracking-[0.1em] text-black"
       style={{ background: t.cor }}
     >
       {children}
@@ -225,7 +225,7 @@ export function Etiqueta({
 /** Status com ícone + rótulo — cor nunca carrega o significado sozinha. */
 export function StatusAtivo({ ativo }: { ativo: boolean }) {
   return (
-    <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.12em]">
+    <span className="inline-flex items-center gap-1.5 text-[var(--fs-rotulo)] font-semibold uppercase tracking-[0.12em]">
       <IconPointFilled
         size={12}
         aria-hidden="true"
@@ -251,8 +251,8 @@ export function Vazio({
   return (
     <div className="flex h-full flex-col items-center justify-center gap-3 py-8 text-center">
       <Ic size={26} stroke={1.5} className="text-[var(--ink-muted)]" aria-hidden="true" />
-      <p className="marca text-[15px] leading-[1.15] text-[var(--ink-2)]">{titulo}</p>
-      <p className="max-w-[46ch] text-[11.5px] leading-relaxed text-[var(--ink-muted)]">
+      <p className="marca text-[var(--fs-md)] leading-[1.15] text-[var(--ink-2)]">{titulo}</p>
+      <p className="max-w-[46ch] text-[var(--fs-corpo)] leading-relaxed text-[var(--ink-muted)]">
         {descricao}
       </p>
     </div>
@@ -279,7 +279,7 @@ export function BarraMeta({
     <div className="flex flex-col gap-1.5">
       <div className="flex items-baseline justify-between gap-2">
         <span className="rotulo truncate">{rotulo}</span>
-        <span className="tabular shrink-0 text-[12px] text-[var(--ink-2)]">
+        <span className="tabular shrink-0 text-[var(--fs-corpo-2)] text-[var(--ink-2)]">
           {formatar(valor)}{" "}
           <span className="text-[var(--ink-muted)]">/ {formatar(limite)}</span>
         </span>
@@ -293,7 +293,7 @@ export function BarraMeta({
           }}
         />
       </div>
-      <span className="tabular text-[11px] text-[var(--ink-muted)]">
+      <span className="tabular text-[var(--fs-corpo)] text-[var(--ink-muted)]">
         {p.toFixed(1).replace(".", ",")}% consumido
       </span>
     </div>

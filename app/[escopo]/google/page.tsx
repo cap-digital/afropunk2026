@@ -194,7 +194,7 @@ export default async function GoogleAds({
             </Cartao>
           </div>
 
-          <p className="shrink-0 text-[11px] leading-relaxed text-[var(--ink-muted)]">
+          <p className="shrink-0 text-[var(--fs-corpo)] leading-relaxed text-[var(--ink-muted)]">
             A praça vem do nome da campanha, pelo mesmo mapeador usado no Meta. Hoje o Google Ads
             cobre apenas Rio de Janeiro e Salvador — Recife não tem campanha no canal. Campanhas
             pausadas de edições anteriores (Belém, São Paulo, 2025) ficam fora.
@@ -238,7 +238,7 @@ function ResumoCanal({
         >
           {fatia.nome}
         </span>
-        <span className="tabular shrink-0 text-[11px] text-[var(--ink-muted)]">
+        <span className="tabular shrink-0 text-[var(--fs-corpo)] text-[var(--ink-muted)]">
           {pct(share, 0)} da verba
         </span>
       </div>

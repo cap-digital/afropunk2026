@@ -124,7 +124,7 @@ export default async function Termos({
             </div>
             <div className="flex flex-col justify-center gap-1.5">
               {porTipo.map((t) => (
-                <div key={t.tipo} className="flex items-baseline gap-2 text-[12px]">
+                <div key={t.tipo} className="flex items-baseline gap-2 text-[var(--fs-corpo-2)]">
                   <IconPointFilled
                     size={11}
                     aria-hidden="true"
@@ -134,7 +134,7 @@ export default async function Termos({
                   <span className="min-w-0 flex-1 truncate text-[var(--ink-2)]" title={t.descricao}>
                     {t.nome}
                   </span>
-                  <span className="tabular shrink-0 text-[11px] text-[var(--ink-muted)]">
+                  <span className="tabular shrink-0 text-[var(--fs-corpo)] text-[var(--ink-muted)]">
                     {t.termos} {t.termos === 1 ? "termo" : "termos"}
                   </span>
                   <span
@@ -182,7 +182,7 @@ export default async function Termos({
           </Linha>
 
 
-          <p className="shrink-0 text-[11px] leading-relaxed text-[var(--ink-muted)]">
+          <p className="shrink-0 text-[var(--fs-corpo)] leading-relaxed text-[var(--ink-muted)]">
             Termo de busca é o que a pessoa digitou; palavra-chave é o que compramos. A tabela traz
             só as buscas que já viraram palavra-chave da conta — o mesmo termo aparecendo em grupos
             diferentes vira uma linha só.
