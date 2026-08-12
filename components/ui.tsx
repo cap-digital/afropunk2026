@@ -205,7 +205,7 @@ export function Etiqueta({
   if (variante === "contorno") {
     return (
       <span
-        className="inline-flex items-center gap-1.5 rounded-md border px-2 py-[2px] text-[var(--fs-micro)] font-semibold uppercase tracking-[0.1em]"
+        className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md border px-2 py-[2px] text-[var(--fs-micro)] font-semibold uppercase tracking-[0.1em]"
         style={{ borderColor: t.bdr, background: t.bg, color: t.cor }}
       >
         {children}
@@ -214,7 +214,7 @@ export function Etiqueta({
   }
   return (
     <span
-      className="inline-flex items-center rounded-md px-2 py-[2px] text-[var(--fs-micro)] font-semibold uppercase tracking-[0.1em] text-black"
+      className="inline-flex shrink-0 items-center whitespace-nowrap rounded-md px-2 py-[2px] text-[var(--fs-micro)] font-semibold uppercase tracking-[0.1em] text-black"
       style={{ background: t.cor }}
     >
       {children}

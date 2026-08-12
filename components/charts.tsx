@@ -455,7 +455,8 @@ export function Sparkline({
   dados: PontoGrafico[];
   chave?: string;
   cor: string;
-  altura?: number;
+  /** Aceita "100%" para acompanhar a caixa, que agora é dimensionada em rem. */
+  altura?: number | string;
 }) {
   if (!dados?.length) return <div style={{ height: altura }} />;
   return (

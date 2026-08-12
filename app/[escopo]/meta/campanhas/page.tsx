@@ -178,7 +178,7 @@ export default async function MetaCampanhas({
               sub="Todas as métricas por campanha ativa"
               className="h-full min-w-0"
             >
-              <div className="max-h-[var(--h-tabela)] overflow-auto">
+              <div className="min-h-[var(--h-tabela)] flex-1 overflow-auto">
               <table className="w-full" style={{ fontSize: "var(--fs-corpo)" }}>
                 <thead>
                   <tr className="text-left text-[var(--fs-corpo)] uppercase tracking-[0.1em] text-[var(--ink-muted)]">
@@ -202,7 +202,7 @@ export default async function MetaCampanhas({
                     .map((c) => (
                       <tr key={c.id} className="border-t border-[var(--border)] text-[var(--ink-2)]">
                         <td
-                          className="max-w-[13.75rem] truncate py-2 pr-3 font-medium text-[var(--ink)]"
+                          className="max-w-[220px] truncate py-2 pr-3 font-medium text-[var(--ink)]"
                           title={c.name}
                         >
                           {nomeCurtoCampanha(c.name)}

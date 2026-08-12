@@ -94,7 +94,10 @@ export default async function Capa() {
   const totalRoas = totalInvConversao > 0 ? totalReceitaConversao / totalInvConversao : 0;
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between overflow-hidden bg-[var(--bg)] px-8 py-8">
+        /* `justify-center` com folga fixa, não `justify-between`: espalhar três
+       blocos pela altura da janela criava vãos enormes quando o conteúdo
+       encolheu 30%. Centralizado, a capa é um bloco só. */
+    <main className="flex min-h-screen flex-col items-center justify-center gap-8 overflow-hidden bg-[var(--bg)] px-8 py-8">
       <header className="flex shrink-0 flex-col items-center gap-3">
         <MarcaAnimada />
         <Losangos qtd={9} cor="var(--surface-3)" />
@@ -121,7 +124,7 @@ export default async function Capa() {
         </div>
       )}
 
-      <div className="flex w-full max-w-[70.0rem] shrink-0 flex-col gap-4">
+      <div className="flex w-full max-w-[1120px] shrink-0 flex-col gap-4">
         <div className="grid grid-cols-3 gap-4">
           {PRACAS.map((p) => (
             <CartaoPraca
@@ -314,8 +317,11 @@ function CartaoPraca({
                 ROAS e CPA sobre {brlCompact(r.investimentoConversao)} em conversão
               </p>
             )}
+            {/* `altura="100%"`: com 38px fixos o gráfico não acompanhava a
+                caixa, que agora é em rem — em zoom a caixa encolhia, ele não,
+                e estourava o cartão em 3px. */}
             <div className="-mx-1 h-[2.375rem]">
-              <Sparkline dados={r.serie} chave="spend" cor={cor} altura={38} />
+              <Sparkline dados={r.serie} chave="spend" cor={cor} altura="100%" />
             </div>
             <div className="flex items-center gap-1.5">
               <span

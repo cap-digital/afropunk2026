@@ -104,7 +104,7 @@ export default async function Pmax({
               icone={IconTextCaption}
               className="min-h-0"
             >
-              <div className="flex max-h-[var(--h-tabela)] flex-col gap-3.5 overflow-auto">
+              <div className="flex min-h-[var(--h-tabela)] flex-1 flex-col gap-3.5 overflow-auto">
                 <ListaTexto rotulo="Títulos" itens={d.titulos} />
                 <ListaTexto rotulo="Descrições" itens={d.descricoes} />
               </div>
@@ -144,12 +144,17 @@ function ListaTexto({ rotulo, itens }: { rotulo: string; itens: AtivoPmax[] }) {
         {itens.map((x, i) => (
           <li
             key={`${x.id}-${i}`}
-            className="flex items-baseline gap-2 border-b border-[var(--border-sutil)] py-[5px] text-[var(--fs-corpo-2)] leading-snug text-[var(--ink-2)] last:border-b-0"
+            className="flex items-start gap-2 border-b border-[var(--border-sutil)] py-[5px] text-[var(--fs-corpo-2)] leading-snug text-[var(--ink-2)] last:border-b-0"
           >
-            <span className="tabular w-[1.0rem] shrink-0 text-[var(--fs-rotulo)] text-[var(--ink-muted)]">
+            <span className="tabular min-w-[1.1rem] shrink-0 text-right text-[var(--fs-rotulo)] text-[var(--ink-muted)]">
               {i + 1}
             </span>
-            <span className="min-w-0 flex-1">{x.texto}</span>
+            {/* Duas linhas em vez de reticência: título e descrição são prosa
+                e a coluna é estreita — truncar escondia 88% do texto, que é o
+                mesmo que não mostrar. */}
+            <span className="line-clamp-2 min-w-0 flex-1" title={x.texto ?? undefined}>
+              {x.texto}
+            </span>
             <span className="tabular shrink-0 text-[var(--fs-corpo)] font-semibold text-[var(--ink)]">
               {x.m.receita > 0 ? brlCurto(x.m.receita) : "—"}
             </span>

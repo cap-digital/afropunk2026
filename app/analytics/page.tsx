@@ -94,7 +94,7 @@ export default async function AnalyticsVisaoGeral({
               titulo="Funil do site"
               sub="Da sessão à compra · etapas do e-commerce"
             >
-              <div className="max-h-[var(--h-tabela)] overflow-auto pr-1">
+              <div className="min-h-[var(--h-tabela)] flex-1 overflow-auto pr-1">
                 {/* Etapa zerada fica fora: linha vazia não informa nada. */}
                 <Funil etapas={d.funil.filter((e) => e.valor > 0)} cor="var(--seq-3)" />
               </div>

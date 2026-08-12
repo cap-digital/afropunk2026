@@ -25,7 +25,7 @@ export function EsqueletoDash() {
     >
       <span className="sr-only">Carregando</span>
 
-      <aside className="painel hidden w-[14.75rem] shrink-0 flex-col overflow-hidden lg:flex">
+      <aside className="painel hidden w-[236px] shrink-0 flex-col overflow-hidden lg:flex">
         <div className="flex h-[3.75rem] shrink-0 items-center justify-center border-b border-[var(--border)] px-3">
           <Marca tamanho="sm" />
         </div>
@@ -87,7 +87,7 @@ export function EsqueletoCapa() {
         <Marca />
         <Bloco className="h-[0.625rem] w-64" />
       </div>
-      <div className="flex w-full max-w-[70.0rem] shrink-0 flex-col gap-4">
+      <div className="flex w-full max-w-[1120px] shrink-0 flex-col gap-4">
         <div className="grid grid-cols-3 gap-4">
           {[0, 1, 2].map((i) => (
             <div key={i} className="cartao flex flex-col gap-3 p-4 pt-5">

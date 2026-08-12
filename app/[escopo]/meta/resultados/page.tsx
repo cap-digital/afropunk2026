@@ -170,7 +170,7 @@ export default async function MetaResultados({
               titulo="Detalhamento por conjunto"
               sub="Ordenado por receita · ROAS em verde quando passa de 1×"
             >
-              <div className="max-h-[var(--h-tabela)] overflow-auto">
+              <div className="min-h-[var(--h-tabela)] flex-1 overflow-auto">
               <table className="w-full" style={{ fontSize: "var(--fs-corpo)" }}>
                 <thead className="sticky top-0 bg-[var(--surface)]">
                   <tr className="text-left uppercase tracking-[0.1em] text-[var(--ink-muted)] [font-size:var(--fs-micro)]">
@@ -187,7 +187,7 @@ export default async function MetaResultados({
                     .map((c) => (
                       <tr key={c.id} className="border-t border-[var(--border)] text-[var(--ink-2)]">
                         <td
-                          className="max-w-[13.75rem] truncate py-2 pr-3 font-medium text-[var(--ink)]"
+                          className="max-w-[220px] truncate py-2 pr-3 font-medium text-[var(--ink)]"
                           title={`${c.nome} — ${nomeCurtoCampanha(d.campanhas.find((k) => k.id === c.campanhaId)?.name ?? "")}`}
                         >
                           {c.nome}

@@ -76,7 +76,7 @@ export function Moldura({
       )}
 
       <aside
-        className={`painel fixed inset-y-3 left-3 z-50 flex w-[15.5rem] flex-col overflow-hidden transition-transform duration-200 lg:static lg:inset-auto lg:w-[14.75rem] lg:translate-x-0 ${
+        className={`painel fixed inset-y-3 left-3 z-50 flex w-[248px] flex-col overflow-hidden transition-transform duration-200 lg:static lg:inset-auto lg:w-[236px] lg:translate-x-0 ${
           aberto ? "translate-x-0" : "-translate-x-[115%] lg:translate-x-0"
         } ${colapsada ? "lg:hidden" : ""}`}
       >

@@ -95,15 +95,24 @@ export function Pagina({ children }: { children: ReactNode }) {
    *
    * Agora o gráfico tem altura própria (--h-grafico), o cartão tem a altura do
    * conteúdo, e a página rola quando precisa. Nada depende do vizinho.
+   *
+   * `min-h-full` para não sobrar faixa preta embaixo quando o conteúdo é curto:
+   * a coluna cresce até a janela e o último bloco flexível ocupa a folga. Isso
+   * era arriscado antes — era o `flex-1` que fazia o gráfico derreter — mas com
+   * altura definida no gráfico o crescimento do pai não realimenta mais nada.
    */
   return (
-    <div className="flex flex-col" style={{ gap: "var(--esp-coluna)" }}>
+    <div className="flex flex-col lg:min-h-full" style={{ gap: "var(--esp-coluna)" }}>
       {children}
     </div>
   );
 }
 
-/** Linha de cartões lado a lado. A altura vem do conteúdo, não da tela. */
+/**
+ * Linha de cartões lado a lado. Cresce para ocupar a folga da coluna — é o que
+ * elimina a faixa preta no rodapé quando o conteúdo é curto. O gráfico dentro
+ * dela tem altura própria, então crescer aqui não volta a derreter nada.
+ */
 export function Linha({
   children,
   className = "",
@@ -111,7 +120,13 @@ export function Linha({
   children: ReactNode;
   className?: string;
 }) {
-  return <div className={className}>{children}</div>;
+  /*
+   * Sem `lg:flex` aqui: quem chama passa `grid` no className, e `display:flex`
+   * sobrepunha o grid — as colunas perdiam o dimensionamento e os cartões
+   * vazavam para fora da tela. O display é decisão de quem usa; esta função só
+   * empresta a capacidade de crescer.
+   */
+  return <div className={`lg:min-h-0 lg:flex-1 ${className}`}>{children}</div>;
 }
 
 /** Faixa de erro da Marketing API — mostra o que fazer. */

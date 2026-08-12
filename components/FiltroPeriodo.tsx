@@ -95,7 +95,7 @@ export function FiltroPeriodo() {
       </button>
 
       {aberto && (
-        <div className="painel absolute right-0 top-[calc(100%+8px)] z-50 w-[17.25rem] p-3.5 shadow-2xl">
+        <div className="painel absolute right-0 top-[calc(100%+8px)] z-50 w-[276px] p-3.5 shadow-2xl">
           <p className="rotulo pb-2.5">Atalhos</p>
           <div className="grid grid-cols-2 gap-1.5">
             {PREDEFINIDOS.map((p) => {

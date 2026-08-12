@@ -27,7 +27,7 @@ export function GradeCriativos({ criativos }: { criativos: Criativo[] }) {
   const daPagina = ordenados.slice(inicio, inicio + POR_PAGINA);
 
   return (
-    <div className="flex h-full flex-col gap-3">
+    <div className="flex h-full min-h-0 flex-col gap-3">
       <div className="flex flex-wrap items-center gap-1.5">
         <span className="rotulo mr-1">Ordenar por</span>
         {METRICAS.map((m) => {
@@ -50,7 +50,7 @@ export function GradeCriativos({ criativos }: { criativos: Criativo[] }) {
         })}
       </div>
 
-      <div className="max-h-[var(--h-tabela)] overflow-auto pr-1">
+      <div className="min-h-[var(--h-tabela)] flex-1 overflow-auto pr-1">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
           {daPagina.map((c, i) => (
             <CartaoCriativo

@@ -70,7 +70,7 @@ export default async function MetaCriativos({
             sub="Ordene pela métrica que importa · clique no card para abrir o post no Instagram"
            
           >
-            <div className="max-h-[var(--h-tabela)] overflow-auto pr-1">
+            <div className="min-h-[var(--h-tabela)] flex-1 overflow-auto pr-1">
               <GradeCriativos criativos={ordenados} />
             </div>
           </Cartao>

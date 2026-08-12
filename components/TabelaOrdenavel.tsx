@@ -162,7 +162,7 @@ export function TabelaOrdenavel({
                     title={primeira ? (l.titulo ?? String(v ?? "")) : undefined}
                     className={`px-3 py-2 ${
                       direita ? "text-right" : ""
-                    } ${primeira ? "max-w-[15.0rem] font-medium text-[var(--ink)]" : ""} ${
+                    } ${primeira ? "max-w-[240px] font-medium text-[var(--ink)]" : ""} ${
                       c.enfase ? "font-semibold text-[var(--ink)]" : ""
                     } ${bom ? "font-semibold" : ""}`}
                     style={bom ? { color: "var(--good)" } : undefined}

@@ -196,15 +196,13 @@ function MiniDestaque({
 }) {
   const src = c.imageUrl ?? c.thumbnailUrl;
   return (
-    <div className="cartao flex items-center gap-3 p-2.5">
+    <div className="cartao flex items-center gap-3" style={{ padding: "var(--esp-cartao-y) var(--esp-cartao-x)" }}>
       <div className="h-[3.375rem] w-[3.375rem] shrink-0 overflow-hidden rounded-[4px] bg-[var(--surface-2)]">
         {src && <img src={src} alt="" className="h-full w-full object-cover" loading="lazy" />}
       </div>
       <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <Etiqueta variante="contorno">
-            {rotulo}
-          </Etiqueta>
+        <div className="flex min-w-0 items-center gap-2">
+          <Etiqueta variante="contorno">{rotulo}</Etiqueta>
         </div>
         <p className="mt-1 truncate text-[var(--fs-corpo-2)] font-semibold text-[var(--ink)]" title={c.adName}>
           {c.adName}

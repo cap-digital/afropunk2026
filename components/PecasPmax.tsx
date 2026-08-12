@@ -78,7 +78,7 @@ export function PecasPmax({ pecas }: { pecas: AtivoPmax[] }) {
   );
 
   return (
-    <div className="flex h-full flex-col gap-3">
+    <div className="flex h-full min-h-0 flex-col gap-3">
       <div className="flex flex-wrap items-center gap-1.5">
         <span className="rotulo mr-1">Ordenar por</span>
         {METRICAS.map((m) => {
@@ -101,7 +101,7 @@ export function PecasPmax({ pecas }: { pecas: AtivoPmax[] }) {
         })}
       </div>
 
-      <div className="max-h-[var(--h-tabela)] overflow-auto pr-1">
+      <div className="min-h-[var(--h-tabela)] flex-1 overflow-auto pr-1">
         <div className="grid auto-rows-min grid-cols-2 gap-2.5 sm:grid-cols-3">
           {ordenadas.map((a, i) => (
             <CartaoPeca key={`${a.id}-${a.campo}`} a={a} posicao={i + 1} destaque={ordem} />
