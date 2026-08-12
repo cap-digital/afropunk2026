@@ -20,7 +20,7 @@ export type Icone = TablerIcon;
 export function Secao({ children, icone: Ic = IconPointFilled }: { children: ReactNode; icone?: Icone }) {
   return (
     <div className="faixa-secao pt-0.5">
-      <Ic size={13} stroke={2} className="shrink-0 text-[var(--ink-muted)]" aria-hidden="true" />
+      <Ic size="0.8125rem" stroke={2} className="shrink-0 text-[var(--ink-muted)]" aria-hidden="true" />
       <h2 className="shrink-0 text-[var(--fs-rotulo)] font-semibold uppercase tracking-[0.18em] text-[var(--ink-2)]">
         {children}
       </h2>
@@ -53,7 +53,7 @@ export function Cartao({
           <div className="flex min-w-0 items-start gap-2">
             {Ic && (
               <Ic
-                size={15}
+                size="0.9375rem"
                 stroke={1.8}
                 className="mt-[1px] shrink-0 text-[var(--ink-muted)]"
                 aria-hidden="true"
@@ -121,7 +121,7 @@ export function Stat({
     <div className="flex min-w-0 flex-col justify-center">
       <div className="flex items-center gap-1.5">
         {Ic && (
-          <Ic size={13} stroke={1.9} className="shrink-0 text-[var(--ink-muted)]" aria-hidden="true" />
+          <Ic size="0.8125rem" stroke={1.9} className="shrink-0 text-[var(--ink-muted)]" aria-hidden="true" />
         )}
         <span className="rotulo truncate">{rotulo}</span>
       </div>
@@ -227,7 +227,7 @@ export function StatusAtivo({ ativo }: { ativo: boolean }) {
   return (
     <span className="inline-flex items-center gap-1.5 text-[var(--fs-rotulo)] font-semibold uppercase tracking-[0.12em]">
       <IconPointFilled
-        size={12}
+        size="0.75rem"
         aria-hidden="true"
         style={{ color: ativo ? "var(--good)" : "var(--ink-muted)" }}
       />
@@ -250,7 +250,7 @@ export function Vazio({
 }) {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-3 py-8 text-center">
-      <Ic size={26} stroke={1.5} className="text-[var(--ink-muted)]" aria-hidden="true" />
+      <Ic size="1.625rem" stroke={1.5} className="text-[var(--ink-muted)]" aria-hidden="true" />
       <p className="marca text-[var(--fs-md)] leading-[1.15] text-[var(--ink-2)]">{titulo}</p>
       <p className="max-w-[46ch] text-[var(--fs-corpo)] leading-relaxed text-[var(--ink-muted)]">
         {descricao}
@@ -284,7 +284,7 @@ export function BarraMeta({
           <span className="text-[var(--ink-muted)]">/ {formatar(limite)}</span>
         </span>
       </div>
-      <div className="h-[9px] w-full overflow-hidden rounded-md bg-[var(--surface-3)]">
+      <div className="h-[0.5625rem] w-full overflow-hidden rounded-md bg-[var(--surface-3)]">
         <div
           className="h-full rounded-md transition-[width] duration-500"
           style={{

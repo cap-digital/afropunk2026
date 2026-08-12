@@ -49,13 +49,13 @@ function Item({
     <Link
       href={href}
       aria-current={ativo ? "page" : undefined}
-      className={`flex items-center gap-2.5 rounded-lg px-3 py-[7px] text-[var(--fs-corpo-2)] font-semibold transition-colors ${
+      className={`flex items-center gap-2 rounded-lg px-2.5 py-[0.3rem] text-[var(--fs-corpo)] font-medium transition-colors ${
         ativo
           ? "nav-ativo border border-[var(--ui-bdr)] bg-[var(--ui-bg)] text-[var(--ink)]"
           : "border border-transparent text-[var(--ink-2)] hover:bg-[var(--surface-2)] hover:text-[var(--ink)]"
       }`}
     >
-      <Ic size={16} stroke={1.9} className="shrink-0" aria-hidden="true" />
+      <Ic size="0.9375rem" stroke={1.8} className="shrink-0" aria-hidden="true" />
       <span className="min-w-0 truncate">{children}</span>
     </Link>
   );
@@ -109,8 +109,13 @@ function Grupo({
         aria-expanded={aberto}
         className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-left text-[var(--ink-muted)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--ink-2)]"
       >
-        <Ic size={15} stroke={1.9} className="shrink-0" aria-hidden="true" />
-        <span className="rotulo flex-1">{titulo}</span>
+        <Ic size="0.9375rem" stroke={1.9} className="shrink-0" aria-hidden="true" />
+        {/* Mesmo tamanho do item filho: "META ADS" aparecia MENOR que
+            "Visão geral", que está um nível abaixo dela. A hierarquia agora vem
+            da caixa alta, do tracking e da cor — não de encolher o pai. */}
+        <span className="flex-1 text-[var(--fs-corpo)] font-semibold uppercase tracking-[0.1em] text-[var(--ink-muted)]">
+          {titulo}
+        </span>
         {estado && (
           <span
             className="shrink-0 text-[var(--fs-micro)] font-semibold uppercase tracking-[0.1em]"
@@ -120,7 +125,7 @@ function Grupo({
           </span>
         )}
         <IconChevronDown
-          size={13}
+          size="0.8125rem"
           stroke={2.4}
           aria-hidden="true"
           className={`shrink-0 transition-transform duration-200 ${aberto ? "" : "-rotate-90"}`}
@@ -236,7 +241,9 @@ export function NavAnalytics() {
   return (
     <nav className="flex flex-1 flex-col gap-3 overflow-y-auto px-2 py-4">
       <div className="flex flex-col gap-0.5">
-        <p className="rotulo px-2 pb-2">Google Analytics</p>
+        <p className="px-2 pb-2 text-[var(--fs-corpo)] font-semibold uppercase tracking-[0.1em] text-[var(--ink-muted)]">
+          Google Analytics
+        </p>
         <Item href="/analytics" icone={IconChartPie}>
           Visão geral
         </Item>

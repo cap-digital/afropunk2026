@@ -105,34 +105,33 @@
     número invade o vizinho — "R$ 19,9 mil" colado em "44,90×". Com `clamp` a
     fonte encolhe junto com a janela e o texto volta a caber na própria caixa.
 
-    O TETO de cada degrau desceu ~2px (20→18, 18→16, 16→14) porque a escala
-    anterior ficava grande em tela grande e empurrava texto para fora da caixa.
-    Os PISOS dos degraus pequenos ficaram onde estavam: abaixo de 8,5px o
-    rótulo em caixa alta deixa de ser legível, e encolher o pequeno junto com
-    o grande resolveria o encaixe criando um problema pior.
+    Em `rem`, não em `clamp(vw)`: quem escala é a raiz, e estes degraus a
+    acompanham. Com clamp próprio cada degrau tinha piso próprio e travava em
+    momentos diferentes, quebrando a hierarquia — o rótulo alcançava o corpo do
+    texto no zoom. Os valores equivalem à escala anterior com a raiz em 15px.
   */
-  --fs-hero: clamp(18px, 1.4vw, 26px);
-  --fs-kpi: clamp(13px, 1vw, 18.5px);
-  --fs-kpi-sm: clamp(11.5px, 0.82vw, 14.5px);
-  --fs-kpi-lg: clamp(16.5px, 1.35vw, 25px);
-  --fs-titulo-cartao: clamp(11px, 0.7vw, 12px);
-  --fs-sub-cartao: clamp(9.5px, 0.58vw, 10px);
-  --fs-corpo: clamp(10px, 0.64vw, 11px);
-  --fs-rotulo: clamp(8.5px, 0.33vw + 4px, 9.5px);
-  --fs-micro: clamp(8.5px, 0.52vw, 9.5px);
-  --fs-corpo-2: clamp(10.5px, 0.72vw, 12px);
-  --fs-md: clamp(11.5px, 0.86vw, 14.5px);
-  --fs-lg: clamp(14px, 1.1vw, 20px);
-  --fs-display: clamp(19px, 1.8vw, 30px);
+  --fs-hero: 1.72rem;
+  --fs-kpi: 1.22rem;
+  --fs-kpi-sm: 0.96rem;
+  --fs-kpi-lg: 1.65rem;
+  --fs-titulo-cartao: 0.79rem;
+  --fs-sub-cartao: 0.66rem;
+  --fs-corpo: 0.73rem;
+  --fs-rotulo: 0.63rem;
+  --fs-micro: 0.63rem;
+  --fs-corpo-2: 0.79rem;
+  --fs-md: 0.96rem;
+  --fs-lg: 1.32rem;
+  --fs-display: 1.98rem;
 
   /*
     Ritmo vertical fluido, atrelado à ALTURA da janela. Em 720px de altura a
     soma de padding, gap e cabeçalho de cartão passava da tela em ~108px e a
     última faixa ficava cortada. Aqui o respiro cede antes do conteúdo.
   */
-  --esp-cartao-y: clamp(8px, 1.1vh, 14px);
-  --esp-cartao-x: clamp(10px, 0.9vw, 14px);
-  --esp-coluna: clamp(8px, 1.1vh, 14px);
+  --esp-cartao-y: 0.72rem;
+  --esp-cartao-x: 0.86rem;
+  --esp-coluna: 0.8rem;
 
   /*
     Altura de gráfico e de tabela — DEFINIDA, proporcional à altura da janela.
@@ -148,6 +147,50 @@
   */
   --h-grafico: clamp(172px, 31vh, 430px);
   --h-tabela: clamp(220px, 48vh, 660px);
+}
+
+/*
+  A raiz escala com a largura da janela — e é ela que move a interface inteira.
+
+  Antes só a FONTE era fluida, via clamp em vw, enquanto padding, altura e gap
+  seguiam fixos. Duas consequências: a proporção entre texto e caixa mudava a
+  cada tela, e o zoom do navegador não era compensado. Com 150% de zoom numa
+  janela de 1642px o viewport vira ~1095px CSS: o clamp em vw caía abaixo do
+  piso, travava, e o navegador ainda multiplicava esse piso por 1,5 — o texto
+  parava de encolher exatamente onde mais precisava.
+
+  A escala de espaçamento do Tailwind já é em rem (px-2.5 = 0.625rem), então
+  mover a raiz move tudo junto e a razão texto/caixa fica constante. Zoom passa
+  a aumentar o tamanho aparente sem nunca quebrar o encaixe.
+*/
+html {
+  /* Celular de verdade: coluna única, sem disputa de espaço. */
+  font-size: 14px;
+}
+
+/*
+  A curva vale a partir de 700px, não de 1024px. Zoom alto derruba o viewport
+  CSS: a 175% numa tela de 1642px ele vira 938px. Com o corte em 1024 a raiz
+  saltava para o valor de celular e a fonte PULAVA de 9,9 para 17,9px aparentes
+  — o oposto do que o zoom deveria fazer. Estendendo a curva, os 700–1920px
+  cobrem zoom até ~230% na mesma tela.
+*/
+@media (min-width: 700px) {
+  html {
+    /*
+      Curva com intercepto NEGATIVO: `1.15vw - 3.6px` cai mais rápido que a
+      largura. Isso é o que faz a fonte encolher de verdade no zoom.
+
+      Com uma curva puramente proporcional (só `vw`), 150% de zoom leva o
+      viewport de 1642 para 1095px CSS e a raiz de 15,1 para 10,1px — mas o
+      navegador multiplica tudo por 1,5 e o tamanho APARENTE não muda. Nada
+      quebra, e nada parece encolher. Com o intercepto negativo, o mesmo zoom
+      deixa a fonte ~10% menor na tela e sobra espaço real no cartão.
+
+      1642px -> 15,0px   |   1280px -> 11,1px   |   1095px (=zoom 150%) -> 9,0px
+    */
+    font-size: clamp(9px, 1.15vw - 3.6px, 15px);
+  }
 }
 
 html,

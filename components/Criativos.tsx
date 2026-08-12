@@ -39,7 +39,7 @@ export function CartaoCriativo({
     <article className="cartao group flex flex-col overflow-hidden transition-colors hover:border-[var(--border-forte)]">
       <div className="relative aspect-square w-full overflow-hidden bg-[var(--surface-2)]">
         {posicao !== undefined && (
-          <span className="absolute bottom-2 right-2 z-[2] flex h-5 min-w-[19px] items-center justify-center bg-black/80 px-1 text-[var(--fs-rotulo)] font-semibold tabular text-[var(--ink)]">
+          <span className="absolute bottom-2 right-2 z-[2] flex h-5 min-w-[1.1875rem] items-center justify-center bg-black/80 px-1 text-[var(--fs-rotulo)] font-semibold tabular text-[var(--ink)]">
             {posicao}
           </span>
         )}
@@ -197,7 +197,7 @@ function MiniDestaque({
   const src = c.imageUrl ?? c.thumbnailUrl;
   return (
     <div className="cartao flex items-center gap-3 p-2.5">
-      <div className="h-[54px] w-[54px] shrink-0 overflow-hidden rounded-[4px] bg-[var(--surface-2)]">
+      <div className="h-[3.375rem] w-[3.375rem] shrink-0 overflow-hidden rounded-[4px] bg-[var(--surface-2)]">
         {src && <img src={src} alt="" className="h-full w-full object-cover" loading="lazy" />}
       </div>
       <div className="min-w-0 flex-1">

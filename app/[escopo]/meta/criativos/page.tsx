@@ -33,7 +33,7 @@ export default async function MetaCriativos({
     if (criativos.length === 0) {
       return (
         <Shell escopo={escopo} titulo="Meta Ads · Criativos" sub={subtituloEscopo(escopo, undefined, periodo)}>
-          <div className="cartao h-[600px]">
+          <div className="cartao h-[37.5rem]">
             <Vazio
               titulo="Nenhum criativo em veiculação"
               descricao="Os anúncios aparecem aqui com preview, métricas e botão direto para o post no Instagram assim que a campanha entrar no ar."

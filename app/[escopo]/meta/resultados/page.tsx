@@ -31,7 +31,7 @@ export default async function MetaResultados({
     if (!d.ativo) {
       return (
         <Shell escopo={escopo} titulo="Meta Ads · Resultados" sub={subtituloEscopo(escopo, undefined, periodo)}>
-          <div className="cartao h-[600px]">
+          <div className="cartao h-[37.5rem]">
             <Vazio
               titulo="Sem resultados registrados"
               descricao="Receita, ROAS, compras e CPA aparecem aqui assim que a primeira campanha de conversão começar a converter."
@@ -187,7 +187,7 @@ export default async function MetaResultados({
                     .map((c) => (
                       <tr key={c.id} className="border-t border-[var(--border)] text-[var(--ink-2)]">
                         <td
-                          className="max-w-[220px] truncate py-2 pr-3 font-medium text-[var(--ink)]"
+                          className="max-w-[13.75rem] truncate py-2 pr-3 font-medium text-[var(--ink)]"
                           title={`${c.nome} — ${nomeCurtoCampanha(d.campanhas.find((k) => k.id === c.campanhaId)?.name ?? "")}`}
                         >
                           {c.nome}

@@ -146,7 +146,7 @@ function ListaTexto({ rotulo, itens }: { rotulo: string; itens: AtivoPmax[] }) {
             key={`${x.id}-${i}`}
             className="flex items-baseline gap-2 border-b border-[var(--border-sutil)] py-[5px] text-[var(--fs-corpo-2)] leading-snug text-[var(--ink-2)] last:border-b-0"
           >
-            <span className="tabular w-[16px] shrink-0 text-[var(--fs-rotulo)] text-[var(--ink-muted)]">
+            <span className="tabular w-[1.0rem] shrink-0 text-[var(--fs-rotulo)] text-[var(--ink-muted)]">
               {i + 1}
             </span>
             <span className="min-w-0 flex-1">{x.texto}</span>

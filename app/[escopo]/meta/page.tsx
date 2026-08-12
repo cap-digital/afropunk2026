@@ -51,7 +51,7 @@ export default async function MetaVisaoGeral({
     if (!d.ativo) {
       return (
         <Shell escopo={escopo} titulo="Meta Ads" sub={subtituloEscopo(escopo, undefined, periodo)}>
-          <div className="cartao h-[600px]">
+          <div className="cartao h-[37.5rem]">
             <Vazio
               titulo={`${d.praca?.nome ?? "Este escopo"} ainda não tem campanha ativa no Meta`}
               descricao="O painel está pronto e conectado. Assim que a primeira campanha entrar no ar, investimento, entrega, público, posicionamentos e criativos aparecem aqui automaticamente."
@@ -192,7 +192,7 @@ async function Comparativo({
                       className="block h-2 w-2 shrink-0 rotate-45"
                       style={{ background: f.bucket.cor }}
                     />
-                    <span className="w-[118px] shrink-0 truncate text-[var(--fs-corpo-2)] text-[var(--ink-2)]">
+                    <span className="w-[7.375rem] shrink-0 truncate text-[var(--fs-corpo-2)] text-[var(--ink-2)]">
                       {f.bucket.nome}
                     </span>
                     <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[var(--surface-2)]">
@@ -204,7 +204,7 @@ async function Comparativo({
                         }}
                       />
                     </div>
-                    <span className="tabular min-w-[52px] shrink-0 whitespace-nowrap text-right text-[var(--fs-corpo)] text-[var(--ink-muted)]">
+                    <span className="tabular min-w-[3.25rem] shrink-0 whitespace-nowrap text-right text-[var(--fs-corpo)] text-[var(--ink-muted)]">
                       {compact(f.total.impressions)}
                     </span>
                   </div>
@@ -484,7 +484,7 @@ function Destaque({
   const conteudo = (
     <div className="flex items-center gap-2.5">
       {imagem && (
-        <span className="h-[38px] w-[38px] shrink-0 overflow-hidden rounded-md bg-[var(--surface-2)]">
+        <span className="h-[2.375rem] w-[2.375rem] shrink-0 overflow-hidden rounded-md bg-[var(--surface-2)]">
           <img src={imagem} alt="" loading="lazy" className="h-full w-full object-cover" />
         </span>
       )}

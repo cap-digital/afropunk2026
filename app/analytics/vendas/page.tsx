@@ -112,7 +112,12 @@ export default async function AnalyticsVendas({
               titulo="Funil de venda por praça"
               sub="Escolha o evento · começa no carrinho, o GA4 não rastreia visualização de item"
             >
-              <div className="h-[var(--h-grafico)]">
+              {/* `min-h` em vez de `h`: o funil tem partes de altura própria
+                  (botões de praça, trapézios, legenda, rodapé) que somam mais
+                  que o slot padrão em tela muito estreita — a 175% de zoom o
+                  conteúdo pedia 284px num slot de 230px e o cartão cortava.
+                  Deixando crescer, nada some. */}
+              <div className="min-h-[var(--h-grafico)]">
                 <FunilEventos
                   eventos={d.eventos.map((e) => ({
                     itemName: e.itemName,

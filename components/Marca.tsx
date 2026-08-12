@@ -52,7 +52,7 @@ export function Losangos({
         <span
           key={i}
           style={{ background: cor }}
-          className="block h-[7px] w-[7px] rotate-45"
+          className="block h-[0.4375rem] w-[0.4375rem] rotate-45"
         />
       ))}
     </span>

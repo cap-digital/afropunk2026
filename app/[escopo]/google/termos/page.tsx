@@ -111,7 +111,7 @@ export default async function Termos({
           {/* O que a tabela não dá: ela lista termo a termo, isto agrupa por
               intenção e mostra qual tipo de busca devolve mais por real. */}
           <div className="cartao grid shrink-0 grid-cols-1 gap-4 px-5 py-3.5 lg:grid-cols-[1.35fr_1fr]">
-            <div className="h-[132px]">
+            <div className="h-[8.25rem]">
               <BarrasH
                 dados={porTipo.map((t) => ({
                   nome: t.nome,
@@ -126,7 +126,7 @@ export default async function Termos({
               {porTipo.map((t) => (
                 <div key={t.tipo} className="flex items-baseline gap-2 text-[var(--fs-corpo-2)]">
                   <IconPointFilled
-                    size={11}
+                    size="0.6875rem"
                     aria-hidden="true"
                     className="shrink-0 self-center"
                     style={{ color: CORES_TIPO[t.tipo] }}
@@ -138,7 +138,7 @@ export default async function Termos({
                     {t.termos} {t.termos === 1 ? "termo" : "termos"}
                   </span>
                   <span
-                    className="tabular w-[64px] shrink-0 text-right font-bold"
+                    className="tabular w-[4.0rem] shrink-0 text-right font-bold"
                     style={{ color: t.m.roas >= 1 ? "var(--good)" : "var(--ink-2)" }}
                   >
                     {t.m.roas > 0 ? `${dec(t.m.roas)}×` : "—"}

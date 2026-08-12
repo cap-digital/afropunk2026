@@ -37,7 +37,7 @@ export default async function MetaPosicionamentos({
     if (!d.ativo) {
       return (
         <Shell escopo={escopo} titulo="Meta Ads · Posicionamentos" sub={subtituloEscopo(escopo, undefined, periodo)}>
-          <div className="cartao h-[600px]">
+          <div className="cartao h-[37.5rem]">
             <Vazio
               titulo="Sem dados de posicionamento"
               descricao="O mapa de plataformas e posicionamentos aparece assim que houver entrega registrada."

@@ -132,9 +132,9 @@ export function TabelaOrdenavel({
                     {c.rotulo}
                     {ativa ? (
                       desc ? (
-                        <IconArrowDown size={12} stroke={2.4} aria-hidden="true" />
+                        <IconArrowDown size="0.75rem" stroke={2.4} aria-hidden="true" />
                       ) : (
-                        <IconArrowUp size={12} stroke={2.4} aria-hidden="true" />
+                        <IconArrowUp size="0.75rem" stroke={2.4} aria-hidden="true" />
                       )
                     ) : (
                       <span aria-hidden="true" className="w-3" />
@@ -162,7 +162,7 @@ export function TabelaOrdenavel({
                     title={primeira ? (l.titulo ?? String(v ?? "")) : undefined}
                     className={`px-3 py-2 ${
                       direita ? "text-right" : ""
-                    } ${primeira ? "max-w-[240px] font-medium text-[var(--ink)]" : ""} ${
+                    } ${primeira ? "max-w-[15.0rem] font-medium text-[var(--ink)]" : ""} ${
                       c.enfase ? "font-semibold text-[var(--ink)]" : ""
                     } ${bom ? "font-semibold" : ""}`}
                     style={bom ? { color: "var(--good)" } : undefined}
@@ -171,7 +171,7 @@ export function TabelaOrdenavel({
                       <span className="flex items-center gap-1.5">
                         {l.cor && (
                           <IconPointFilled
-                            size={12}
+                            size="0.75rem"
                             aria-hidden="true"
                             className="shrink-0"
                             style={{ color: l.cor }}

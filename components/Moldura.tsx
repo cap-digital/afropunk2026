@@ -65,7 +65,7 @@ export function Moldura({
   };
 
   return (
-    <div className="flex min-h-screen w-full gap-4 bg-[var(--bg)] p-3 lg:h-screen lg:min-h-[640px] lg:overflow-hidden lg:p-4">
+    <div className="flex min-h-screen w-full gap-4 bg-[var(--bg)] p-3 lg:h-screen lg:min-h-[40.0rem] lg:overflow-hidden lg:p-4">
       {/* Fundo escuro por trás da gaveta */}
       {aberto && (
         <div
@@ -76,11 +76,11 @@ export function Moldura({
       )}
 
       <aside
-        className={`painel fixed inset-y-3 left-3 z-50 flex w-[248px] flex-col overflow-hidden transition-transform duration-200 lg:static lg:inset-auto lg:w-[236px] lg:translate-x-0 ${
+        className={`painel fixed inset-y-3 left-3 z-50 flex w-[15.5rem] flex-col overflow-hidden transition-transform duration-200 lg:static lg:inset-auto lg:w-[14.75rem] lg:translate-x-0 ${
           aberto ? "translate-x-0" : "-translate-x-[115%] lg:translate-x-0"
         } ${colapsada ? "lg:hidden" : ""}`}
       >
-        <div className="relative flex h-[60px] shrink-0 items-center justify-center border-b border-[var(--border)] px-3">
+        <div className="relative flex h-[3.75rem] shrink-0 items-center justify-center border-b border-[var(--border)] px-3">
           <Marca tamanho="sm" href="/" />
           <button
             type="button"
@@ -115,7 +115,7 @@ export function Moldura({
                 className="group flex items-center gap-2 rounded-lg border border-[var(--border-forte)] bg-[var(--surface-2)] px-2.5 py-2.5 transition-colors hover:bg-[var(--surface-3)]"
               >
                 <IconMapPin
-                  size={15}
+                  size="0.9375rem"
                   stroke={1.9}
                   aria-hidden="true"
                   className="shrink-0 text-[var(--ink-muted)]"
@@ -131,7 +131,7 @@ export function Moldura({
                     ficava com 79px para 118px de texto. O rótulo continua no
                     `title` e no `aria-label` do link. */}
                 <IconArrowsLeftRight
-                  size={14}
+                  size="0.875rem"
                   stroke={1.9}
                   aria-hidden="true"
                   className="shrink-0 text-[var(--ink-muted)] transition-colors group-hover:text-[var(--ink)]"
@@ -158,7 +158,7 @@ export function Moldura({
             alt="CAP.CO"
             width={1752}
             height={536}
-            className="h-[14px] w-auto opacity-85"
+            className="h-[0.875rem] w-auto opacity-85"
           />
           <span aria-hidden="true" className="h-3 w-px bg-[var(--border-forte)]" />
           <Image
@@ -166,7 +166,7 @@ export function Moldura({
             alt="GRAAL.hub"
             width={900}
             height={127}
-            className="h-[14px] w-auto opacity-85"
+            className="h-[0.875rem] w-auto opacity-85"
           />
         </div>
       </aside>
@@ -187,7 +187,7 @@ export function Moldura({
         >
           <span className="marca-dagua text-[15rem]">{uf}</span>
         </span>
-        <header className="painel flex min-h-[56px] shrink-0 flex-wrap items-center justify-between gap-3 px-3.5 py-2.5 lg:h-[56px] lg:flex-nowrap lg:px-5 lg:py-0">
+        <header className="painel flex min-h-[3.5rem] shrink-0 flex-wrap items-center justify-between gap-3 px-3.5 py-2.5 lg:h-[3.5rem] lg:flex-nowrap lg:px-5 lg:py-0">
           <div className="flex min-w-0 items-center gap-2.5">
             <button
               type="button"
@@ -202,7 +202,7 @@ export function Moldura({
               </svg>
             </button>
             <IconChartBar
-              size={18}
+              size="1.125rem"
               stroke={1.9}
               aria-hidden="true"
               className="hidden shrink-0 text-[var(--ink-muted)] lg:block"
@@ -223,7 +223,7 @@ export function Moldura({
             {/* useSearchParams exige fronteira de Suspense em página estática */}
             <Suspense
               fallback={
-                <span className="h-[30px] w-[92px] rounded-lg border border-[var(--border-forte)]" />
+                <span className="h-[1.875rem] w-[5.75rem] rounded-lg border border-[var(--border-forte)]" />
               }
             >
               <FiltroPeriodo />

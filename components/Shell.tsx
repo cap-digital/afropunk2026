@@ -165,7 +165,7 @@ export function ShellAnalytics({
             className="group flex items-center gap-2 rounded-lg border border-[var(--border-forte)] bg-[var(--surface-2)] px-2.5 py-2.5 transition-colors hover:bg-[var(--surface-3)]"
           >
             <IconWorldWww
-              size={15}
+              size="0.9375rem"
               stroke={1.9}
               aria-hidden="true"
               className="shrink-0 text-[var(--ink-muted)]"

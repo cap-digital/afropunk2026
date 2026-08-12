@@ -121,7 +121,7 @@ export default async function Capa() {
         </div>
       )}
 
-      <div className="flex w-full max-w-[1120px] shrink-0 flex-col gap-4">
+      <div className="flex w-full max-w-[70.0rem] shrink-0 flex-col gap-4">
         <div className="grid grid-cols-3 gap-4">
           {PRACAS.map((p) => (
             <CartaoPraca
@@ -211,7 +211,7 @@ export default async function Capa() {
             width={1752}
             height={536}
             priority
-            className="h-[19px] w-auto opacity-90"
+            className="h-[1.1875rem] w-auto opacity-90"
           />
           <span aria-hidden="true" className="h-4 w-px bg-[var(--border-forte)]" />
           {/*
@@ -224,7 +224,7 @@ export default async function Capa() {
             width={900}
             height={127}
             priority
-            className="h-[19px] w-auto opacity-90"
+            className="h-[1.1875rem] w-auto opacity-90"
           />
         </div>
       </footer>
@@ -314,7 +314,7 @@ function CartaoPraca({
                 ROAS e CPA sobre {brlCompact(r.investimentoConversao)} em conversão
               </p>
             )}
-            <div className="-mx-1 h-[38px]">
+            <div className="-mx-1 h-[2.375rem]">
               <Sparkline dados={r.serie} chave="spend" cor={cor} altura={38} />
             </div>
             <div className="flex items-center gap-1.5">
@@ -330,7 +330,7 @@ function CartaoPraca({
             </div>
           </>
         ) : (
-          <div className="flex min-h-[118px] flex-col justify-center gap-2">
+          <div className="flex min-h-[7.375rem] flex-col justify-center gap-2">
             <p className="marca text-[var(--fs-kpi)] text-[var(--ink-2)]">Sem Campanha Ativa</p>
             <p className="text-[var(--fs-corpo-2)] leading-relaxed text-[var(--ink-muted)]">
               O painel já está montado esperando a Campanha de {nome} entrar no ar

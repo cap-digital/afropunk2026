@@ -141,7 +141,7 @@ function CartaoPeca({
           loading="lazy"
           className="h-full w-full object-cover"
         />
-        <span className="tabular absolute bottom-1.5 right-1.5 flex h-5 min-w-[20px] items-center justify-center rounded bg-black/80 px-1 text-[var(--fs-rotulo)] font-semibold text-[var(--ink)]">
+        <span className="tabular absolute bottom-1.5 right-1.5 flex h-5 min-w-[1.25rem] items-center justify-center rounded bg-black/80 px-1 text-[var(--fs-rotulo)] font-semibold text-[var(--ink)]">
           {posicao}
         </span>
       </div>

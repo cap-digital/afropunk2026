@@ -99,7 +99,7 @@ export function FunilEventos({ eventos }: { eventos: EventoFunil[] }) {
               <span className="tabular shrink-0 text-[var(--fs-corpo-2)] font-bold text-[var(--ink)]">
                 {int(x.valor)}
               </span>
-              <span className="tabular min-w-[62px] shrink-0 whitespace-nowrap text-right text-[var(--fs-corpo-2)] text-[var(--ink-muted)]">
+              <span className="tabular min-w-[3.875rem] shrink-0 whitespace-nowrap text-right text-[var(--fs-corpo-2)] text-[var(--ink-muted)]">
                 {taxa !== null ? `${dec(taxa)}%` : `${dec(doTopo)}%`}
               </span>
             </div>

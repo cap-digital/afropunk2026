@@ -46,7 +46,7 @@ export default async function MetaCampanhas({
     if (!d.ativo) {
       return (
         <Shell escopo={escopo} titulo="Meta Ads · Campanhas" sub={subtituloEscopo(escopo, undefined, periodo)}>
-          <div className="cartao h-[600px]">
+          <div className="cartao h-[37.5rem]">
             <Vazio
               titulo="Nenhuma campanha ativa"
               descricao="Assim que uma campanha entrar em veiculação, ela aparece aqui com investimento, entrega, orçamento e série diária."
@@ -154,7 +154,7 @@ export default async function MetaCampanhas({
               titulo="Investimento × cliques"
               sub="Duas escalas diferentes, dois gráficos — nunca eixo duplo"
             >
-              <div className="grid h-[300px] grid-rows-2 gap-2 lg:h-full">
+              <div className="grid h-[18.75rem] grid-rows-2 gap-2 lg:h-full">
                 <BarrasAgrupadas
                   dados={comparativo}
                   series={[{ chave: "investimento", nome: "Investimento (R$)", cor: "var(--par-a)" }]}
@@ -202,7 +202,7 @@ export default async function MetaCampanhas({
                     .map((c) => (
                       <tr key={c.id} className="border-t border-[var(--border)] text-[var(--ink-2)]">
                         <td
-                          className="max-w-[220px] truncate py-2 pr-3 font-medium text-[var(--ink)]"
+                          className="max-w-[13.75rem] truncate py-2 pr-3 font-medium text-[var(--ink)]"
                           title={c.name}
                         >
                           {nomeCurtoCampanha(c.name)}
