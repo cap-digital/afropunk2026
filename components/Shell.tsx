@@ -56,16 +56,23 @@ export async function Shell({
 }
 
 /** Contexto do escopo, mostrado sob o título. */
+/**
+ * Subtítulo do cabeçalho: só o que é específico da PÁGINA.
+ *
+ * Antes ele repetia a marca e o local da praça — "AFROPUNK EXPERIENCE ·
+ * TERREIRÃO DO SAMBA · …" — que já estão no seletor de praça, dois centímetros
+ * à esquerda. Eram 74 caracteres pedindo 766px num espaço de 379px em tela de
+ * 1280, e nenhum tamanho de fonte legível resolve isso: o excesso era de
+ * conteúdo, não de tipografia. A lista de praças do comparativo saiu pelo
+ * mesmo motivo — o seletor já diz "Todas as Praças", e os gráficos trazem a
+ * legenda por praça.
+ */
 export function subtituloEscopo(
   escopo: EscopoSlug,
   extra?: string,
   periodo?: Periodo,
 ): string {
-  const base =
-    escopo === ESCOPO_TODAS
-      ? "Rio · Recife · Salvador · Nacional"
-      : `${PRACA_POR_SLUG[escopo].marca} · ${PRACA_POR_SLUG[escopo].local}`;
-  const partes = [base];
+  const partes: string[] = [];
   if (extra) partes.push(extra);
   if (periodo && periodo !== "maximum") partes.push(rotuloPeriodo(periodo));
   return partes.join(" · ");

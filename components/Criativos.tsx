@@ -6,6 +6,17 @@ import { metricasDoCard, type ChaveMetrica } from "./metricasCriativo";
 import { OBJETIVO_LABEL } from "@/lib/config";
 
 /**
+ * Primeira tag do nome do conjunto. O nome cru — "[ENGAJADOS AFROPUNK 365D]
+ * [LAL 1%] [HORIZONTAL]" — escondia 73% de si mesmo no cartão de 125px, então
+ * mostrava reticências e nenhuma informação. A primeira tag é o que distingue
+ * um conjunto do outro; o nome inteiro continua no `title`.
+ */
+function primeiraTag(nome: string): string {
+  const m = nome.match(/\[([^\]]+)\]/);
+  return m ? m[1].trim() : nome;
+}
+
+/**
  * Usamos <img> em vez de next/image de propósito: as URLs do fbcdn são
  * assinadas e expiram (parâmetro `oe`), então o pipeline de otimização do Next
  * não agrega nada e falharia depois que o link vencesse.
@@ -107,7 +118,7 @@ export function CartaoCriativo({
           title={`${OBJETIVO_LABEL[c.objetivo] ?? c.objetivo} · ${c.conjuntoNome ?? "—"} · ${c.campanhaNome}`}
         >
           <span className="font-semibold">{OBJETIVO_LABEL[c.objetivo] ?? c.objetivo}</span>
-          {c.conjuntoNome ? ` · ${c.conjuntoNome}` : ""}
+          {c.conjuntoNome ? ` · ${primeiraTag(c.conjuntoNome)}` : ""}
         </p>
         <p className="tabular truncate text-[var(--fs-rotulo)] text-[var(--ink-muted)]">
           {compact(c.m.impressions)} impr. ·{" "}

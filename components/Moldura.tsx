@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { IconChartBar, IconMapPin } from "@tabler/icons-react";
+import { IconArrowsLeftRight, IconChartBar, IconMapPin } from "@tabler/icons-react";
 import { Marca } from "./Marca";
 import { NavPlataformas } from "./Nav";
 import { BotaoAtualizar } from "./BotaoAtualizar";
@@ -110,6 +110,8 @@ export function Moldura({
               <p className="rotulo px-1 pb-2">Praça</p>
               <Link
                 href="/"
+                title="Trocar de praça"
+                aria-label="Trocar de praça"
                 className="group flex items-center gap-2 rounded-lg border border-[var(--border-forte)] bg-[var(--surface-2)] px-2.5 py-2.5 transition-colors hover:bg-[var(--surface-3)]"
               >
                 <IconMapPin
@@ -124,9 +126,16 @@ export function Moldura({
                 <span className="marca min-w-0 flex-1 truncate text-[var(--fs-corpo-2)] leading-[1.2] text-[var(--ink)]">
                   {escopo ? nomeDoEscopo(escopo) : ""}
                 </span>
-                <span className="shrink-0 text-[var(--fs-micro)] font-semibold uppercase tracking-[0.12em] text-[var(--ink-muted)] transition-colors group-hover:text-[var(--ink)]">
-                  trocar
-                </span>
+                {/* Ícone no lugar da palavra "trocar": ela ocupava ~50px dos
+                    236px da lateral, e o nome da praça — que é a informação —
+                    ficava com 79px para 118px de texto. O rótulo continua no
+                    `title` e no `aria-label` do link. */}
+                <IconArrowsLeftRight
+                  size={14}
+                  stroke={1.9}
+                  aria-hidden="true"
+                  className="shrink-0 text-[var(--ink-muted)] transition-colors group-hover:text-[var(--ink)]"
+                />
               </Link>
             </>
           )}
@@ -203,7 +212,7 @@ export function Moldura({
                   e "VISÃO GERAL" perdiam o til dentro do `truncate`. */}
               <h1 className="marca truncate text-[var(--fs-md)] leading-[1.2] lg:text-[var(--fs-kpi)]">{titulo}</h1>
               {sub && (
-                <div className="mt-1.5 truncate text-[var(--fs-micro)] uppercase tracking-[0.1em] leading-none text-[var(--ink-muted)] lg:text-[var(--fs-rotulo)]">
+                <div className="mt-1.5 truncate text-[var(--fs-micro)] uppercase tracking-[0.08em] leading-none text-[var(--ink-muted)]">
                   {sub}
                 </div>
               )}
