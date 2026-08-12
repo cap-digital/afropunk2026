@@ -77,7 +77,7 @@ export default async function Termos({
         sub={subtituloEscopo(escopo, `${termos.length} palavras-chave com busca`)}
       >
         <Pagina>
-          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-4 py-4 sm:grid-cols-3 lg:grid-cols-[minmax(240px,1.1fr)_repeat(4,1fr)] lg:gap-5 lg:px-5">
+          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] sm:grid-cols-3 lg:grid-cols-[minmax(15.5rem,1.1fr)_repeat(4,1fr)]">
             <Hero
               rotulo="Investido em buscas"
               valor={brl(t.custo)}
@@ -110,18 +110,16 @@ export default async function Termos({
 
           {/* O que a tabela não dá: ela lista termo a termo, isto agrupa por
               intenção e mostra qual tipo de busca devolve mais por real. */}
-          <div className="cartao grid shrink-0 grid-cols-1 gap-4 px-5 py-3.5 lg:grid-cols-[1.35fr_1fr]">
-            <div className="h-[8.25rem]">
-              <BarrasH
-                dados={porTipo.map((t) => ({
-                  nome: t.nome,
-                  valor: t.m.custo,
-                  cor: CORES_TIPO[t.tipo],
-                }))}
-                formato="brl"
-                larguraRotulo={128}
-              />
-            </div>
+          <div className="cartao grid shrink-0 grid-cols-1 gap-4 px-[var(--esp-cartao-x)] py-[calc(var(--esp-cartao-y)*0.82)] lg:grid-cols-[1.35fr_1fr]">
+            <BarrasH
+              dados={porTipo.map((t) => ({
+                nome: t.nome,
+                valor: t.m.custo,
+                cor: CORES_TIPO[t.tipo],
+              }))}
+              formato="brl"
+              larguraRotulo={128}
+            />
             <div className="flex flex-col justify-center gap-1.5">
               {porTipo.map((t) => (
                 <div key={t.tipo} className="flex items-baseline gap-2 text-[var(--fs-corpo-2)]">

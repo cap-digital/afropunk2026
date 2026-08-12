@@ -56,7 +56,7 @@ export default async function MetaCriativos({
       >
         <Pagina>
           <div className="grid shrink-0 grid-cols-1 gap-3.5 lg:grid-cols-[1.05fr_1fr]">
-            <div className="cartao grid grid-cols-2 items-center gap-4 px-4 py-4 lg:grid-cols-4 lg:gap-5 lg:px-5">
+            <div className="cartao grid grid-cols-2 items-center gap-4 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] lg:grid-cols-4">
               <Stat rotulo="Anúncios" valor={String(criativos.length)} />
               <Stat rotulo="Investido" valor={brl(total.spend)} />
               <Stat rotulo="Impressões" valor={compact(total.impressions)} />
@@ -68,11 +68,12 @@ export default async function MetaCriativos({
           <Cartao
             titulo="Galeria de criativos"
             sub="Ordene pela métrica que importa · clique no card para abrir o post no Instagram"
-           
           >
-            <div className="min-h-[var(--h-tabela)] flex-1 overflow-auto pr-1">
-              <GradeCriativos criativos={ordenados} />
-            </div>
+            {/* Sem teto nem rolagem aqui: a grade já tem os dois, por dentro, e
+                é o que mantém os botões de ordenação parados enquanto as
+                imagens rolam. Empilhados, os dois scrollers levavam a barra de
+                ordenação embora junto com o conteúdo que ela ordena. */}
+            <GradeCriativos criativos={ordenados} />
           </Cartao>
         </Pagina>
       </Shell>

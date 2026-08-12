@@ -73,7 +73,7 @@ export default async function Pmax({
         }
       >
         <Pagina>
-          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-4 py-4 sm:grid-cols-3 lg:grid-cols-[minmax(240px,1.1fr)_repeat(5,1fr)] lg:gap-5 lg:px-5">
+          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] sm:grid-cols-3 lg:grid-cols-[minmax(15.5rem,1.1fr)_repeat(5,1fr)]">
             <Hero rotulo="Investido em PMax" valor={brl(t.custo)} sub="grupos de recursos ativos" />
             <Stat
               rotulo="Receita"
@@ -104,7 +104,7 @@ export default async function Pmax({
               icone={IconTextCaption}
               className="min-h-0"
             >
-              <div className="flex min-h-[var(--h-tabela)] flex-1 flex-col gap-3.5 overflow-auto">
+              <div className="flex max-h-[var(--h-tabela)] flex-col gap-3.5 overflow-auto">
                 <ListaTexto rotulo="Títulos" itens={d.titulos} />
                 <ListaTexto rotulo="Descrições" itens={d.descricoes} />
               </div>

@@ -89,7 +89,7 @@ export function PecasPmax({ pecas }: { pecas: AtivoPmax[] }) {
               type="button"
               onClick={() => setOrdem(m.chave)}
               aria-pressed={ativo}
-              className={`rounded-md border px-2 py-[5px] text-[var(--fs-corpo)] font-semibold uppercase tracking-[0.1em] transition-colors ${
+              className={`rounded-md border px-2 py-[5px] text-[var(--fs-corpo)] font-semibold uppercase tracking-[0.08em] transition-colors ${
                 ativo
                   ? "border-[var(--ink)] bg-[var(--ink)] text-black"
                   : "border-[var(--border-forte)] text-[var(--ink-2)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
@@ -101,7 +101,7 @@ export function PecasPmax({ pecas }: { pecas: AtivoPmax[] }) {
         })}
       </div>
 
-      <div className="min-h-[var(--h-tabela)] flex-1 overflow-auto pr-1">
+      <div className="max-h-[var(--h-galeria)] overflow-auto pr-1">
         <div className="grid auto-rows-min grid-cols-2 gap-2.5 sm:grid-cols-3">
           {ordenadas.map((a, i) => (
             <CartaoPeca key={`${a.id}-${a.campo}`} a={a} posicao={i + 1} destaque={ordem} />
@@ -165,7 +165,7 @@ function CartaoPeca({
         <div className="tabular flex items-baseline justify-between gap-2 text-[var(--fs-rotulo)] text-[var(--ink-muted)]">
           {secundarias.map((m) => (
             <span key={m.chave} className="whitespace-nowrap">
-              <span className="text-[var(--fs-micro)] uppercase tracking-[0.05em]">{m.curto} </span>
+              <span className="text-[var(--fs-micro)] uppercase tracking-[0.06em]">{m.curto} </span>
               <span className="text-[var(--ink-2)]">{m.valor(a)}</span>
             </span>
           ))}

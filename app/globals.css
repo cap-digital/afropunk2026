@@ -108,51 +108,116 @@
     Em `rem`, não em `clamp(vw)`: quem escala é a raiz, e estes degraus a
     acompanham. Com clamp próprio cada degrau tinha piso próprio e travava em
     momentos diferentes, quebrando a hierarquia — o rótulo alcançava o corpo do
-    texto no zoom. Os valores equivalem à escala anterior com a raiz em 15px.
+    texto no zoom.
+
+    UMA escada, nove degraus, cada um com um passo perceptível de ~1,12. Antes
+    havia duplicatas (`rotulo` = `micro`, `corpo-2` = `titulo-cartao`) e a
+    hierarquia colapsava: o título do cartão saía do mesmo tamanho do corpo que
+    ele encabeça, e o rótulo de eixo — que é cromo — do mesmo tamanho do dado.
+    Quem separa nível aqui é o TAMANHO; peso, caixa alta e cor só reforçam.
   */
-  --fs-hero: 1.72rem;
-  --fs-kpi: 1.22rem;
-  --fs-kpi-sm: 0.96rem;
-  --fs-kpi-lg: 1.65rem;
-  --fs-titulo-cartao: 0.79rem;
-  --fs-sub-cartao: 0.66rem;
-  --fs-corpo: 0.73rem;
-  --fs-rotulo: 0.63rem;
-  --fs-micro: 0.63rem;
-  --fs-corpo-2: 0.79rem;
-  --fs-md: 0.96rem;
-  --fs-lg: 1.32rem;
-  --fs-display: 1.98rem;
+  --fs-micro: 0.62rem;        /* cabeçalho de tabela, etiqueta */
+  --fs-rotulo: 0.68rem;       /* rótulo de KPI, faixa de seção */
+  --fs-sub-cartao: 0.72rem;   /* subtítulo de cartão, contexto de KPI */
+  --fs-corpo: 0.79rem;        /* corpo, navegação, botão */
+  --fs-corpo-2: 0.88rem;      /* corpo enfático, célula em destaque */
+  --fs-titulo-cartao: 0.99rem;/* título de cartão — precisa liderar o corpo */
+  --fs-md: 1.06rem;
+  --fs-kpi-sm: 1.06rem;
+  --fs-kpi: 1.34rem;
+  --fs-lg: 1.5rem;
+  --fs-kpi-lg: 1.72rem;
+  --fs-hero: 2rem;
+  --fs-display: 2.3rem;
 
   /*
-    Ritmo vertical fluido, atrelado à ALTURA da janela. Em 720px de altura a
-    soma de padding, gap e cabeçalho de cartão passava da tela em ~108px e a
-    última faixa ficava cortada. Aqui o respiro cede antes do conteúdo.
+    Tipografia DENTRO do gráfico. Estava em px cravado no JS (10 a 12,5) — a
+    única parte do dashboard fora da escala fluida. O efeito era o mais visível
+    de todos: o rótulo do eixo saía MAIOR que o título do cartão que o contém,
+    e não encolhia com a janela como o resto. Agora vem da mesma escada: o eixo
+    é cromo (fica abaixo do corpo) e o valor rotulado é dado (empata com ele).
   */
-  /*
-    Espaçamento compensado: a raiz caiu 30% a pedido, e como estes tokens são
-    em rem eles cairiam junto — texto menor num cartão igualmente menor não
-    parece mais leve, parece apertado. Os valores foram divididos por 0,7 para
-    manter o respiro absoluto de antes enquanto a fonte encolhe.
-  */
-  --esp-cartao-y: 1.03rem;
-  --esp-cartao-x: 1.23rem;
-  --esp-coluna: 1.14rem;
+  --fs-eixo: 0.72rem;
+  --fs-valor-grafico: 0.79rem;
 
   /*
-    Altura de gráfico e de tabela — DEFINIDA, proporcional à altura da janela.
-
-    A premissa antiga era "tudo cabe numa tela": a página tinha altura fixa e as
-    linhas se esticavam para preencher. Isso brigava com quatro coisas ao mesmo
-    tempo — altura de tela variável, zoom, volume de dado variável e comprimento
-    de texto variável — e quando a conta não fechava algo cedia sozinho: cortava,
-    sobrepunha ou o gráfico derretia realimentando a própria medida.
-
-    Agora o gráfico tem altura própria, que cresce com a janela mas nunca depende
-    do que está em volta. A página empilha e rola, como qualquer painel.
+    Espaçamento do conteúdo. Estes valores foram um dia divididos por 0,7 para
+    "segurar" o respiro absoluto quando a raiz caiu 30% — e era justamente isso
+    que fazia o dashboard parecer incoerente: texto de um tamanho dentro de
+    caixa de outro. Padding é proporção, não medida absoluta; voltando a
+    acompanhar a raiz, a razão texto/caixa fica igual em qualquer tela.
   */
-  --h-grafico: clamp(172px, 44vh, 620px);
+  --esp-cartao-y: 0.86rem;
+  --esp-cartao-x: 1.02rem;
+  --esp-coluna: 0.95rem;
+
+  /*
+    Ritmo do CROMO — cabeçalho e lateral. Os dois painéis dividem a mesma
+    altura de faixa e o mesmo respiro interno; sem isso a primeira divisória da
+    lateral não bate com a base do cabeçalho e a moldura parece torta.
+
+    A faixa é dimensionada pelo que carrega (título + subtítulo) MAIS folga:
+    antes eram 3,5rem cravados para ~2,8rem de texto, e sobravam 4px em cima e
+    embaixo — o texto encostava nos limites do painel.
+  */
+  --h-chrome: 4.5rem;
+  --esp-chrome-x: 1.15rem;
+  --esp-chrome-y: 0.95rem;
+
+  /*
+    Alturas de conteúdo. Três medidas, três regras diferentes — e a diferença
+    entre elas é o que estava errado até aqui:
+
+      gráfico  → altura PRÓPRIA. Não tem altura natural: um SVG preenche o que
+                 lhe derem. Precisa de um número, e ele não pode vir do vizinho.
+      tabela   → TETO. A altura natural dela é o número de linhas.
+      galeria  → TETO, mais alto, porque a unidade é uma imagem inteira.
+
+    O gráfico é quem define a altura da linha inteira — os cartões irmãos se
+    igualam a ele. Então este número não é "quanto o gráfico quer": é quanto a
+    LINHA INTEIRA vai medir, e quanto o vizinho mais curto vai ter de preencher.
+
+    Os vizinhos são blocos de texto e barra — o funil, a participação por canal,
+    o resumo de verba — e todos ficam entre 180 e 240px, porque são medidos em
+    `rem`. Uma altura só em `vh` descola disso: numa tela alta o gráfico ia a
+    500px e o vizinho ficava com 250px de preto dentro da própria caixa.
+
+    Por isso piso e teto são em `rem` — eles amarram o gráfico à mesma escala do
+    texto que ele acompanha, e o `vh` no meio só cede quando a tela é baixa. A
+    linha passa a terminar onde o conteúdo termina.
+  */
+  --h-grafico: clamp(10.5rem, 26vh, 25rem);
+
+  /*
+    Barra horizontal: a altura vem do NÚMERO DE FAIXAS, não da janela. Uma lista
+    de cinco plataformas não fica mais informativa ocupando 36vh — fica só mais
+    alta, e arrasta os cartões irmãos da linha junto, que é o que empurrava a
+    página para fora da tela.
+
+    Piso e teto em px porque `maxBarSize` do Recharts é px cravado: numa raiz
+    pequena, uma faixa só em `rem` ficaria menor que a própria barra.
+  */
+  --h-barra-faixa: clamp(26px, 3.1rem, 44px);
+  --h-barra-folga: clamp(12px, 1.25rem, 20px);
+
+  /*
+    Tabela: TETO, não piso.
+
+    Era `min-height`, e é a origem do sintoma mais óbvio do painel — a tabela de
+    duas linhas ocupando meia tela de preto. Uma lista não tem altura própria: a
+    altura dela é o número de linhas. O que ela precisa é de um limite para não
+    empurrar o resto da página quando são quarenta — e aí ela rola por dentro.
+  */
   --h-tabela: clamp(220px, 52vh, 720px);
+
+  /*
+    Galeria de criativos e peças. Teto próprio, mais alto que o da tabela: a
+    unidade aqui é um card de imagem de ~430px, e com o teto da tabela (52vh)
+    a segunda fileira aparecia fatiada ao meio — pior que não aparecer. Este
+    valor mostra duas fileiras inteiras na maioria das telas, e a rolagem
+    interna continua avisando que há mais.
+  */
+  --h-galeria: clamp(340px, 74vh, 1000px);
 }
 
 /*
@@ -272,7 +337,7 @@ body::after {
 */
 .rotulo {
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   font-size: var(--fs-rotulo);
   color: var(--ink-muted);
@@ -355,9 +420,15 @@ body::after {
 .recharts-surface:focus {
   outline: none;
 }
+/*
+  Esta regra vence o `fontSize` que o JS passa em cada eixo — atributo de
+  apresentação perde para CSS. Na prática TODO tick já renderizava no mesmo
+  tamanho, e os 10,5/12,5 espalhados pelo charts.tsx eram letra morta. Agora o
+  valor único vem da escala, então o eixo encolhe junto com o resto.
+*/
 .recharts-cartesian-axis-tick text {
   fill: var(--ink-muted);
-  font-size: 11px;
+  font-size: var(--fs-eixo);
 }
 .recharts-tooltip-wrapper {
   outline: none;

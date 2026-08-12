@@ -92,7 +92,7 @@ export default async function MetaResultados({
         <Pagina>
           <Secao>Retorno</Secao>
 
-          <div className="cartao grid grid-cols-2 items-center gap-4 px-4 py-4 sm:grid-cols-3 lg:grid-cols-[minmax(250px,1.1fr)_repeat(5,1fr)] lg:gap-5 lg:px-5">
+          <div className="cartao grid grid-cols-2 items-center gap-4 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] sm:grid-cols-3 lg:grid-cols-[minmax(16rem,1.1fr)_repeat(5,1fr)]">
             <Hero
               rotulo="Receita atribuída"
               valor={brl(t.purchaseValue)}
@@ -154,26 +154,30 @@ export default async function MetaResultados({
                   : "nenhum conjunto registrou venda no período"
               }
             >
-              <div className="h-[var(--h-grafico)]">
-                {receitaPorConjunto.length > 0 ? (
-                  <BarrasH dados={receitaPorConjunto} formato="brl" larguraRotulo={186} />
-                ) : (
+              {/* Sem altura no wrapper: com dado, quem dita é o número de
+                  faixas; sem dado, o estado vazio tem a altura dele. O
+                  `min-h-[--h-grafico]` sobra só para o vazio não virar uma
+                  tarja de duas linhas dentro de um cartão largo. */}
+              {receitaPorConjunto.length > 0 ? (
+                <BarrasH dados={receitaPorConjunto} formato="brl" larguraRotulo={186} />
+              ) : (
+                <div className="min-h-[var(--h-grafico)]">
                   <Vazio
                     titulo="Sem receita por conjunto"
                     descricao="As campanhas de alcance não geram venda direta. Quando as de conversão registrarem compras, a divisão por conjunto aparece aqui."
                   />
-                )}
-              </div>
+                </div>
+              )}
             </Cartao>
 
             <Cartao
               titulo="Detalhamento por conjunto"
               sub="Ordenado por receita · ROAS em verde quando passa de 1×"
             >
-              <div className="min-h-[var(--h-tabela)] flex-1 overflow-auto">
+              <div className="max-h-[var(--h-tabela)] overflow-auto">
               <table className="w-full" style={{ fontSize: "var(--fs-corpo)" }}>
                 <thead className="sticky top-0 bg-[var(--surface)]">
-                  <tr className="text-left uppercase tracking-[0.1em] text-[var(--ink-muted)] [font-size:var(--fs-micro)]">
+                  <tr className="text-left uppercase tracking-[0.08em] text-[var(--ink-muted)] [font-size:var(--fs-micro)]">
                     <th className="pb-2 pr-3 font-semibold">Conjunto</th>
                     <th className="pb-2 pr-3 text-right font-semibold">Investido</th>
                     <th className="pb-2 pr-3 text-right font-semibold">Receita</th>

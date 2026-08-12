@@ -75,7 +75,7 @@ export default async function GoogleAds({
         acoes={<Etiqueta variante="contorno">Conectado</Etiqueta>}
       >
         <Pagina>
-          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-4 py-4 sm:grid-cols-3 lg:grid-cols-[minmax(250px,1.1fr)_repeat(5,1fr)] lg:gap-5 lg:px-5">
+          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] sm:grid-cols-3 lg:grid-cols-[minmax(16rem,1.1fr)_repeat(5,1fr)]">
             <Hero rotulo="Investido" valor={brl(t.custo)} sub={`${janela} · BRL`} />
             <Stat
               rotulo="Receita"
@@ -136,10 +136,10 @@ export default async function GoogleAds({
 
           <div className="shrink-0">
             <Cartao className="min-w-0">
-              <div className="min-h-[var(--h-tabela)] flex-1 overflow-auto">
+              <div className="max-h-[var(--h-tabela)] overflow-auto">
                 <table className="w-full" style={{ fontSize: "var(--fs-corpo)" }}>
                   <thead>
-                    <tr className="text-left uppercase tracking-[0.1em] text-[var(--ink-muted)] [font-size:var(--fs-micro)]">
+                    <tr className="text-left uppercase tracking-[0.08em] text-[var(--ink-muted)] [font-size:var(--fs-micro)]">
                       <th className="pb-2 pr-3 font-semibold">Canal</th>
                       <th className="pb-2 pr-3 font-semibold">Campanha</th>
                       <th className="pb-2 pr-3 text-right font-semibold">Investido</th>

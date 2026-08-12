@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { ErroMeta, Shell, subtituloEscopo, Linha, Pagina } from "@/components/Shell";
-import { Cartao, Hero, Secao, Stat, Vazio } from "@/components/ui";
+import { Cartao, ComLeitura, Hero, Realce, Secao, Stat, Vazio } from "@/components/ui";
 import {
   AreaTempo,
   BarrasAgrupadas,
@@ -128,7 +128,7 @@ async function Comparativo({
     >
       <Pagina>
         <Secao>Resumo consolidado</Secao>
-        <div className="cartao grid grid-cols-2 items-center gap-4 px-4 py-4 sm:grid-cols-3 lg:grid-cols-[minmax(250px,1.15fr)_repeat(5,1fr)] lg:gap-5 lg:px-5">
+        <div className="cartao grid grid-cols-2 items-center gap-4 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] sm:grid-cols-3 lg:grid-cols-[minmax(16rem,1.15fr)_repeat(5,1fr)]">
           <Hero rotulo="Investimento total" valor={brl(t.spend)} sub={`${janela} · ${d.conta.currency}`} />
           <Stat rotulo="Impressões" valor={compact(t.impressions)} sub={`freq. ${dec(t.frequency)}`} />
           <Stat rotulo="Alcance" valor={compact(t.reach)} sub="pessoas únicas" />
@@ -217,10 +217,10 @@ async function Comparativo({
             titulo="Comparativo completo"
             sub="Todas as métricas lado a lado"
           >
-            <div className="min-h-[var(--h-tabela)] flex-1 overflow-auto">
+            <div className="max-h-[var(--h-tabela)] overflow-auto">
               <table className="w-full" style={{ fontSize: "var(--fs-corpo)" }}>
                 <thead className="sticky top-0 bg-[var(--surface)]">
-                  <tr className="text-left text-[var(--fs-corpo)] uppercase tracking-[0.1em] text-[var(--ink-muted)]">
+                  <tr className="text-left text-[var(--fs-corpo)] uppercase tracking-[0.08em] text-[var(--ink-muted)]">
                     <th className="pb-2 pr-2 font-semibold">Praça</th>
                     <th className="pb-2 pr-2 text-right font-semibold">Investido</th>
                     <th className="pb-2 pr-2 text-right font-semibold">Impressões</th>
@@ -327,6 +327,36 @@ async function PracaUnica({
     valor: p.impressions,
   }));
 
+  /*
+   * Leitura do funil: qual passagem perde mais gente.
+   *
+   * O gráfico mostra as cinco etapas e as taxas entre elas; o que ele NÃO diz
+   * é qual delas é o gargalo, porque comparar cinco porcentagens de cabeça é
+   * justamente o trabalho que o cartão deveria poupar. Aqui a maior queda vira
+   * frase, com o volume perdido em número absoluto — que é o que dimensiona o
+   * problema. Uma taxa de 15% não diz se são 30 pessoas ou 3 mil.
+   */
+  const gargalo = (() => {
+    if (funil.length < 2) return null;
+    let pior: { de: string; para: string; taxa: number; perdidos: number } | null = null;
+    for (let i = 1; i < funil.length; i++) {
+      const anterior = funil[i - 1];
+      const atual = funil[i];
+      if (anterior.valor <= 0) continue;
+      const taxa = (atual.valor / anterior.valor) * 100;
+      if (!pior || taxa < pior.taxa) {
+        pior = {
+          de: anterior.nome.toLowerCase(),
+          para: atual.nome.toLowerCase(),
+          taxa,
+          perdidos: anterior.valor - atual.valor,
+        };
+      }
+    }
+    // Funil sem estreitamento relevante não tem gargalo para apontar.
+    return pior && pior.taxa < 80 ? pior : null;
+  })();
+
   return (
     <Shell
       escopo={escopo}
@@ -335,7 +365,7 @@ async function PracaUnica({
     >
       <Pagina>
         <Secao>Resumo</Secao>
-        <div className="cartao grid grid-cols-2 items-center gap-4 px-4 py-4 sm:grid-cols-3 lg:grid-cols-[minmax(250px,1.15fr)_repeat(5,1fr)] lg:gap-5 lg:px-5">
+        <div className="cartao grid grid-cols-2 items-center gap-4 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] sm:grid-cols-3 lg:grid-cols-[minmax(16rem,1.15fr)_repeat(5,1fr)]">
           <Hero rotulo="Investido" valor={brl(t.spend)} sub={`${janela} · ${d.conta.currency}`} />
           <Stat rotulo="Impressões" valor={compact(t.impressions)} />
           <Stat rotulo="Alcance" valor={compact(t.reach)} sub={`freq. ${dec(t.frequency)}`} />
@@ -371,25 +401,39 @@ async function PracaUnica({
             titulo="Funil de conversão"
             sub="Eventos contados de forma independente pelo Meta"
           >
-            <div className="min-h-[var(--h-tabela)] flex-1 overflow-auto">
-              <Funil etapas={funil} cor={praca.cor} />
-            </div>
+            {/* `h-full`, não teto de tabela: o funil SABE se distribuir na
+                altura (é o `esticar` do componente). Preso a um `min-height` de
+                52vh ele empilhava as cinco etapas no topo e deixava o resto do
+                cartão preto — o vazio mais visível do dashboard. */}
+            <ComLeitura
+              leitura={
+                gargalo && (
+                  <>
+                    A maior perda está entre <Realce>{gargalo.de}</Realce> e{" "}
+                    <Realce>{gargalo.para}</Realce>: passam{" "}
+                    <Realce>{pct(gargalo.taxa, 1)}</Realce>, e{" "}
+                    <Realce>{int(gargalo.perdidos)}</Realce> pessoas ficam pelo caminho. É a etapa
+                    onde uma melhora rende mais do que aumentar a verba.
+                  </>
+                )
+              }
+            >
+              <Funil etapas={funil} cor={praca.cor} esticar={false} />
+            </ComLeitura>
           </Cartao>
         </Linha>
 
         <Secao>Entrega e verba</Secao>
         <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-3">
           <Cartao titulo="Onde as impressões acontecem" sub="Plataformas de veiculação">
-            <div className="h-[var(--h-grafico)]">
-              <BarrasH dados={plataformas} formato="int" corUnica="var(--seq-2)" larguraRotulo={104} />
-            </div>
+            <BarrasH dados={plataformas} formato="int" corUnica="var(--seq-2)" larguraRotulo={104} />
           </Cartao>
 
           <Cartao
             titulo="Orçamento"
             sub={orcamento > 0 ? "Consumo sobre o total contratado" : "Sem orçamento vitalício na campanha"}
           >
-            <div className="flex h-full flex-col justify-evenly gap-4">
+            <div className="flex h-full flex-col justify-center gap-4">
               {orcamento > 0 ? (
                 <>
                   <Medidor valor={t.spend} limite={orcamento} rotulo="Investimento vitalício" cor={praca.cor} />
@@ -415,7 +459,7 @@ async function PracaUnica({
             titulo="Destaques por ROAS"
             sub="O que mais devolveu por real investido"
           >
-            <div className="flex h-full flex-col justify-evenly gap-3">
+            <div className="flex h-full flex-col justify-center gap-3">
               <Destaque
                 rotulo="Top conjunto"
                 nome={topConjunto?.nome}
@@ -491,7 +535,7 @@ function Destaque({
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5">
           <span className="rotulo">{rotulo}</span>
-          <span className="text-[var(--fs-rotulo)] font-semibold uppercase tracking-[0.12em] text-[var(--ink-muted)]">
+          <span className="text-[var(--fs-rotulo)] font-semibold uppercase tracking-[0.08em] text-[var(--ink-muted)]">
             · {plataforma}
           </span>
         </div>

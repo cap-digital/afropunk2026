@@ -14,20 +14,98 @@ import { IconInbox, IconPointFilled, type TablerIcon } from "@tabler/icons-react
 export type Icone = TablerIcon;
 
 /**
+ * Leitura: a frase que o cartão diria em voz alta.
+ *
+ * Ocupa a folga do cartão curto — aquele que existe ao lado de um gráfico e
+ * sobrava vazio porque o irmão define a altura da linha. Em vez de esticar o
+ * conteúdo ou aceitar o vão, o espaço vira a interpretação do próprio número.
+ *
+ * Três regras, e elas são o que separa isto de texto de enfeite:
+ *
+ *  1. Só afirma o que está NA MESMA CAIXA. Toda frase daqui é conferível
+ *     olhando o gráfico ao lado — se precisar de um dado que não está na tela,
+ *     não entra.
+ *  2. É calculada no servidor, a partir dos números que a página já carregou.
+ *     Sem chamada nova, sem modelo de linguagem, sem número que ninguém possa
+ *     reproduzir.
+ *  3. Diz o que mudou ou o que destoa, não o que o gráfico já mostra. "Instagram
+ *     lidera" é legenda; "o Google entrou depois e já leva um terço da verba"
+ *     é leitura.
+ *
+ * Quando o dado não sustenta uma frase — canal sem veiculação, série de um dia
+ * só — quem chama passa `null` e o bloco não aparece. Silêncio é melhor que
+ * uma observação vazia ocupando espaço.
+ */
+export function Leitura({ children }: { children: ReactNode }) {
+  return (
+    <div className="mt-auto flex shrink-0 gap-2 border-t border-[var(--border)] pt-3">
+      <span
+        aria-hidden="true"
+        className="mt-[0.45em] block h-1.5 w-1.5 shrink-0 rotate-45 bg-[var(--ink-muted)]"
+      />
+      <p className="text-[var(--fs-corpo)] leading-relaxed text-[var(--ink-2)]">{children}</p>
+    </div>
+  );
+}
+
+/**
+ * Corpo de cartão que carrega uma leitura: o conteúdo centraliza no espaço que
+ * sobra e a leitura fica presa no rodapé. Sem isto, `justify-center` no pai
+ * centralizaria os dois juntos e a folga voltaria a se abrir em cima.
+ */
+export function ComLeitura({
+  children,
+  leitura,
+}: {
+  children: ReactNode;
+  /** `null` quando o dado não sustenta uma frase — o rodapé some junto. */
+  leitura: ReactNode | null;
+}) {
+  return (
+    <div className="flex h-full flex-col gap-4">
+      <div className="flex min-h-0 flex-1 flex-col justify-center gap-5">{children}</div>
+      {leitura && <Leitura>{leitura}</Leitura>}
+    </div>
+  );
+}
+
+/** Destaque de número dentro de uma leitura — tinta cheia, sem cor. */
+export function Realce({ children }: { children: ReactNode }) {
+  return <strong className="font-semibold text-[var(--ink)]">{children}</strong>;
+}
+
+/**
  * Faixa de seção — ícone, rótulo em caixa alta e filete até a margem.
  * Agrupa cartões em blocos nomeados e dá ritmo vertical à página.
  */
 export function Secao({ children, icone: Ic = IconPointFilled }: { children: ReactNode; icone?: Icone }) {
   return (
-    <div className="faixa-secao pt-0.5">
-      <Ic size="0.8125rem" stroke={2} className="shrink-0 text-[var(--ink-muted)]" aria-hidden="true" />
-      <h2 className="shrink-0 text-[var(--fs-rotulo)] font-semibold uppercase tracking-[0.18em] text-[var(--ink-2)]">
+    <div className="faixa-secao pt-1">
+      {/* Ícone à altura da letra, não maior que ela: em 0,8125rem o losango
+          crescia acima da caixa do texto e a faixa lia como dois elementos
+          soltos em vez de uma linha só. */}
+      <Ic size="0.6rem" stroke={2} className="shrink-0 text-[var(--ink-muted)]" aria-hidden="true" />
+      <h2 className="shrink-0 text-[var(--fs-rotulo)] font-semibold uppercase tracking-[0.16em] text-[var(--ink-2)]">
         {children}
       </h2>
     </div>
   );
 }
 
+/**
+ * Cartão: cabeçalho opcional com filete e um corpo.
+ *
+ * A altura vem do CONTEÚDO, nunca da janela — só o gráfico traz altura própria
+ * (`--h-grafico`), porque um SVG não tem altura natural. Tabela e galeria
+ * trazem TETO (`--h-tabela`, `--h-galeria`) e rolam por dentro quando passam.
+ *
+ * Cartões lado a lado se igualam em altura pelo `stretch` da grade, e é o que
+ * se quer — um par com as bases desencontradas fica torto. Quando um deles fica
+ * com folga, a regra é UMA: o conteúdo se agrupa e centraliza (`h-full` +
+ * `justify-center` + gap fixo). Nunca `justify-between`/`evenly`: distribuir na
+ * altura toda afasta os itens a ponto de deixarem de ler como um bloco só, e é
+ * assim que um funil de cinco etapas vira cinco medidores soltos.
+ */
 export function Cartao({
   children,
   className = "",
@@ -46,16 +124,19 @@ export function Cartao({
   return (
     <section className={`cartao flex flex-col overflow-hidden ${className}`}>
       {(titulo || acao) && (
+        /* Cabeçalho um pouco mais raso que o corpo: com o mesmo padding dos
+           dois lados do filete, uma faixa de duas linhas de texto ficava tão
+           alta quanto o gráfico que ela nomeia. */
         <header
           className="cartao-cabecalho flex shrink-0 items-start justify-between gap-3"
-          style={{ padding: "var(--esp-cartao-y) var(--esp-cartao-x)" }}
+          style={{ padding: "calc(var(--esp-cartao-y) * 0.82) var(--esp-cartao-x)" }}
         >
           <div className="flex min-w-0 items-start gap-2">
             {Ic && (
               <Ic
-                size="0.9375rem"
+                size="0.875rem"
                 stroke={1.8}
-                className="mt-[1px] shrink-0 text-[var(--ink-muted)]"
+                className="mt-[0.12em] shrink-0 text-[var(--ink-muted)]"
                 aria-hidden="true"
               />
             )}
@@ -201,11 +282,23 @@ export function Etiqueta({
   tom?: TomEtiqueta;
   variante?: "solida" | "contorno";
 }) {
+  /*
+   * Etiqueta é anotação, não manchete.
+   *
+   * Ela vinha com o mesmo peso de caixa de um título: `px-2 py-[2px]` e 0,1em
+   * de tracking sobre um corpo de 6px inflam a pílula muito além do que a
+   * palavra ocupa — "ATIVO" saía do tamanho de "META ADS", que é o nome do
+   * canal. O que encolhe aqui é a CAIXA e o espacejamento, não a legibilidade:
+   * o corpo do texto continua o mesmo, e `leading-[1.35]` garante que cedilha e
+   * til não sejam cortados como já aconteceu nos títulos.
+   */
   const t = TOM[tom];
+  const base =
+    "inline-flex shrink-0 items-center whitespace-nowrap rounded px-1.5 py-px text-[var(--fs-micro)] font-semibold uppercase leading-[1.35] tracking-[0.06em]";
   if (variante === "contorno") {
     return (
       <span
-        className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md border px-2 py-[2px] text-[var(--fs-micro)] font-semibold uppercase tracking-[0.1em]"
+        className={`${base} gap-1.5 border`}
         style={{ borderColor: t.bdr, background: t.bg, color: t.cor }}
       >
         {children}
@@ -213,10 +306,7 @@ export function Etiqueta({
     );
   }
   return (
-    <span
-      className="inline-flex shrink-0 items-center whitespace-nowrap rounded-md px-2 py-[2px] text-[var(--fs-micro)] font-semibold uppercase tracking-[0.1em] text-black"
-      style={{ background: t.cor }}
-    >
+    <span className={`${base} text-black`} style={{ background: t.cor }}>
       {children}
     </span>
   );
@@ -225,9 +315,9 @@ export function Etiqueta({
 /** Status com ícone + rótulo — cor nunca carrega o significado sozinha. */
 export function StatusAtivo({ ativo }: { ativo: boolean }) {
   return (
-    <span className="inline-flex items-center gap-1.5 text-[var(--fs-rotulo)] font-semibold uppercase tracking-[0.12em]">
+    <span className="inline-flex items-center gap-1 text-[var(--fs-micro)] font-semibold uppercase tracking-[0.06em]">
       <IconPointFilled
-        size="0.75rem"
+        size="0.6rem"
         aria-hidden="true"
         style={{ color: ativo ? "var(--good)" : "var(--ink-muted)" }}
       />

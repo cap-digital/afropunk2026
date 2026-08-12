@@ -94,7 +94,7 @@ export default async function Segmentacao({
         sub={subtituloEscopo(escopo, `${d.cidades.length} cidades com entrega`)}
       >
         <Pagina>
-          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-4 py-4 sm:grid-cols-3 lg:grid-cols-[minmax(240px,1.1fr)_repeat(4,1fr)] lg:gap-5 lg:px-5">
+          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] sm:grid-cols-3 lg:grid-cols-[minmax(15.5rem,1.1fr)_repeat(4,1fr)]">
             <Hero
               rotulo="Investido"
               valor={brl(t.custo)}
@@ -135,7 +135,11 @@ export default async function Segmentacao({
               sub="Faixas de 3 horas — só dias com entrega"
               className="min-h-0"
             >
-              <div className="h-[var(--h-grafico)]">
+              {/* Uma linha por dia: aqui o número de faixas cresce com o
+                  recorte, então o mapa ganha o mesmo tratamento de uma lista
+                  longa — teto e rolagem por dentro, em vez de comprimir os dias
+                  até a faixa ficar ilegível. */}
+              <div className="max-h-[var(--h-tabela)] overflow-y-auto">
                 <MapaCalor
                   linhas={diasComDado}
                   colunas={FAIXAS.map((f) => f.rotulo)}
@@ -151,14 +155,12 @@ export default async function Segmentacao({
               sub="Localização de quem viu o anúncio"
               className="min-h-0"
             >
-              <div className="h-[var(--h-grafico)]">
-                <BarrasH
-                  dados={cidadesGrafico}
-                  formato="brl"
-                  larguraRotulo={112}
-                  corUnica="var(--par-a)"
-                />
-              </div>
+              <BarrasH
+                dados={cidadesGrafico}
+                formato="brl"
+                larguraRotulo={112}
+                corUnica="var(--par-a)"
+              />
             </Cartao>
           </Linha>
 
@@ -175,7 +177,7 @@ export default async function Segmentacao({
             <Cartao className="min-w-0">
               <table className="w-full" style={{ fontSize: "var(--fs-corpo)" }}>
                 <thead>
-                  <tr className="text-left uppercase tracking-[0.1em] text-[var(--ink-muted)] [font-size:var(--fs-micro)]">
+                  <tr className="text-left uppercase tracking-[0.08em] text-[var(--ink-muted)] [font-size:var(--fs-micro)]">
                     <th className="pb-2 pr-3 font-semibold">Aparelho</th>
                     <th className="pb-2 pr-3 text-right font-semibold">Investido</th>
                     <th className="pb-2 pr-3 text-right font-semibold">Cliques</th>

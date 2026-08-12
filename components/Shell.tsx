@@ -90,28 +90,34 @@ export function Pagina({ children }: { children: ReactNode }) {
    * A versão anterior fixava a coluna em `h-full` para que tudo coubesse numa
    * tela. Isso obrigava todo cartão a caber à força, e o que não cabia sumia
    * cortado. Como a altura da janela, o zoom, o volume de dado e o comprimento
-   * do texto variam todos ao mesmo tempo, a conta nunca fecha para todo mundo:
-   * cada correção ensinava UM componente a ceder e deixava os outros quebrados.
+   * do texto variam todos ao mesmo tempo, a conta nunca fecha para todo mundo.
    *
-   * Agora o gráfico tem altura própria (--h-grafico), o cartão tem a altura do
-   * conteúdo, e a página rola quando precisa. Nada depende do vizinho.
+   * Depois veio `min-h-full` + `flex-1` nas linhas, para não sobrar faixa preta
+   * embaixo quando o conteúdo é curto. Trocou um defeito por outro, e por um
+   * pior: a linha esticava até a janela e o cartão junto, mas o conteúdo dele
+   * não — funil de cinco barras em caixa de 900px, tabela de duas linhas em
+   * meia tela de preto. Preencher a tela virou o objetivo, e a proporção entre
+   * caixa e conteúdo, o preço.
    *
-   * `min-h-full` para não sobrar faixa preta embaixo quando o conteúdo é curto:
-   * a coluna cresce até a janela e o último bloco flexível ocupa a folga. Isso
-   * era arriscado antes — era o `flex-1` que fazia o gráfico derreter — mas com
-   * altura definida no gráfico o crescimento do pai não realimenta mais nada.
+   * Faixa preta embaixo não é defeito: é a página acabando. Aqui a coluna tem a
+   * altura do que carrega, cada cartão tem a altura do próprio conteúdo, e a
+   * página rola quando precisa. Nada depende do vizinho nem da janela.
    */
   return (
-    <div className="flex flex-col lg:min-h-full" style={{ gap: "var(--esp-coluna)" }}>
+    <div className="flex flex-col pb-1" style={{ gap: "var(--esp-coluna)" }}>
       {children}
     </div>
   );
 }
 
 /**
- * Linha de cartões lado a lado. Cresce para ocupar a folga da coluna — é o que
- * elimina a faixa preta no rodapé quando o conteúdo é curto. O gráfico dentro
- * dela tem altura própria, então crescer aqui não volta a derreter nada.
+ * Linha de cartões lado a lado.
+ *
+ * Não cresce mais para ocupar a folga da coluna: era esse `flex-1` que esticava
+ * o cartão sem esticar o conteúdo dele. Os cartões irmãos continuam se
+ * igualando em altura — isso é o `stretch` natural do grid/flex e é o que se
+ * quer, um par de cartões lado a lado com bases desalinhadas fica torto. O que
+ * sai é só a amarração à altura da JANELA.
  */
 export function Linha({
   children,
@@ -123,10 +129,9 @@ export function Linha({
   /*
    * Sem `lg:flex` aqui: quem chama passa `grid` no className, e `display:flex`
    * sobrepunha o grid — as colunas perdiam o dimensionamento e os cartões
-   * vazavam para fora da tela. O display é decisão de quem usa; esta função só
-   * empresta a capacidade de crescer.
+   * vazavam para fora da tela. O display é decisão de quem usa.
    */
-  return <div className={`lg:min-h-0 lg:flex-1 ${className}`}>{children}</div>;
+  return <div className={`min-w-0 ${className}`}>{children}</div>;
 }
 
 /** Faixa de erro da Marketing API — mostra o que fazer. */
@@ -188,7 +193,7 @@ export function ShellAnalytics({
             <span className="marca min-w-0 flex-1 truncate text-[var(--fs-md)] text-[var(--ink)]">
               Site AFROPUNK
             </span>
-            <span className="shrink-0 text-[var(--fs-rotulo)] font-semibold uppercase tracking-[0.14em] text-[var(--ink-muted)] transition-colors group-hover:text-[var(--ink)]">
+            <span className="shrink-0 text-[var(--fs-rotulo)] font-semibold uppercase tracking-[0.08em] text-[var(--ink-muted)] transition-colors group-hover:text-[var(--ink)]">
               sair
             </span>
           </Link>

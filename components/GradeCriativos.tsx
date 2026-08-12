@@ -38,7 +38,7 @@ export function GradeCriativos({ criativos }: { criativos: Criativo[] }) {
               type="button"
               onClick={() => setOrdem(m.chave)}
               aria-pressed={ativo}
-              className={`rounded-md border px-2 py-[5px] text-[var(--fs-corpo)] font-semibold uppercase tracking-[0.1em] transition-colors ${
+              className={`rounded-md border px-2 py-[5px] text-[var(--fs-corpo)] font-semibold uppercase tracking-[0.08em] transition-colors ${
                 ativo
                   ? "border-[var(--ink)] bg-[var(--ink)] text-black"
                   : "border-[var(--border-forte)] text-[var(--ink-2)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
@@ -50,7 +50,7 @@ export function GradeCriativos({ criativos }: { criativos: Criativo[] }) {
         })}
       </div>
 
-      <div className="min-h-[var(--h-tabela)] flex-1 overflow-auto pr-1">
+      <div className="max-h-[var(--h-galeria)] overflow-auto pr-1">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
           {daPagina.map((c, i) => (
             <CartaoCriativo

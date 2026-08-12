@@ -1,10 +1,10 @@
 import { ErroGA4, Linha, Pagina, ShellAnalytics } from "@/components/Shell";
-import { Cartao, Hero, Secao, Stat } from "@/components/ui";
+import { Cartao, ComLeitura, Hero, Realce, Secao, Stat } from "@/components/ui";
 import { BarrasH, EmpilhadaTotal, type PontoGrafico } from "@/components/charts";
 import { carregarAquisicaoGA4, type LinhaCanal } from "@/lib/analytics";
 import { explicarErroGA4, GA4Error, REVALIDATE_GA4, ROTULO_PADRAO } from "@/lib/ga4";
 import { periodoDeParams, rotuloPeriodo, type ParamsBusca } from "@/lib/periodo";
-import { brl, brlCompact, compact, pct } from "@/lib/format";
+import { brl, brlCompact, compact, dec, pct } from "@/lib/format";
 
 export const revalidate = REVALIDATE_GA4;
 
@@ -34,6 +34,34 @@ export default async function AnalyticsAquisicao({
       .slice(0, 8)
       .map((c) => ({ nome: c.nome, valor: c.receita }));
 
+    /*
+     * Leitura do cartão de dispositivos: onde o volume está × onde a compra
+     * acontece. É a tensão que as duas metades do cartão mostram lado a lado e
+     * ninguém soma de cabeça — a barra de cima é sessão, a lista de baixo é
+     * conversão, e quase sempre elas apontam para lados opostos.
+     *
+     * Só aparece com dois dispositivos convertendo: comparar taxa de conversão
+     * exige ter com o quê comparar.
+     */
+    const leituraDispositivos = (() => {
+      const comVenda = d.dispositivos.filter((x) => x.transacoes > 0 && x.sessoes > 0);
+      if (comVenda.length < 2) return null;
+      const totalSessoes = d.dispositivos.reduce((a, x) => a + x.sessoes, 0);
+      if (totalSessoes <= 0) return null;
+      const maisTrafego = [...comVenda].sort((a, b) => b.sessoes - a.sessoes)[0];
+      const melhorTaxa = [...comVenda].sort((a, b) => b.taxaConversao - a.taxaConversao)[0];
+      // Mesmo aparelho lidera os dois: não há descompasso para narrar.
+      if (maisTrafego.nome === melhorTaxa.nome) return null;
+      return {
+        maisTrafego,
+        melhorTaxa,
+        shareTrafego: (maisTrafego.sessoes / totalSessoes) * 100,
+        vezes: maisTrafego.taxaConversao > 0
+          ? melhorTaxa.taxaConversao / maisTrafego.taxaConversao
+          : 0,
+      };
+    })();
+
     // Origens vêm de UTM e chegam com o nome inteiro da campanha; sem corte
     // os rótulos quebram em várias linhas e se sobrepõem.
     const encurtar = (n: string) => (n.length > 30 ? `${n.slice(0, 29)}…` : n);
@@ -56,7 +84,7 @@ export default async function AnalyticsAquisicao({
         <Pagina>
           <Secao>Origem do tráfego</Secao>
 
-          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-4 py-4 sm:grid-cols-3 lg:grid-cols-[minmax(250px,1.1fr)_repeat(4,1fr)] lg:gap-5 lg:px-5">
+          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] sm:grid-cols-3 lg:grid-cols-[minmax(16rem,1.1fr)_repeat(4,1fr)]">
             <Hero
               rotulo="Sessões"
               valor={compact(t.sessoes)}
@@ -100,29 +128,25 @@ export default async function AnalyticsAquisicao({
               titulo="Sessões por canal"
               sub="Agrupamento padrão do GA4"
             >
-              <div className="h-[var(--h-grafico)]">
-                <BarrasH dados={canaisSessoes} formato="int" larguraRotulo={132} />
-              </div>
+              <BarrasH dados={canaisSessoes} formato="int" larguraRotulo={132} />
             </Cartao>
 
             <Cartao
               titulo="Receita por canal"
               sub="Só canais que geraram venda"
             >
-              <div className="h-[var(--h-grafico)]">
-                {canaisReceita.length > 0 ? (
-                  <BarrasH
-                    dados={canaisReceita}
-                    formato="brl"
-                    corUnica="var(--par-a)"
-                    larguraRotulo={132}
-                  />
-                ) : (
-                  <p className="pt-8 text-center text-[var(--fs-corpo-2)] text-[var(--ink-muted)]">
-                    Nenhum canal registrou receita neste recorte.
-                  </p>
-                )}
-              </div>
+              {canaisReceita.length > 0 ? (
+                <BarrasH
+                  dados={canaisReceita}
+                  formato="brl"
+                  corUnica="var(--par-a)"
+                  larguraRotulo={132}
+                />
+              ) : (
+                <p className="py-8 text-center text-[var(--fs-corpo-2)] text-[var(--ink-muted)]">
+                  Nenhum canal registrou receita neste recorte.
+                </p>
+              )}
             </Cartao>
           </Linha>
 
@@ -133,21 +157,35 @@ export default async function AnalyticsAquisicao({
               titulo="Origem e mídia"
               sub="A fonte exata, antes do agrupamento em canais"
             >
-              <div className="h-[var(--h-grafico)]">
-                <BarrasH
-                  dados={origens}
-                  formato="int"
-                  corUnica="var(--seq-2)"
-                  larguraRotulo={170}
-                />
-              </div>
+              <BarrasH
+                dados={origens}
+                formato="int"
+                corUnica="var(--seq-2)"
+                larguraRotulo={170}
+              />
             </Cartao>
 
             <Cartao
               titulo="Dispositivos"
               sub="Onde o público navega"
             >
-              <div className="flex h-full flex-col justify-evenly gap-5">
+              <ComLeitura
+                leitura={
+                  leituraDispositivos && (
+                    <>
+                      O <Realce>{leituraDispositivos.maisTrafego.nome}</Realce> traz{" "}
+                      <Realce>{pct(leituraDispositivos.shareTrafego, 1)}</Realce> das sessões, mas
+                      quem converte melhor é o{" "}
+                      <Realce>{leituraDispositivos.melhorTaxa.nome}</Realce>:{" "}
+                      <Realce>{pct(leituraDispositivos.melhorTaxa.taxaConversao, 2)}</Realce> contra{" "}
+                      <Realce>{pct(leituraDispositivos.maisTrafego.taxaConversao, 2)}</Realce>
+                      {leituraDispositivos.vezes >= 1.3
+                        ? ` — ${dec(leituraDispositivos.vezes)}× mais.`
+                        : "."}
+                    </>
+                  )
+                }
+              >
                 <EmpilhadaTotal
                   segmentos={d.dispositivos.slice(0, 3).map((x, i) => ({
                     nome: x.nome,
@@ -172,7 +210,7 @@ export default async function AnalyticsAquisicao({
                       </div>
                     ))}
                 </div>
-              </div>
+              </ComLeitura>
             </Cartao>
           </Linha>
         </Pagina>

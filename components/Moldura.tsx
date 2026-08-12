@@ -80,7 +80,13 @@ export function Moldura({
           aberto ? "translate-x-0" : "-translate-x-[115%] lg:translate-x-0"
         } ${colapsada ? "lg:hidden" : ""}`}
       >
-        <div className="relative flex h-[3.75rem] shrink-0 items-center justify-center border-b border-[var(--border)] px-3">
+        {/* Mesma altura do cabeçalho (--h-chrome): a divisória da lateral e a
+            base do cabeçalho passam a correr na mesma linha, e a moldura lê
+            como uma só peça em vez de dois painéis desencontrados. */}
+        <div
+          className="relative flex shrink-0 items-center justify-center border-b border-[var(--border)]"
+          style={{ height: "var(--h-chrome)", paddingInline: "var(--esp-chrome-x)" }}
+        >
           <Marca tamanho="sm" href="/" />
           <button
             type="button"
@@ -104,10 +110,13 @@ export function Moldura({
           </button>
         </div>
 
-        <div className="shrink-0 border-b border-[var(--border)] px-3 py-3.5">
+        <div
+          className="shrink-0 border-b border-[var(--border)]"
+          style={{ padding: "var(--esp-chrome-y) var(--esp-chrome-x)" }}
+        >
           {contexto ?? (
             <>
-              <p className="rotulo px-1 pb-2">Praça</p>
+              <p className="rotulo pb-2">Praça</p>
               <Link
                 href="/"
                 title="Trocar de praça"
@@ -152,7 +161,10 @@ export function Moldura({
 
         {/* Assinatura: as duas marcas, com o mesmo filete que separa no rodapé
             da capa. Recortadas na caixa dos glifos, então batem em altura. */}
-        <div className="flex shrink-0 items-center justify-center gap-2.5 border-t border-[var(--border)] px-4 py-3.5">
+        <div
+          className="flex shrink-0 items-center justify-center gap-2.5 border-t border-[var(--border)]"
+          style={{ padding: "var(--esp-chrome-y) var(--esp-chrome-x)" }}
+        >
           <Image
             src="/capco.png"
             alt="CAP.CO"
@@ -187,17 +199,26 @@ export function Moldura({
         >
           <span className="marca-dagua text-[15rem]">{uf}</span>
         </span>
-        <header className="painel flex min-h-[3.5rem] shrink-0 flex-wrap items-center justify-between gap-3 px-3.5 py-2.5 lg:h-[3.5rem] lg:flex-nowrap lg:px-5 lg:py-0">
+        {/* Altura vinda do token, e com padding vertical de verdade: cravado em
+            3,5rem, o bloco título+subtítulo deixava ~4px de folga em cima e
+            embaixo e o texto encostava nas bordas do painel. */}
+        <header
+          className="painel flex shrink-0 flex-wrap items-center justify-between gap-3 lg:flex-nowrap"
+          style={{
+            minHeight: "var(--h-chrome)",
+            padding: "var(--esp-chrome-y) var(--esp-chrome-x)",
+          }}
+        >
           <div className="flex min-w-0 items-center gap-2.5">
             <button
               type="button"
               onClick={() => (colapsada ? alternarColapso() : setAberto(true))}
               aria-label="Abrir menu"
-              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--border-forte)] text-[var(--ink-2)] transition-colors hover:text-[var(--ink)] ${
+              className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[var(--border-forte)] text-[var(--ink-2)] transition-colors hover:text-[var(--ink)] ${
                 colapsada ? "" : "lg:hidden"
               }`}
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+              <svg width="13" height="13" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
                 <path d="M4 7h16M4 12h16M4 17h16" />
               </svg>
             </button>
@@ -209,21 +230,24 @@ export function Moldura({
             />
             <div className="min-w-0">
               {/* Mesma razão da praça na lateral: com `leading-none`, "SEGMENTAÇÃO"
-                  e "VISÃO GERAL" perdiam o til dentro do `truncate`. */}
-              <h1 className="marca truncate text-[var(--fs-md)] leading-[1.2] lg:text-[var(--fs-kpi)]">{titulo}</h1>
+                  e "VISÃO GERAL" perdiam o til dentro do `truncate`.
+                  `--fs-lg` e não `--fs-kpi`: o título da página estava saindo
+                  MENOR que os botões ao lado, que são cromo. Quem lidera a
+                  faixa é o nome da página. */}
+              <h1 className="marca truncate text-[var(--fs-corpo-2)] leading-[1.2] lg:text-[var(--fs-lg)]">{titulo}</h1>
               {sub && (
-                <div className="mt-1.5 truncate text-[var(--fs-micro)] uppercase tracking-[0.08em] leading-none text-[var(--ink-muted)]">
+                <div className="mt-1 truncate text-[var(--fs-micro)] uppercase tracking-[0.08em] leading-[1.3] text-[var(--ink-muted)]">
                   {sub}
                 </div>
               )}
             </div>
           </div>
-          <div className="flex shrink-0 items-center gap-2 lg:gap-3">
+          <div className="flex shrink-0 items-center gap-2">
             <span className="hidden lg:block">{acoes}</span>
             {/* useSearchParams exige fronteira de Suspense em página estática */}
             <Suspense
               fallback={
-                <span className="h-[1.875rem] w-[5.75rem] rounded-lg border border-[var(--border-forte)]" />
+                <span className="h-[1.7rem] w-[5.25rem] rounded-lg border border-[var(--border-forte)]" />
               }
             >
               <FiltroPeriodo />
@@ -239,8 +263,11 @@ export function Moldura({
         {/* `overflow-x-hidden`: nada deve rolar na horizontal, nunca. O eixo
             vertical rola só como rede de segurança — se tudo couber, e é o
             caso hoje, nenhuma barra aparece. */}
+        {/* Sem `h-full` no filho: era ele que passava a altura da janela adiante
+            para `Pagina` esticar as linhas. A área rola; o conteúdo tem a
+            altura que tem. */}
         <main className="relative z-[1] min-h-0 flex-1 lg:overflow-y-auto lg:overflow-x-hidden">
-          <div className="lg:h-full">{children}</div>
+          {children}
         </main>
       </div>
     </div>

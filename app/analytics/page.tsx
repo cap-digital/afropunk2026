@@ -49,7 +49,7 @@ export default async function AnalyticsVisaoGeral({
         <Pagina>
           <Secao>Comportamento do site</Secao>
 
-          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-4 py-4 sm:grid-cols-3 lg:grid-cols-[minmax(250px,1.1fr)_repeat(5,1fr)] lg:gap-5 lg:px-5">
+          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] sm:grid-cols-3 lg:grid-cols-[minmax(16rem,1.1fr)_repeat(5,1fr)]">
             <Hero
               rotulo="Sessões"
               valor={compact(t.sessoes)}
@@ -94,7 +94,10 @@ export default async function AnalyticsVisaoGeral({
               titulo="Funil do site"
               sub="Da sessão à compra · etapas do e-commerce"
             >
-              <div className="min-h-[var(--h-tabela)] flex-1 overflow-auto pr-1">
+              {/* `h-full` e não teto de tabela: o funil se centraliza sozinho na
+                  altura do cartão. Com `max-height` ele ancorava no topo e
+                  deixava metade da caixa vazia. */}
+              <div className="h-full">
                 {/* Etapa zerada fica fora: linha vazia não informa nada. */}
                 <Funil etapas={d.funil.filter((e) => e.valor > 0)} cor="var(--seq-3)" />
               </div>

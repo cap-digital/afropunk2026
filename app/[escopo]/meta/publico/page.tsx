@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { ErroMeta, Linha, Pagina, Shell, subtituloEscopo } from "@/components/Shell";
-import { Cartao, Secao, Stat, Vazio } from "@/components/ui";
+import { Cartao, ComLeitura, Realce, Secao, Stat, Vazio } from "@/components/ui";
 import { BarrasAgrupadas, BarrasH, EmpilhadaTotal, Piramide, type PontoGrafico } from "@/components/charts";
 import { carregarBreakdowns, carregarEscopo } from "@/lib/dados";
 import { periodoDeParams, type ParamsBusca } from "@/lib/periodo";
@@ -81,6 +81,26 @@ export default async function MetaPublico({
       .sort((a, b) => b.total - a.total);
     const totalImpr = porFaixa.reduce((a, f) => a + f.total, 0) || 1;
 
+    /*
+     * Leitura do cartão de gênero: concentração.
+     *
+     * O cartão mostra duas divisões — gênero em cima, faixa etária embaixo — e
+     * a conclusão útil não está em nenhuma das duas sozinha: é quanto do público
+     * cabe numa faixa só, porque é isso que decide se vale segmentar mais fino
+     * ou se a campanha já está falando com quem devia.
+     */
+    const leituraPerfil = (() => {
+      const topo = porFaixa[0];
+      if (!topo || totalImpr <= 1) return null;
+      const shareTopo = (topo.total / totalImpr) * 100;
+      const duasPrimeiras = porFaixa
+        .slice(0, 2)
+        .reduce((acc, f) => acc + (f.total / totalImpr) * 100, 0);
+      const genero = totalF >= totalM ? "feminino" : "masculino";
+      const shareGenero = (Math.max(totalF, totalM) / totalGen) * 100;
+      return { topo, shareTopo, duasPrimeiras, genero, shareGenero };
+    })();
+
     const dispositivos: PontoGrafico[] = bd.dispositivos.slice(0, 6).map((r) => ({
       nome: DISPOSITIVO_LABEL[r.chave] ?? r.chave,
       valor: r.impressions,
@@ -116,7 +136,7 @@ export default async function MetaPublico({
         <Pagina>
           <Secao>Quem está sendo alcançado</Secao>
 
-          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-4 py-4 sm:grid-cols-3 lg:grid-cols-5 lg:gap-5 lg:px-5">
+          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] sm:grid-cols-3 lg:grid-cols-5">
             <Stat
               rotulo="Faixa dominante"
               valor={porFaixa[0]?.faixa ?? "—"}
@@ -159,7 +179,20 @@ export default async function MetaPublico({
                   <BarrasAgrupadas dados={perfilPorBucket} series={seriesBuckets} formato="pct" />
                 </div>
               ) : (
-                <div className="flex h-full flex-col justify-center gap-5">
+                <ComLeitura
+                  leitura={
+                    leituraPerfil && (
+                      <>
+                        Público concentrado: <Realce>{leituraPerfil.topo.faixa}</Realce> responde
+                        por <Realce>{pct(leituraPerfil.shareTopo, 1)}</Realce> das impressões, e as
+                        duas primeiras faixas somam{" "}
+                        <Realce>{pct(leituraPerfil.duasPrimeiras, 1)}</Realce>. O corte de gênero é
+                        mais suave — <Realce>{pct(leituraPerfil.shareGenero, 1)}</Realce>{" "}
+                        {leituraPerfil.genero}.
+                      </>
+                    )
+                  }
+                >
                   <EmpilhadaTotal
                     segmentos={[
                       { nome: "Feminino", valor: totalF, cor: "var(--par-a)" },
@@ -188,7 +221,7 @@ export default async function MetaPublico({
                       </div>
                     ))}
                   </div>
-                </div>
+                </ComLeitura>
               )}
             </Cartao>
           </Linha>
@@ -205,9 +238,7 @@ export default async function MetaPublico({
                 titulo="Regiões"
                 sub="Impressões por estado — a segmentação geográfica em prática"
               >
-                <div className="h-[var(--h-grafico)]">
-                  <BarrasH dados={regioes} formato="int" corUnica="var(--seq-2)" larguraRotulo={132} />
-                </div>
+                <BarrasH dados={regioes} formato="int" corUnica="var(--seq-2)" larguraRotulo={132} />
               </Cartao>
             )}
 
@@ -219,9 +250,7 @@ export default async function MetaPublico({
                   : `Aparelho usado para ver o anúncio · ${d.praca?.uf ?? ""} concentra toda a entrega`
               }
             >
-              <div className="h-[var(--h-grafico)]">
-                <BarrasH dados={dispositivos} formato="int" corUnica="var(--seq-3)" larguraRotulo={120} />
-              </div>
+              <BarrasH dados={dispositivos} formato="int" corUnica="var(--seq-3)" larguraRotulo={120} />
             </Cartao>
           </Linha>
         </Pagina>

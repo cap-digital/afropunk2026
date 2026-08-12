@@ -39,7 +39,7 @@ export default async function AnalyticsVendas({
         <Pagina>
           <Secao>Receita do site</Secao>
 
-          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-4 py-4 sm:grid-cols-3 lg:grid-cols-[minmax(250px,1.1fr)_repeat(4,1fr)] lg:gap-5 lg:px-5">
+          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] sm:grid-cols-3 lg:grid-cols-[minmax(16rem,1.1fr)_repeat(4,1fr)]">
             <Hero
               rotulo="Receita em ingressos"
               valor={brlCompact(receitaTotal)}
@@ -70,10 +70,8 @@ export default async function AnalyticsVendas({
                 sub="Cor identifica a praça"
                
               >
-                <div className="flex h-full flex-col justify-evenly gap-4">
-                  <div className="h-[58%]">
-                    <BarrasH dados={receitaBarras} formato="brl" larguraRotulo={132} />
-                  </div>
+                <div className="flex h-full flex-col justify-center gap-4">
+                  <BarrasH dados={receitaBarras} formato="brl" larguraRotulo={132} />
                   <EmpilhadaTotal
                     segmentos={d.eventos.map((e) => ({
                       nome: e.bucket?.nome ?? e.itemName,

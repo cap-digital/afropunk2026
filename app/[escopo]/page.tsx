@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ErroMeta, Linha, Pagina, Shell, subtituloEscopo } from "@/components/Shell";
-import { Cartao, Etiqueta, Hero, Secao, Stat } from "@/components/ui";
+import { Cartao, ComLeitura, Etiqueta, Hero, Realce, Secao, Stat } from "@/components/ui";
 import { AreaTempo, EmpilhadaTotal, type PontoGrafico } from "@/components/charts";
 import { carregarEscopo } from "@/lib/dados";
 import { carregarAds, METRICAS_ADS_ZERO, tentarAds } from "@/lib/ads";
@@ -125,6 +125,32 @@ export default async function VisaoGeralGlobal({
         ? `${diaMesCurto(d.primeiroDia)} – ${diaMesCurto(d.ultimoDia)}`
         : "sem dados";
 
+    /*
+     * Leitura do cartão de participação: onde a fatia de RECEITA descola da
+     * fatia de INVESTIMENTO. É a pergunta que o subtítulo do cartão faz, e a
+     * única coisa que as três faixas juntas respondem e nenhuma sozinha.
+     *
+     * Só existe com os dois canais no ar e com receita registrada: com um canal
+     * só a comparação é ele contra nada, e a frase viraria enfeite.
+     */
+    const leituraParticipacao = (() => {
+      if (conectados.length < 2 || receita <= 0 || investimento <= 0) return null;
+      const comShare = conectados.map((c) => ({
+        nome: c.nome,
+        shareInv: (c.investimento / investimento) * 100,
+        shareRec: (c.receita / receita) * 100,
+      }));
+      // O que mais devolve acima do que consome — maior distância entre as duas fatias.
+      const lider = [...comShare].sort(
+        (a, b) => b.shareRec - b.shareInv - (a.shareRec - a.shareInv),
+      )[0];
+      const folga = lider.shareRec - lider.shareInv;
+      // Fatias praticamente iguais: não há descolamento para narrar.
+      if (folga < 3) return null;
+      const outro = comShare.find((c) => c.nome !== lider.nome);
+      return { lider, folga, outro };
+    })();
+
     // Série diária unificada: a união das datas dos dois canais, para que o
     // início mais tardio do Google não corte o histórico do Meta.
     const custoGooglePorDia = new Map(
@@ -153,7 +179,10 @@ export default async function VisaoGeralGlobal({
         <Pagina>
           <Secao>Consolidado de mídia</Secao>
 
-          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-4 py-4 sm:grid-cols-3 lg:grid-cols-[minmax(250px,1.1fr)_repeat(5,1fr)] lg:gap-5 lg:px-5">
+          <div
+            className="cartao grid shrink-0 grid-cols-2 items-center gap-4 sm:grid-cols-3 lg:grid-cols-[minmax(15.5rem,1.1fr)_repeat(5,1fr)]"
+            style={{ padding: "var(--esp-cartao-y) var(--esp-cartao-x)" }}
+          >
             <Hero
               rotulo="Investimento total"
               valor={brl(investimento)}
@@ -190,7 +219,7 @@ export default async function VisaoGeralGlobal({
                 <Link
                   key={c.slug}
                   href={c.href}
-                  className="cartao group flex flex-col gap-3 px-5 py-4 transition-colors hover:border-[var(--border-forte)]"
+                  className="cartao group flex flex-col gap-3 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] transition-colors hover:border-[var(--border-forte)]"
                 >
                   <div className="flex items-center gap-2.5">
                     <span
@@ -283,14 +312,36 @@ export default async function VisaoGeralGlobal({
               titulo="Participação por canal"
               sub="Onde o retorno descola do gasto"
             >
-              {/* Duas faixas, não três: cada bloco custa ~80px com legenda e a
-                  terceira estourava a altura do cartão. Compras sai — o CPA de
-                  cada canal, logo acima, responde o mesmo. */}
-              <div className="flex h-full flex-col justify-center gap-6">
-                {[
-                  { rotulo: "Investimento", valor: (c: Canal) => c.investimento },
-                  { rotulo: "Receita", valor: (c: Canal) => c.receita },
-                ].map((faixa) => (
+              {/* Três faixas de volta.
+                  Elas tinham sido cortadas para duas porque a terceira
+                  "estourava a altura do cartão" — o que era verdade quando a
+                  altura vinha da janela. Sem isso, duas faixas de ~55px num
+                  cartão de 380px deixavam o conteúdo boiando no meio de muito
+                  preto. E compras é justamente a faixa que fecha o argumento do
+                  subtítulo: é entre receita e compras que dá para ver o retorno
+                  descolar do gasto. */}
+              <ComLeitura
+                leitura={
+                  leituraParticipacao && (
+                    <>
+                      O <Realce>{leituraParticipacao.lider.nome}</Realce> leva{" "}
+                      <Realce>{pct(leituraParticipacao.lider.shareInv, 1)}</Realce> da verba e
+                      devolve <Realce>{pct(leituraParticipacao.lider.shareRec, 1)}</Realce> da
+                      receita — <Realce>{pct(leituraParticipacao.folga, 1)}</Realce> a mais do que
+                      consome.{" "}
+                      {leituraParticipacao.outro
+                        ? `O ${leituraParticipacao.outro.nome} faz o caminho inverso: fica com ${pct(leituraParticipacao.outro.shareInv, 1)} do investimento para ${pct(leituraParticipacao.outro.shareRec, 1)} do retorno.`
+                        : ""}
+                    </>
+                  )
+                }
+              >
+                {([
+                  { rotulo: "Investimento", valor: (c: Canal) => c.investimento, formato: "brl" },
+                  { rotulo: "Receita", valor: (c: Canal) => c.receita, formato: "brl" },
+                  // Compras é contagem, não moeda — a faixa carrega o próprio formato.
+                  { rotulo: "Compras", valor: (c: Canal) => c.conversoes, formato: "int" },
+                ] as const).map((faixa) => (
                   <div key={faixa.rotulo} className="flex flex-col gap-2">
                     <span className="rotulo">{faixa.rotulo}</span>
                     <EmpilhadaTotal
@@ -299,11 +350,11 @@ export default async function VisaoGeralGlobal({
                         valor: faixa.valor(c),
                         cor: c.cor,
                       }))}
-                      formato="brl"
+                      formato={faixa.formato}
                     />
                   </div>
                 ))}
-              </div>
+              </ComLeitura>
             </Cartao>
           </Linha>
         </Pagina>

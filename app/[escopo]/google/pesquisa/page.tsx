@@ -83,7 +83,7 @@ export default async function Pesquisa({
         sub={subtituloEscopo(escopo, `${d.palavras.length} palavras-chave com impressão`)}
       >
         <Pagina>
-          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-4 py-4 sm:grid-cols-3 lg:grid-cols-[minmax(240px,1.1fr)_repeat(5,1fr)] lg:gap-5 lg:px-5">
+          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] sm:grid-cols-3 lg:grid-cols-[minmax(15.5rem,1.1fr)_repeat(5,1fr)]">
             <Hero rotulo="Investido em Pesquisa" valor={brl(t.custo)} sub="soma das palavras-chave" />
             <Stat
               rotulo="Receita"
@@ -105,7 +105,7 @@ export default async function Pesquisa({
           {/* O índice de qualidade não é número de apresentação — é diagnóstico:
               diz se o dinheiro está indo para palavra que o Google considera
               relevante. Fica como faixa, não como coluna da tabela. */}
-          <div className="cartao shrink-0 px-5 py-3">
+          <div className="cartao shrink-0 px-[var(--esp-cartao-x)] py-[calc(var(--esp-cartao-y)*0.82)]">
             <div className="flex items-baseline justify-between gap-3">
               <span className="rotulo">Investimento por índice de qualidade</span>
               <span className="text-[var(--fs-corpo)] text-[var(--ink-muted)]">

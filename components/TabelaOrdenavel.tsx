@@ -104,11 +104,17 @@ export function TabelaOrdenavel({
     setDesc(Boolean(c.formato) && c.formato !== "texto");
   };
 
+  /*
+   * Sem `h-full`: dentro de um cartão esticado ele fazia a tabela de duas
+   * linhas ocupar a caixa inteira, com o cabeçalho grudado no topo e o resto
+   * preto. A altura é o número de linhas; o teto vem de quem chama, via
+   * `max-h-[var(--h-tabela)]`, e é aí que a rolagem interna entra.
+   */
   return (
-    <div className={`h-full overflow-auto ${className}`}>
+    <div className={`max-h-[var(--h-tabela)] overflow-auto ${className}`}>
       <table className="w-full" style={{ fontSize: "var(--fs-corpo)" }}>
         <thead className="sticky top-0 z-[1] bg-[var(--surface-2)]">
-          <tr className="uppercase tracking-[0.1em] text-[var(--ink-muted)] [font-size:var(--fs-micro)]">
+          <tr className="uppercase tracking-[0.08em] text-[var(--ink-muted)] [font-size:var(--fs-micro)]">
             {colunas.map((c) => {
               const ativa = c.chave === chave;
               const direita = c.alinhar === "direita" || (c.formato && c.formato !== "texto");
@@ -124,7 +130,7 @@ export function TabelaOrdenavel({
                   <button
                     type="button"
                     onClick={() => alternar(c)}
-                    className={`inline-flex items-center gap-1 whitespace-nowrap uppercase tracking-[0.12em] transition-colors hover:text-[var(--ink)] ${
+                    className={`inline-flex items-center gap-1 whitespace-nowrap uppercase tracking-[0.08em] transition-colors hover:text-[var(--ink)] ${
                       direita ? "flex-row-reverse" : ""
                     } ${ativa ? "text-[var(--ink)]" : ""}`}
                     title={`Ordenar por ${c.rotulo}`}

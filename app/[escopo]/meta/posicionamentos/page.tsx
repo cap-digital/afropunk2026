@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { ErroMeta, Shell, subtituloEscopo, Linha, Pagina } from "@/components/Shell";
-import { Cartao, Stat, Vazio } from "@/components/ui";
+import { Cartao, ComLeitura, Realce, Stat, Vazio } from "@/components/ui";
 import { BarrasAgrupadas, BarrasH, EmpilhadaTotal, MapaCalor, type PontoGrafico } from "@/components/charts";
 import { carregarBreakdowns, carregarEscopo } from "@/lib/dados";
 import { periodoDeParams, type ParamsBusca } from "@/lib/periodo";
@@ -80,6 +80,27 @@ export default async function MetaPosicionamentos({
       }))
       .sort((a, b) => Number(b.valor) - Number(a.valor));
 
+    /*
+     * Leitura do cartão de CPM: a plataforma mais barata é a que entrega?
+     *
+     * O cartão põe CPM por plataforma em cima e divisão de impressões embaixo
+     * justamente porque as duas raramente concordam — e quando não concordam,
+     * há verba parada no lugar mais caro. A frase diz qual é o caso.
+     */
+    const leituraCpm = (() => {
+      const comCpm = bd.plataformas
+        .filter((p) => p.impressions > 500 && p.spend > 0)
+        .map((p) => ({
+          nome: PLATAFORMA_LABEL[p.chave] ?? p.chave,
+          cpm: (p.spend / p.impressions) * 1000,
+          share: (p.impressions / totalImpr) * 100,
+        }));
+      if (comCpm.length < 2) return null;
+      const barata = [...comCpm].sort((a, b) => a.cpm - b.cpm)[0];
+      const entregadora = [...comCpm].sort((a, b) => b.share - a.share)[0];
+      return { barata, entregadora, mesma: barata.nome === entregadora.nome };
+    })();
+
     // Comparativo: share do Instagram (ou da plataforma principal) por praça.
     const mixPorBucket: PontoGrafico[] = plataformasUnicas.slice(0, 3).map((plat) => {
       const linha: PontoGrafico = { nome: PLATAFORMA_LABEL[plat] ?? plat };
@@ -101,7 +122,7 @@ export default async function MetaPosicionamentos({
         sub={subtituloEscopo(escopo, undefined, periodo)}
       >
         <Pagina>
-          <div className="cartao grid grid-cols-2 items-center gap-4 px-4 py-4 sm:grid-cols-3 lg:grid-cols-5 lg:gap-5 lg:px-5">
+          <div className="cartao grid grid-cols-2 items-center gap-4 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] sm:grid-cols-3 lg:grid-cols-5">
             <Stat
               rotulo="Plataforma principal"
               valor={PLATAFORMA_LABEL[principal?.chave ?? ""] ?? "—"}
@@ -121,17 +142,13 @@ export default async function MetaPosicionamentos({
               titulo="Mapa de entrega: plataforma × posicionamento"
               sub="Impressões por combinação — rampa sequencial, mais claro é mais volume"
             >
-              <div className="h-[var(--h-grafico)]">
-                <MapaCalor linhas={linhas} colunas={colunas} valores={valores} formato="int" />
-              </div>
+              <MapaCalor linhas={linhas} colunas={colunas} valores={valores} formato="int" />
             </Cartao>
           </Linha>
 
           <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-2">
             <Cartao titulo="Top posicionamentos" sub="Onde o volume realmente acontece">
-              <div className="h-[var(--h-grafico)]">
-                <BarrasH dados={porPosicionamento} formato="int" corUnica="var(--seq-2)" larguraRotulo={128} />
-              </div>
+              <BarrasH dados={porPosicionamento} formato="int" corUnica="var(--seq-2)" larguraRotulo={128} />
             </Cartao>
 
             {d.comparativo ? (
@@ -148,10 +165,35 @@ export default async function MetaPosicionamentos({
                 titulo="Custo por mil por plataforma"
                 sub="Só plataformas com mais de 500 impressões — abaixo disso o CPM é ruído"
               >
-                <div className="flex h-full flex-col justify-between">
-                  <div className="h-[var(--h-grafico)]">
-                    <BarrasH dados={cpmPorPlataforma} formato="brl" corUnica="var(--seq-3)" larguraRotulo={128} />
-                  </div>
+                {/* Centrado com gap fixo, não `justify-between`: as três barras
+                    de CPM já não esticam mais, então empurrar a divisão de
+                    impressões para o fundo do cartão só abria um vão no meio. */}
+                <ComLeitura
+                  leitura={
+                    leituraCpm && (
+                      <>
+                        {leituraCpm.mesma ? (
+                          <>
+                            O <Realce>{leituraCpm.barata.nome}</Realce> é ao mesmo tempo o mais
+                            barato (<Realce>{brl(leituraCpm.barata.cpm)}</Realce> de CPM) e o que
+                            mais entrega (<Realce>{pct(leituraCpm.barata.share, 1)}</Realce> das
+                            impressões). A verba já está onde deveria.
+                          </>
+                        ) : (
+                          <>
+                            O CPM mais baixo é do{" "}
+                            <Realce>{leituraCpm.barata.nome}</Realce> (
+                            <Realce>{brl(leituraCpm.barata.cpm)}</Realce>), mas quem concentra a
+                            entrega é o <Realce>{leituraCpm.entregadora.nome}</Realce>, com{" "}
+                            <Realce>{pct(leituraCpm.entregadora.share, 1)}</Realce> das impressões a{" "}
+                            <Realce>{brl(leituraCpm.entregadora.cpm)}</Realce>.
+                          </>
+                        )}
+                      </>
+                    )
+                  }
+                >
+                  <BarrasH dados={cpmPorPlataforma} formato="brl" corUnica="var(--seq-3)" larguraRotulo={128} />
                   <EmpilhadaTotal
                     segmentos={bd.plataformas.slice(0, 3).map((p, i) => ({
                       nome: PLATAFORMA_LABEL[p.chave] ?? p.chave,
@@ -160,7 +202,7 @@ export default async function MetaPosicionamentos({
                     }))}
                     formato="int"
                   />
-                </div>
+                </ComLeitura>
               </Cartao>
             )}
           </Linha>

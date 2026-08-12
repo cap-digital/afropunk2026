@@ -72,7 +72,10 @@ export function FiltroPeriodo() {
         type="button"
         onClick={() => setAberto((v) => !v)}
         aria-expanded={aberto}
-        className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-[7px] text-[var(--fs-corpo)] font-semibold uppercase tracking-[0.12em] transition-colors ${
+        /* Mesma métrica do botão de atualizar — os dois vivem lado a lado e
+           qualquer diferença de corpo, tracking ou raio aparece como desalinho.
+           Em `--fs-corpo` + 0,12em eles liam maiores que o título da página. */
+        className={`flex items-center gap-1.5 rounded-lg border px-2 py-[0.28rem] text-[var(--fs-micro)] font-semibold uppercase tracking-[0.06em] transition-colors ${
           temIntervalo
             ? "border-[var(--ink)] text-[var(--ink)]"
             : "border-[var(--border-forte)] text-[var(--ink-2)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
@@ -153,7 +156,7 @@ export function FiltroPeriodo() {
             type="button"
             onClick={() => navegar(de, ate)}
             disabled={!de || !ate}
-            className="mt-3 w-full rounded-lg bg-[var(--ink)] px-3 py-2 text-[var(--fs-corpo)] font-semibold uppercase tracking-[0.12em] text-black transition-opacity hover:opacity-85 disabled:opacity-40"
+            className="mt-3 w-full rounded-lg bg-[var(--ink)] px-3 py-2 text-[var(--fs-corpo)] font-semibold uppercase tracking-[0.08em] text-black transition-opacity hover:opacity-85 disabled:opacity-40"
           >
             Aplicar intervalo
           </button>

@@ -25,8 +25,10 @@ import { brl, brlCompact, compact, dec, diaMesCurto, int, pct } from "@/lib/form
 
 const GRID = "var(--grid)";
 const EIXO = "var(--baseline)";
-// 11px nos eixos: 12 competia com o número do próprio dado.
-const TICK = { fill: "var(--ink-muted)", fontSize: 11 };
+// O tamanho vem do CSS (`.recharts-cartesian-axis-tick text`), que vence o
+// atributo de apresentação — por isso aqui só a cor. Os `fontSize` que
+// existiam neste objeto e nos overrides por eixo nunca chegaram a renderizar.
+const TICK = { fill: "var(--ink-muted)" };
 const SURFACE = "var(--surface)";
 
 export type Formato = "brl" | "int" | "pct" | "dec" | "roas";
@@ -88,7 +90,7 @@ function DicaPadrao({ active, payload, label, formato = "int", rotuloEixo }: Dic
   return (
     <Caixa>
       {label !== undefined && (
-        <div className="mb-1.5 text-[var(--fs-rotulo)] font-semibold uppercase tracking-[0.1em] text-[var(--ink-muted)]">
+        <div className="mb-1.5 text-[var(--fs-rotulo)] font-semibold uppercase tracking-[0.08em] text-[var(--ink-muted)]">
           {rotuloEixo ? rotuloEixo(String(label)) : label}
         </div>
       )}
@@ -208,8 +210,7 @@ function rotuloPico(dados: PontoGrafico[], chave: string, formato: Formato, cor:
         x={naDireita ? x - 2 : naEsquerda ? x + 2 : x}
         y={y - 10}
         fill={cor}
-        fontSize={10.5}
-        fontWeight={600}
+        style={{ fontSize: "var(--fs-valor-grafico)", fontWeight: 600 }}
         textAnchor={naDireita ? "end" : naEsquerda ? "start" : "middle"}
       >
         {texto}
@@ -260,8 +261,7 @@ function rotuloPontos(
         x={naDireita ? x - 2 : naEsquerda ? x + 2 : x}
         y={y - 9}
         fill={cor}
-        fontSize={10.5}
-        fontWeight={600}
+        style={{ fontSize: "var(--fs-valor-grafico)", fontWeight: 600 }}
         textAnchor={naDireita ? "end" : naEsquerda ? "start" : "middle"}
       >
         {texto}
@@ -290,8 +290,7 @@ function rotuloTopo(formato: Formato, indiceSerie: number) {
         y={y - 6 - indiceSerie * 14}
         textAnchor="middle"
         fill="var(--ink-2)"
-        fontSize={10}
-        fontWeight={600}
+        style={{ fontSize: "var(--fs-valor-grafico)", fontWeight: 600 }}
       >
         {fmt(v, formato)}
       </text>
@@ -490,7 +489,7 @@ export function BarrasH({
   chaveValor = "valor",
   chaveNome = "nome",
   formato = "int",
-  altura = "100%",
+  altura,
   cores,
   corUnica,
   rotularValor = true,
@@ -500,14 +499,33 @@ export function BarrasH({
   chaveValor?: string;
   chaveNome?: string;
   formato?: Formato;
+  /** Só quando o chamador precisa fugir da altura por faixa. */
   altura?: number | string;
   cores?: string[];
   corUnica?: string;
   rotularValor?: boolean;
   larguraRotulo?: number;
 }) {
+  /*
+   * Altura DERIVADA do número de faixas.
+   *
+   * Antes era `100%` e quem chamava embrulhava num `h-[var(--h-grafico)]` —
+   * a mesma medida do gráfico de série temporal. Só que uma série contínua
+   * precisa de altura para a curva ter forma, e uma lista de cinco barras não:
+   * ela precisa de cinco faixas. Esticada em 36vh, cada barra de 22px ficava
+   * numa pista de 72px, o cartão ficava com o dobro da altura do conteúdo, e —
+   * porque o irmão mais alto da linha define a altura de todos — arrastava
+   * "Orçamento" e "Destaques por ROAS" junto, empurrando a página para fora
+   * da tela.
+   *
+   * A faixa tem piso e teto em px de propósito: `maxBarSize` é px cravado, e
+   * numa raiz pequena uma faixa puramente em `rem` ficaria menor que a própria
+   * barra.
+   */
+  const alturaFaixas = `calc(${Math.max(dados.length, 1)} * var(--h-barra-faixa) + var(--h-barra-folga))`;
   return (
-    <ResponsiveContainer width="100%" height={altura}>
+    <div style={{ height: altura ?? alturaFaixas }}>
+    <ResponsiveContainer width="100%" height="100%">
       <BarChart
         data={dados}
         layout="vertical"
@@ -519,7 +537,7 @@ export function BarrasH({
         <YAxis
           type="category"
           dataKey={chaveNome}
-          tick={{ ...TICK, fontSize: 12.5 }}
+          tick={TICK}
           axisLine={false}
           tickLine={false}
           interval={0}
@@ -548,12 +566,13 @@ export function BarrasH({
                 const cheio = fmt(v, formato);
                 return cheio.length > 12 ? fmtEixo(v, formato) : cheio;
               }}
-              style={{ fill: "var(--ink-2)", fontSize: 12, fontWeight: 600 }}
+              style={{ fill: "var(--ink-2)", fontSize: "var(--fs-valor-grafico)", fontWeight: 600 }}
             />
           )}
         </Bar>
       </BarChart>
     </ResponsiveContainer>
+    </div>
   );
 }
 
@@ -577,7 +596,7 @@ export function BarrasAgrupadas({
         <CartesianGrid stroke={GRID} strokeDasharray="2 4" vertical={false} />
         <XAxis
           dataKey={chaveNome}
-          tick={{ ...TICK, fontSize: 10.5 }}
+          tick={TICK}
           axisLine={{ stroke: EIXO }}
           tickLine={false}
         />
@@ -725,7 +744,7 @@ export function Piramide({
         <YAxis
           type="category"
           dataKey="faixa"
-          tick={{ ...TICK, fontSize: 12.5 }}
+          tick={TICK}
           axisLine={false}
           tickLine={false}
           interval={0}
@@ -734,6 +753,22 @@ export function Piramide({
         <Tooltip cursor={CURSOR_BARRA} content={dica(formato)} />
         <Legend content={legenda()} />
         <ReferenceLine x={0} stroke={EIXO} strokeWidth={1} />
+        {/*
+          DEFEITO ABERTO: nenhuma barra é desenhada.
+          Eixos, grade, legenda e tooltip renderizam; os `<g
+          class="recharts-bar-rectangle">` saem VAZIOS, o que no Recharts quer
+          dizer geometria inválida (NaN) chegando ao `Rectangle`.
+
+          Já descartados: `radius` em array (tirar não muda nada) e
+          `stackOffset="sign"` (tirar piora — some até o grupo do retângulo).
+          Os dados chegam certos: `plot` traz `feminino` negativo e `masculino`
+          positivo, ambos numéricos. A suspeita que sobra é a combinação
+          `layout="vertical"` + `stackId` + domínio simétrico explícito.
+
+          Fica como está — errado e visível — em vez de "consertado" por
+          tentativa. Quem for atacar: comparar com um caso mínimo sem
+          `domain`/`tickCount` fixos é o próximo passo.
+        */}
         <Bar
           dataKey="feminino"
           name="Feminino"
@@ -787,7 +822,7 @@ export function Dispersao({
             value: "CPM",
             position: "insideBottom",
             offset: -10,
-            style: { fill: "var(--ink-muted)", fontSize: 10 },
+            style: { fill: "var(--ink-muted)", fontSize: "var(--fs-eixo)" },
           }}
         />
         <YAxis
@@ -865,18 +900,22 @@ export function MapaCalor({
     return "var(--seq-1)";
   };
   return (
-    <div className="flex h-full min-h-0 flex-col gap-1.5">
-      {/* As linhas esticam para preencher o cartão: com altura fixa, o mapa
-          terminava no meio e a legenda ia para o rodapé, deixando um vão que
-          parecia dado faltando. `minmax` mantém o piso legível. */}
+    <div className="flex min-h-0 flex-col gap-1.5">
+      {/*
+        A faixa do mapa é a MESMA do gráfico de barras (`--h-barra-faixa`): nos
+        dois casos uma linha é uma categoria, e o que define a altura é quantas
+        elas são.
+
+        Antes as linhas eram `minmax(0, 1fr)` esticando dentro de um wrapper de
+        36vh — cinco plataformas viravam cinco tiras de 65px, e duas delas sem
+        nenhuma entrega. O mapa ficava do tamanho de uma série temporal para
+        mostrar uma tabela de cinco por sete.
+      */}
       <div
-        className="grid min-h-0 flex-1 gap-[2px] text-[var(--fs-corpo)]"
+        className="grid min-h-0 gap-[2px] text-[var(--fs-corpo)]"
         style={{
           gridTemplateColumns: `${larguraRotulo}px repeat(${colunas.length}, minmax(0,1fr))`,
-          // `minmax(0, 1fr)`: as linhas esticam quando sobra altura e comprimem
-          // quando falta. Com piso fixo elas não cediam e o mapa rolava dentro
-          // do cartão, escondendo o próprio cabeçalho em tela de 720px.
-          gridTemplateRows: `auto repeat(${linhas.length}, minmax(0, 1fr))`,
+          gridTemplateRows: `auto repeat(${linhas.length}, var(--h-barra-faixa))`,
         }}
       >
         <div />
@@ -944,15 +983,22 @@ export function Funil({
 }: {
   etapas: { nome: string; valor: number }[];
   cor: string;
-  /** Distribui as etapas na altura do cartão. Com poucas etapas, desligue. */
+  /** Centraliza o bloco na altura do cartão em vez de ancorar no topo. */
   esticar?: boolean;
 }) {
   const topo = etapas[0]?.valor || 1;
   return (
-    // justify-between: as etapas ocupam toda a altura do cartão em vez de
-    // empilharem no topo e deixarem vazio embaixo em telas altas. Com três
-    // etapas isso abre buracos, então o chamador pode desligar.
-    <div className={`flex h-full flex-col gap-3 ${esticar ? "justify-between" : "justify-start"}`}>
+    /*
+     * Centraliza com gap FIXO — não distribui na altura toda.
+     *
+     * Era `justify-between`, para o funil não empilhar no topo e deixar vazio
+     * embaixo. Só que espalhar cinco etapas por 400px afasta uma barra da outra
+     * a ponto de deixarem de ler como uma sequência: viram cinco medidores
+     * soltos, e a queda de etapa para etapa — que é a informação — some.
+     * Bloco junto, centrado, com a folga sobrando em volta. Mesma conclusão a
+     * que a legenda do FunilEventos já tinha chegado.
+     */
+    <div className={`flex h-full flex-col gap-4 ${esticar ? "justify-center" : "justify-start"}`}>
       {etapas.map((e, i) => {
         const larg = Math.max((e.valor / topo) * 100, 0.6);
         const anterior = i > 0 ? etapas[i - 1].valor : null;

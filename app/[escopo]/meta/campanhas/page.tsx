@@ -113,8 +113,12 @@ export default async function MetaCampanhas({
               const orcamento = Number(c.lifetime_budget ?? 0) / 100;
               const cor = corDa(i, c.bucket?.slug);
               return (
-                <div key={c.id} className="cartao flex flex-col gap-2.5 p-3">
-                  <div className="flex items-start justify-between gap-2">
+                <div key={c.id} className="cartao flex flex-col gap-2.5 p-[var(--esp-cartao-y)]">
+                  {/* Objetivo e status juntos, à esquerda — não um em cada
+                      ponta. A largura do cartão depende de quantas campanhas a
+                      praça tem: com duas, `justify-between` jogava o status a
+                      800px do rótulo e a linha deixava de ler como um par. */}
+                  <div className="flex flex-wrap items-center gap-2">
                     <Etiqueta>{OBJETIVO_LABEL[c.objective] ?? c.objective}</Etiqueta>
                     <StatusAtivo ativo={c.effective_status === "ACTIVE"} />
                   </div>
@@ -124,7 +128,12 @@ export default async function MetaCampanhas({
                   >
                     {d.comparativo ? (c.bucket?.nome ?? nomeCurtoCampanha(c.name)) : nomeCurtoCampanha(c.name)}
                   </p>
-                  <div className="grid grid-cols-2 gap-2">
+                  {/* Espalhados, não em duas colunas de grade: o número de
+                      colunas do cartão vem de quantas campanhas a praça tem, e
+                      com duas o par de KPIs ficava espremido na metade
+                      esquerda de um cartão de 800px. Mesmo arranjo do rodapé
+                      dos cartões de canal no Overview. */}
+                  <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
                     <Stat rotulo="Investido" valor={brlCompact(c.m.spend)} tamanho="sm" />
                     <Stat rotulo="CTR" valor={pct(c.m.ctr, 1)} tamanho="sm" />
                   </div>
@@ -178,10 +187,10 @@ export default async function MetaCampanhas({
               sub="Todas as métricas por campanha ativa"
               className="h-full min-w-0"
             >
-              <div className="min-h-[var(--h-tabela)] flex-1 overflow-auto">
+              <div className="max-h-[var(--h-tabela)] overflow-auto">
               <table className="w-full" style={{ fontSize: "var(--fs-corpo)" }}>
                 <thead>
-                  <tr className="text-left text-[var(--fs-corpo)] uppercase tracking-[0.1em] text-[var(--ink-muted)]">
+                  <tr className="text-left text-[var(--fs-corpo)] uppercase tracking-[0.08em] text-[var(--ink-muted)]">
                     <th className="pb-2 pr-3 font-semibold">Campanha</th>
                     {d.comparativo && <th className="pb-2 pr-3 font-semibold">Praça</th>}
                     <th className="pb-2 pr-3 font-semibold">Objetivo</th>
