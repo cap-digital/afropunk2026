@@ -168,8 +168,15 @@ export function Moldura({
           numa página que cabia inteira. Fora do scroller, o
           `overflow-hidden` do shell apara e nada rola. */}
       <div className="relative flex min-w-0 flex-1 flex-col gap-3 lg:gap-4">
-        <span aria-hidden="true" className="marca-dagua hidden text-[15rem] lg:block">
-          {uf}
+        {/* Camada de recorte própria: a marca d'água sangra para fora da caixa
+            de propósito e, sendo absoluta, essa sangria entra na altura do
+            conteúdo do pai — 105px fantasma em toda página. Confinada aqui,
+            ela continua sangrando visualmente sem inflar nada. */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 hidden overflow-hidden lg:block"
+        >
+          <span className="marca-dagua text-[15rem]">{uf}</span>
         </span>
         <header className="painel flex min-h-[56px] shrink-0 flex-wrap items-center justify-between gap-3 px-3.5 py-2.5 lg:h-[56px] lg:flex-nowrap lg:px-5 lg:py-0">
           <div className="flex min-w-0 items-center gap-2.5">

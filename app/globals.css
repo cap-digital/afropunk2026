@@ -96,6 +96,51 @@
   /* Gradiente da barra de meta — o único gradiente do sistema da casa. */
   --meta-de: #3a99ac;
   --meta-ate: #83becd;
+
+  /*
+    Escala tipográfica FLUIDA.
+
+    Tamanho fixo em px dentro de coluna fluida foi a causa de toda a família de
+    bugs de sobreposição: a coluna estreita com a tela, o texto não cede, e o
+    número invade o vizinho — "R$ 19,9 mil" colado em "44,90×". Com `clamp` a
+    fonte encolhe junto com a janela e o texto volta a caber na própria caixa.
+
+    Os limites são o piso legível e o teto já validado em tela grande; o meio é
+    proporcional à largura da janela.
+  */
+  --fs-hero: clamp(19px, 1.55vw, 29px);
+  --fs-kpi: clamp(14px, 1.12vw, 21px);
+  --fs-kpi-sm: clamp(12px, 0.9vw, 16px);
+  --fs-kpi-lg: clamp(18px, 1.5vw, 28px);
+  --fs-titulo-cartao: clamp(11px, 0.72vw, 12.5px);
+  --fs-sub-cartao: clamp(9.5px, 0.6vw, 10.5px);
+  --fs-corpo: clamp(10px, 0.66vw, 11.5px);
+  --fs-rotulo: clamp(8.5px, 0.35vw + 4px, 10px);
+  --fs-micro: clamp(8.5px, 0.55vw, 10px);
+
+  /*
+    Ritmo vertical fluido, atrelado à ALTURA da janela. Em 720px de altura a
+    soma de padding, gap e cabeçalho de cartão passava da tela em ~108px e a
+    última faixa ficava cortada. Aqui o respiro cede antes do conteúdo.
+  */
+  --esp-cartao-y: clamp(8px, 1.1vh, 14px);
+  --esp-cartao-x: clamp(10px, 0.9vw, 14px);
+  --esp-coluna: clamp(8px, 1.1vh, 14px);
+
+  /*
+    Altura de gráfico e de tabela — DEFINIDA, proporcional à altura da janela.
+
+    A premissa antiga era "tudo cabe numa tela": a página tinha altura fixa e as
+    linhas se esticavam para preencher. Isso brigava com quatro coisas ao mesmo
+    tempo — altura de tela variável, zoom, volume de dado variável e comprimento
+    de texto variável — e quando a conta não fechava algo cedia sozinho: cortava,
+    sobrepunha ou o gráfico derretia realimentando a própria medida.
+
+    Agora o gráfico tem altura própria, que cresce com a janela mas nunca depende
+    do que está em volta. A página empilha e rola, como qualquer painel.
+  */
+  --h-grafico: clamp(168px, 24vh, 280px);
+  --h-tabela: clamp(220px, 40vh, 440px);
 }
 
 html,
@@ -170,8 +215,13 @@ body::after {
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  font-size: 10px;
+  font-size: var(--fs-rotulo);
   color: var(--ink-muted);
+  /* Rótulo nunca empurra o vizinho: se não couber, corta com reticências. */
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .tabular {

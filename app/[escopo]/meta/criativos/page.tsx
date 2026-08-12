@@ -68,9 +68,9 @@ export default async function MetaCriativos({
           <Cartao
             titulo="Galeria de criativos"
             sub="Ordene pela métrica que importa · clique no card para abrir o post no Instagram"
-            className="min-h-[520px] lg:min-h-0 lg:flex-1"
+           
           >
-            <div className="h-full overflow-auto pr-1">
+            <div className="max-h-[var(--h-tabela)] overflow-auto pr-1">
               <GradeCriativos criativos={ordenados} />
             </div>
           </Cartao>

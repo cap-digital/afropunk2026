@@ -146,9 +146,8 @@ async function Comparativo({
           <Cartao
             titulo="Investimento diário por praça"
             sub="Campanhas iniciadas em 31/07 e 03/08 — a série cresce a cada dia"
-            className="h-full"
           >
-            <div className="h-[230px] lg:h-full">
+            <div className="h-[var(--h-grafico)]">
               <LinhasTempo dados={serie} series={series} formato="brl" />
             </div>
           </Cartao>
@@ -156,9 +155,8 @@ async function Comparativo({
           <Cartao
             titulo="Volume entregue"
             sub="Impressões vs. alcance — a distância entre as barras é a repetição"
-            className="h-full"
           >
-            <div className="h-[230px] lg:h-full">
+            <div className="h-[var(--h-grafico)]">
               <BarrasAgrupadas
                 dados={volumes}
                 series={[
@@ -176,7 +174,6 @@ async function Comparativo({
           <Cartao
             titulo="Divisão do investimento"
             sub="Parte do todo · inclui a campanha nacional"
-            className="h-full"
           >
             <div className="flex h-full flex-col justify-between">
               <EmpilhadaTotal
@@ -219,10 +216,9 @@ async function Comparativo({
           <Cartao
             titulo="Comparativo completo"
             sub="Todas as métricas lado a lado"
-            className="h-full"
           >
-            <div className="max-h-[320px] overflow-auto lg:h-full lg:max-h-none">
-              <table className="w-full text-[11.5px]">
+            <div className="max-h-[var(--h-tabela)] overflow-auto">
+              <table className="w-full" style={{ fontSize: "var(--fs-corpo)" }}>
                 <thead className="sticky top-0 bg-[var(--surface)]">
                   <tr className="text-left text-[11px] uppercase tracking-[0.1em] text-[var(--ink-muted)]">
                     <th className="pb-2 pr-2 font-semibold">Praça</th>
@@ -361,9 +357,8 @@ async function PracaUnica({
           <Cartao
             titulo="Investimento por dia"
             sub="Ritmo de gasto desde o início da veiculação"
-            className="h-full"
           >
-            <div className="h-[230px] lg:h-full">
+            <div className="h-[var(--h-grafico)]">
               <AreaTempo
                 dados={d.serie}
                 series={[{ chave: "spend", nome: "Investimento", cor: praca.cor }]}
@@ -375,9 +370,8 @@ async function PracaUnica({
           <Cartao
             titulo="Funil de conversão"
             sub="Eventos contados de forma independente pelo Meta"
-            className="h-full"
           >
-            <div className="max-h-[320px] overflow-auto lg:h-full lg:max-h-none">
+            <div className="max-h-[var(--h-tabela)] overflow-auto">
               <Funil etapas={funil} cor={praca.cor} />
             </div>
           </Cartao>
@@ -385,8 +379,8 @@ async function PracaUnica({
 
         <Secao>Entrega e verba</Secao>
         <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-3">
-          <Cartao titulo="Onde as impressões acontecem" sub="Plataformas de veiculação" className="h-full">
-            <div className="h-[230px] lg:h-full">
+          <Cartao titulo="Onde as impressões acontecem" sub="Plataformas de veiculação">
+            <div className="h-[var(--h-grafico)]">
               <BarrasH dados={plataformas} formato="int" corUnica="var(--seq-2)" larguraRotulo={104} />
             </div>
           </Cartao>
@@ -394,7 +388,6 @@ async function PracaUnica({
           <Cartao
             titulo="Orçamento"
             sub={orcamento > 0 ? "Consumo sobre o total contratado" : "Sem orçamento vitalício na campanha"}
-            className="h-full"
           >
             <div className="flex h-full flex-col justify-evenly gap-4">
               {orcamento > 0 ? (
@@ -421,7 +414,6 @@ async function PracaUnica({
           <Cartao
             titulo="Destaques por ROAS"
             sub="O que mais devolveu por real investido"
-            className="h-full"
           >
             <div className="flex h-full flex-col justify-evenly gap-3">
               <Destaque

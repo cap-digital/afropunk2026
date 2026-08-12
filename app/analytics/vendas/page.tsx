@@ -68,7 +68,7 @@ export default async function AnalyticsVendas({
               <Cartao
                 titulo="Receita por evento"
                 sub="Cor identifica a praça"
-                className="min-h-[200px] lg:min-h-0 lg:flex-1"
+               
               >
                 <div className="flex h-full flex-col justify-evenly gap-4">
                   <div className="h-[58%]">
@@ -88,9 +88,9 @@ export default async function AnalyticsVendas({
               <Cartao
                 titulo="Ingressos e carrinho"
                 sub="Vendidos vs. adicionados ao carrinho"
-                className="min-h-[220px] lg:min-h-0 lg:flex-1"
+               
               >
-                <div className="h-[230px] lg:h-full">
+                <div className="h-[var(--h-grafico)]">
                   <BarrasAgrupadas
                     dados={d.eventos.map((e) => ({
                       nome: e.bucket?.nome ?? e.itemName,
@@ -111,9 +111,8 @@ export default async function AnalyticsVendas({
             <Cartao
               titulo="Funil de venda por praça"
               sub="Escolha o evento · começa no carrinho, o GA4 não rastreia visualização de item"
-              className="h-full"
             >
-              <div className="h-[230px] lg:h-full">
+              <div className="h-[var(--h-grafico)]">
                 <FunilEventos
                   eventos={d.eventos.map((e) => ({
                     itemName: e.itemName,

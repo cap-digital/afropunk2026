@@ -135,7 +135,7 @@ export default async function Segmentacao({
               sub="Faixas de 3 horas — só dias com entrega"
               className="min-h-0"
             >
-              <div className="h-full">
+              <div className="h-[var(--h-grafico)]">
                 <MapaCalor
                   linhas={diasComDado}
                   colunas={FAIXAS.map((f) => f.rotulo)}
@@ -151,7 +151,7 @@ export default async function Segmentacao({
               sub="Localização de quem viu o anúncio"
               className="min-h-0"
             >
-              <div className="h-full">
+              <div className="h-[var(--h-grafico)]">
                 <BarrasH
                   dados={cidadesGrafico}
                   formato="brl"
@@ -173,9 +173,9 @@ export default async function Segmentacao({
             </Cartao>
 
             <Cartao className="min-w-0">
-              <table className="w-full text-[11.5px]">
+              <table className="w-full" style={{ fontSize: "var(--fs-corpo)" }}>
                 <thead>
-                  <tr className="text-left text-[10px] uppercase tracking-[0.1em] text-[var(--ink-muted)]">
+                  <tr className="text-left uppercase tracking-[0.1em] text-[var(--ink-muted)] [font-size:var(--fs-micro)]">
                     <th className="pb-2 pr-3 font-semibold">Aparelho</th>
                     <th className="pb-2 pr-3 text-right font-semibold">Investido</th>
                     <th className="pb-2 pr-3 text-right font-semibold">Cliques</th>

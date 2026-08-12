@@ -77,18 +77,26 @@ export function subtituloEscopo(
  * uma pilha que rola.
  */
 export function Pagina({ children }: { children: ReactNode }) {
-    /*
-   * `h-full`, não `min-h-full`. O ResponsiveContainer do Recharts resolve a
-   * própria altura a partir do pai: se o pai é dimensionado PELO CONTEÚDO, ele
-   * mede, desenha, o pai cresce, ele mede de novo — e o gráfico derrete para
-   * baixo indefinidamente (18px por ciclo, medido). Com altura definida aqui, o
-   * `flex-1` da Linha resolve em pixel e a corrente inteira fica estável.
-   * O que não couber transborda e o `main` rola — sem cortar nem derreter.
+  /*
+   * Empilha e rola — sem amarrar à altura da janela.
+   *
+   * A versão anterior fixava a coluna em `h-full` para que tudo coubesse numa
+   * tela. Isso obrigava todo cartão a caber à força, e o que não cabia sumia
+   * cortado. Como a altura da janela, o zoom, o volume de dado e o comprimento
+   * do texto variam todos ao mesmo tempo, a conta nunca fecha para todo mundo:
+   * cada correção ensinava UM componente a ceder e deixava os outros quebrados.
+   *
+   * Agora o gráfico tem altura própria (--h-grafico), o cartão tem a altura do
+   * conteúdo, e a página rola quando precisa. Nada depende do vizinho.
    */
-  return <div className="flex flex-col gap-3 lg:h-full">{children}</div>;
+  return (
+    <div className="flex flex-col" style={{ gap: "var(--esp-coluna)" }}>
+      {children}
+    </div>
+  );
 }
 
-/** Linha que cresce para ocupar a altura restante, com piso próprio. */
+/** Linha de cartões lado a lado. A altura vem do conteúdo, não da tela. */
 export function Linha({
   children,
   className = "",
@@ -96,14 +104,7 @@ export function Linha({
   children: ReactNode;
   className?: string;
 }) {
-    /*
-   * Piso de 236px no desktop: com `min-h-0` a linha podia ser espremida a zero
-   * e o gráfico dentro dela desaparecia — o ResponsiveContainer resolvia a
-   * altura para 0 e desenhava nada. Com piso, ou cabe, ou a página rola.
-   */
-  return (
-    <div className={`min-h-[300px] lg:min-h-[236px] lg:flex-1 ${className}`}>{children}</div>
-  );
+  return <div className={className}>{children}</div>;
 }
 
 /** Faixa de erro da Marketing API — mostra o que fazer. */

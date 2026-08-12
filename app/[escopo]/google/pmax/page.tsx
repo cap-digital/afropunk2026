@@ -104,7 +104,7 @@ export default async function Pmax({
               icone={IconTextCaption}
               className="min-h-0"
             >
-              <div className="flex h-full flex-col gap-3.5 overflow-auto">
+              <div className="flex max-h-[var(--h-tabela)] flex-col gap-3.5 overflow-auto">
                 <ListaTexto rotulo="Títulos" itens={d.titulos} />
                 <ListaTexto rotulo="Descrições" itens={d.descricoes} />
               </div>

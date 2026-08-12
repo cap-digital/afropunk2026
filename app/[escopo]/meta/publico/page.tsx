@@ -140,9 +140,8 @@ export default async function MetaPublico({
             <Cartao
               titulo="Pirâmide etária"
               sub="Impressões por faixa e gênero — barras divergentes a partir do zero"
-              className="h-full"
             >
-              <div className="h-[230px] lg:h-full">
+              <div className="h-[var(--h-grafico)]">
                 <Piramide dados={piramide} corF="var(--par-a)" corM="var(--par-b)" formato="int" />
               </div>
             </Cartao>
@@ -154,10 +153,9 @@ export default async function MetaPublico({
                   ? "% das impressões de cada praça em cada faixa"
                   : "Parte do todo sobre as impressões entregues"
               }
-              className="h-full"
             >
               {d.comparativo ? (
-                <div className="h-[230px] lg:h-full">
+                <div className="h-[var(--h-grafico)]">
                   <BarrasAgrupadas dados={perfilPorBucket} series={seriesBuckets} formato="pct" />
                 </div>
               ) : (
@@ -206,9 +204,8 @@ export default async function MetaPublico({
               <Cartao
                 titulo="Regiões"
                 sub="Impressões por estado — a segmentação geográfica em prática"
-                className="h-full"
               >
-                <div className="h-[230px] lg:h-full">
+                <div className="h-[var(--h-grafico)]">
                   <BarrasH dados={regioes} formato="int" corUnica="var(--seq-2)" larguraRotulo={132} />
                 </div>
               </Cartao>
@@ -221,9 +218,8 @@ export default async function MetaPublico({
                   ? "Aparelho usado para ver o anúncio"
                   : `Aparelho usado para ver o anúncio · ${d.praca?.uf ?? ""} concentra toda a entrega`
               }
-              className="h-full"
             >
-              <div className="h-[230px] lg:h-full">
+              <div className="h-[var(--h-grafico)]">
                 <BarrasH dados={dispositivos} formato="int" corUnica="var(--seq-3)" larguraRotulo={120} />
               </div>
             </Cartao>

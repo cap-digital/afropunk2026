@@ -999,10 +999,13 @@ export function Medidor({
   const p = limite > 0 ? Math.min((valor / limite) * 100, 100) : 0;
   return (
     <div className="flex flex-col gap-1.5">
-      <div className="flex items-baseline justify-between">
+      {/* Rótulo curto em cima, números embaixo: com o rótulo e os dois valores
+          na mesma linha, cada monitor truncava num ponto diferente. */}
+      <div className="flex min-w-0 flex-col gap-0.5">
         <span className="rotulo">{rotulo}</span>
-        <span className="tabular text-[12px] text-[var(--ink-2)]">
-          {fmt(valor, formato)} <span className="text-[var(--ink-muted)]">/ {fmt(limite, formato)}</span>
+        <span className="tabular text-[var(--ink-2)]" style={{ fontSize: "var(--fs-corpo)" }}>
+          {fmt(valor, formato)}{" "}
+          <span className="text-[var(--ink-muted)]">de {fmt(limite, formato)}</span>
         </span>
       </div>
       <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--surface-2)]">

@@ -80,9 +80,8 @@ export default async function AnalyticsVisaoGeral({
             <Cartao
               titulo="Sessões por dia"
               sub="Os picos coincidem com as aberturas de venda"
-              className="h-full"
             >
-              <div className="h-[230px] lg:h-full">
+              <div className="h-[var(--h-grafico)]">
                 <AreaTempo
                   dados={serieSessoes}
                   series={[{ chave: "sessoes", nome: "Sessões", cor: "var(--seq-3)" }]}
@@ -94,9 +93,8 @@ export default async function AnalyticsVisaoGeral({
             <Cartao
               titulo="Funil do site"
               sub="Da sessão à compra · etapas do e-commerce"
-              className="h-full"
             >
-              <div className="max-h-[320px] overflow-auto pr-1 lg:h-full lg:max-h-none">
+              <div className="max-h-[var(--h-tabela)] overflow-auto pr-1">
                 {/* Etapa zerada fica fora: linha vazia não informa nada. */}
                 <Funil etapas={d.funil.filter((e) => e.valor > 0)} cor="var(--seq-3)" />
               </div>
@@ -109,9 +107,8 @@ export default async function AnalyticsVisaoGeral({
             <Cartao
               titulo="Receita por dia"
               sub="Valor transacionado no site"
-              className="h-full"
             >
-              <div className="h-[230px] lg:h-full">
+              <div className="h-[var(--h-grafico)]">
                 <LinhasTempo
                   dados={serieReceita}
                   series={[{ chave: "receita", nome: "Receita", cor: "var(--par-a)" }]}
@@ -123,9 +120,8 @@ export default async function AnalyticsVisaoGeral({
             <Cartao
               titulo="Compras por dia"
               sub="Quantidade de transações"
-              className="h-full"
             >
-              <div className="h-[230px] lg:h-full">
+              <div className="h-[var(--h-grafico)]">
                 <AreaTempo
                   dados={serieReceita}
                   series={[{ chave: "transacoes", nome: "Compras", cor: "var(--par-b)" }]}

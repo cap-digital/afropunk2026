@@ -50,7 +50,7 @@ export function GradeCriativos({ criativos }: { criativos: Criativo[] }) {
         })}
       </div>
 
-      <div className="min-h-0 flex-1 overflow-auto pr-1">
+      <div className="max-h-[var(--h-tabela)] overflow-auto pr-1">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
           {daPagina.map((c, i) => (
             <CartaoCriativo

@@ -106,9 +106,8 @@ export default async function GoogleAds({
             <Cartao
               titulo="Investimento por dia"
               sub="Empilhado por canal — a pilha inteira é o total do dia"
-              className="h-full"
             >
-              <div className="h-[230px] lg:h-full">
+              <div className="h-[var(--h-grafico)]">
                 <AreaTempo dados={d.serie} series={seriesCusto} formato="brl" empilhar />
               </div>
             </Cartao>
@@ -126,7 +125,7 @@ export default async function GoogleAds({
                 <Medidor
                   valor={t.custo}
                   limite={orcamentoDiario * Math.max(d.serie.length, 1)}
-                  rotulo={`Verba (${brl(orcamentoDiario)}/dia)`}
+                  rotulo="Verba do período"
                   cor={cor}
                 />
               )}
@@ -137,10 +136,10 @@ export default async function GoogleAds({
 
           <div className="shrink-0">
             <Cartao className="min-w-0">
-              <div className="overflow-x-auto">
-                <table className="w-full text-[11.5px]">
+              <div className="max-h-[var(--h-tabela)] overflow-auto">
+                <table className="w-full" style={{ fontSize: "var(--fs-corpo)" }}>
                   <thead>
-                    <tr className="text-left text-[10px] uppercase tracking-[0.1em] text-[var(--ink-muted)]">
+                    <tr className="text-left uppercase tracking-[0.1em] text-[var(--ink-muted)] [font-size:var(--fs-micro)]">
                       <th className="pb-2 pr-3 font-semibold">Canal</th>
                       <th className="pb-2 pr-3 font-semibold">Campanha</th>
                       <th className="pb-2 pr-3 text-right font-semibold">Investido</th>
@@ -233,7 +232,12 @@ function ResumoCanal({
           className="block h-2.5 w-2.5 shrink-0 rotate-45"
           style={{ background: cor }}
         />
-        <span className="min-w-0 flex-1 truncate text-[13px] font-bold">{fatia.nome}</span>
+        <span
+          className="min-w-0 flex-1 truncate font-semibold"
+          style={{ fontSize: "var(--fs-corpo)" }}
+        >
+          {fatia.nome}
+        </span>
         <span className="tabular shrink-0 text-[11px] text-[var(--ink-muted)]">
           {pct(share, 0)} da verba
         </span>
@@ -260,8 +264,9 @@ function MiniCanal({ rotulo, valor, cor }: { rotulo: string; valor: string; cor?
     <div className="flex min-w-0 flex-col">
       <span className="rotulo">{rotulo}</span>
       <span
-        className="tabular mt-1 truncate text-[15px] font-bold leading-none"
-        style={cor ? { color: cor } : undefined}
+        className="tabular mt-1 truncate font-bold leading-none"
+        style={{ fontSize: "var(--fs-kpi-sm)", ...(cor ? { color: cor } : {}) }}
+        title={valor}
       >
         {valor}
       </span>

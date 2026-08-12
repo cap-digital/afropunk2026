@@ -120,17 +120,16 @@ export default async function MetaPosicionamentos({
             <Cartao
               titulo="Mapa de entrega: plataforma × posicionamento"
               sub="Impressões por combinação — rampa sequencial, mais claro é mais volume"
-              className="h-full"
             >
-              <div className="h-[230px] lg:h-full">
+              <div className="h-[var(--h-grafico)]">
                 <MapaCalor linhas={linhas} colunas={colunas} valores={valores} formato="int" />
               </div>
             </Cartao>
           </Linha>
 
           <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-2">
-            <Cartao titulo="Top posicionamentos" sub="Onde o volume realmente acontece" className="h-full">
-              <div className="h-[230px] lg:h-full">
+            <Cartao titulo="Top posicionamentos" sub="Onde o volume realmente acontece">
+              <div className="h-[var(--h-grafico)]">
                 <BarrasH dados={porPosicionamento} formato="int" corUnica="var(--seq-2)" larguraRotulo={128} />
               </div>
             </Cartao>
@@ -139,9 +138,8 @@ export default async function MetaPosicionamentos({
               <Cartao
                 titulo="Mix de plataformas por praça"
                 sub="% das impressões de cada praça em cada plataforma"
-                className="h-full"
               >
-                <div className="h-[230px] lg:h-full">
+                <div className="h-[var(--h-grafico)]">
                   <BarrasAgrupadas dados={mixPorBucket} series={seriesBuckets} formato="pct" />
                 </div>
               </Cartao>
@@ -149,10 +147,9 @@ export default async function MetaPosicionamentos({
               <Cartao
                 titulo="Custo por mil por plataforma"
                 sub="Só plataformas com mais de 500 impressões — abaixo disso o CPM é ruído"
-                className="h-full"
               >
                 <div className="flex h-full flex-col justify-between">
-                  <div className="h-[230px] lg:h-full">
+                  <div className="h-[var(--h-grafico)]">
                     <BarrasH dados={cpmPorPlataforma} formato="brl" corUnica="var(--seq-3)" larguraRotulo={128} />
                   </div>
                   <EmpilhadaTotal

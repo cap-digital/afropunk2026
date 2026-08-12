@@ -101,7 +101,7 @@ export function PecasPmax({ pecas }: { pecas: AtivoPmax[] }) {
         })}
       </div>
 
-      <div className="min-h-0 flex-1 overflow-auto pr-1">
+      <div className="max-h-[var(--h-tabela)] overflow-auto pr-1">
         <div className="grid auto-rows-min grid-cols-2 gap-2.5 sm:grid-cols-3">
           {ordenadas.map((a, i) => (
             <CartaoPeca key={`${a.id}-${a.campo}`} a={a} posicao={i + 1} destaque={ordem} />

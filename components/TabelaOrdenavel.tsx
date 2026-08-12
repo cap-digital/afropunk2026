@@ -106,9 +106,9 @@ export function TabelaOrdenavel({
 
   return (
     <div className={`h-full overflow-auto ${className}`}>
-      <table className="w-full text-[11.5px]">
+      <table className="w-full" style={{ fontSize: "var(--fs-corpo)" }}>
         <thead className="sticky top-0 z-[1] bg-[var(--surface-2)]">
-          <tr className="text-[10px] uppercase tracking-[0.1em] text-[var(--ink-muted)]">
+          <tr className="uppercase tracking-[0.1em] text-[var(--ink-muted)] [font-size:var(--fs-micro)]">
             {colunas.map((c) => {
               const ativa = c.chave === chave;
               const direita = c.alinhar === "direita" || (c.formato && c.formato !== "texto");

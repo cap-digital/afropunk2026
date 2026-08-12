@@ -144,9 +144,8 @@ export default async function MetaCampanhas({
             <Cartao
               titulo="Investimento diário por campanha"
               sub="Compara o ritmo de gasto entre as campanhas ativas"
-              className="h-full"
             >
-              <div className="h-[230px] lg:h-full">
+              <div className="h-[var(--h-grafico)]">
                 <LinhasTempo dados={serieCampanhas} series={seriesCfg} formato="brl" />
               </div>
             </Cartao>
@@ -154,7 +153,6 @@ export default async function MetaCampanhas({
             <Cartao
               titulo="Investimento × cliques"
               sub="Duas escalas diferentes, dois gráficos — nunca eixo duplo"
-              className="h-full"
             >
               <div className="grid h-[300px] grid-rows-2 gap-2 lg:h-full">
                 <BarrasAgrupadas
@@ -171,13 +169,17 @@ export default async function MetaCampanhas({
             </Cartao>
           </Linha>
 
-          <Cartao
-            titulo="Detalhamento"
-            sub="Todas as métricas por campanha ativa"
-            className="shrink-0"
-          >
-            <div className="overflow-auto">
-              <table className="w-full text-[11.5px]">
+          {/* Tabela longa rola DENTRO do cartão, não empurra a página: com
+              todas as praças juntas ela passava 319px da tela e a última linha
+              ficava fora de alcance sem que nada indicasse isso. */}
+          <Linha>
+            <Cartao
+              titulo="Detalhamento"
+              sub="Todas as métricas por campanha ativa"
+              className="h-full min-w-0"
+            >
+              <div className="max-h-[var(--h-tabela)] overflow-auto">
+              <table className="w-full" style={{ fontSize: "var(--fs-corpo)" }}>
                 <thead>
                   <tr className="text-left text-[11px] uppercase tracking-[0.1em] text-[var(--ink-muted)]">
                     <th className="pb-2 pr-3 font-semibold">Campanha</th>
@@ -233,8 +235,9 @@ export default async function MetaCampanhas({
                     ))}
                 </tbody>
               </table>
-            </div>
-          </Cartao>
+              </div>
+            </Cartao>
+          </Linha>
         </Pagina>
       </Shell>
     );

@@ -127,9 +127,8 @@ export default async function MetaResultados({
             <Cartao
               titulo="Evolução do ROAS"
               sub="Receita do dia ÷ investimento em conversão do dia"
-              className="h-full"
             >
-              <div className="h-[230px] lg:h-full">
+              <div className="h-[var(--h-grafico)]">
                 <LinhasTempo dados={serieRoas} series={seriesRoas} formato="roas" />
               </div>
             </Cartao>
@@ -137,9 +136,8 @@ export default async function MetaResultados({
             <Cartao
               titulo="Receita × investimento por dia"
               sub="Mesma unidade (R$), então cabem no mesmo eixo"
-              className="h-full"
             >
-              <div className="h-[230px] lg:h-full">
+              <div className="h-[var(--h-grafico)]">
                 <LinhasTempo dados={serieReceita} series={seriesReceita} formato="brl" />
               </div>
             </Cartao>
@@ -155,9 +153,8 @@ export default async function MetaResultados({
                   ? `${conjuntosComReceita.length} conjunto${conjuntosComReceita.length > 1 ? "s" : ""} com venda registrada`
                   : "nenhum conjunto registrou venda no período"
               }
-              className="h-full"
             >
-              <div className="h-[230px] lg:h-full">
+              <div className="h-[var(--h-grafico)]">
                 {receitaPorConjunto.length > 0 ? (
                   <BarrasH dados={receitaPorConjunto} formato="brl" larguraRotulo={186} />
                 ) : (
@@ -172,12 +169,11 @@ export default async function MetaResultados({
             <Cartao
               titulo="Detalhamento por conjunto"
               sub="Ordenado por receita · ROAS em verde quando passa de 1×"
-              className="h-full"
             >
-              <div className="max-h-[320px] overflow-auto lg:h-full lg:max-h-none">
-              <table className="w-full text-[11.5px]">
+              <div className="max-h-[var(--h-tabela)] overflow-auto">
+              <table className="w-full" style={{ fontSize: "var(--fs-corpo)" }}>
                 <thead className="sticky top-0 bg-[var(--surface)]">
-                  <tr className="text-left text-[10px] uppercase tracking-[0.1em] text-[var(--ink-muted)]">
+                  <tr className="text-left uppercase tracking-[0.1em] text-[var(--ink-muted)] [font-size:var(--fs-micro)]">
                     <th className="pb-2 pr-3 font-semibold">Conjunto</th>
                     <th className="pb-2 pr-3 text-right font-semibold">Investido</th>
                     <th className="pb-2 pr-3 text-right font-semibold">Receita</th>

@@ -99,9 +99,8 @@ export default async function AnalyticsAquisicao({
             <Cartao
               titulo="Sessões por canal"
               sub="Agrupamento padrão do GA4"
-              className="h-full"
             >
-              <div className="h-[230px] lg:h-full">
+              <div className="h-[var(--h-grafico)]">
                 <BarrasH dados={canaisSessoes} formato="int" larguraRotulo={132} />
               </div>
             </Cartao>
@@ -109,9 +108,8 @@ export default async function AnalyticsAquisicao({
             <Cartao
               titulo="Receita por canal"
               sub="Só canais que geraram venda"
-              className="h-full"
             >
-              <div className="h-[230px] lg:h-full">
+              <div className="h-[var(--h-grafico)]">
                 {canaisReceita.length > 0 ? (
                   <BarrasH
                     dados={canaisReceita}
@@ -134,9 +132,8 @@ export default async function AnalyticsAquisicao({
             <Cartao
               titulo="Origem e mídia"
               sub="A fonte exata, antes do agrupamento em canais"
-              className="h-full"
             >
-              <div className="h-[230px] lg:h-full">
+              <div className="h-[var(--h-grafico)]">
                 <BarrasH
                   dados={origens}
                   formato="int"
@@ -149,7 +146,6 @@ export default async function AnalyticsAquisicao({
             <Cartao
               titulo="Dispositivos"
               sub="Onde o público navega"
-              className="h-full"
             >
               <div className="flex h-full flex-col justify-evenly gap-5">
                 <EmpilhadaTotal

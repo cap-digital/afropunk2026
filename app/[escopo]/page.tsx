@@ -260,9 +260,8 @@ export default async function VisaoGeralGlobal({
                   ? "O Google entrou depois — antes da primeira barra, só há Meta"
                   : "Google entra nesta série quando a praça tiver campanha no canal"
               }
-              className="h-full"
             >
-              <div className="h-[230px] lg:h-full">
+              <div className="h-[var(--h-grafico)]">
                 <AreaTempo
                   dados={serie}
                   series={[
@@ -283,7 +282,6 @@ export default async function VisaoGeralGlobal({
             <Cartao
               titulo="Participação por canal"
               sub="Onde o retorno descola do gasto"
-              className="h-full"
             >
               {/* Duas faixas, não três: cada bloco custa ~80px com legenda e a
                   terceira estourava a altura do cartão. Compras sai — o CPA de
@@ -325,7 +323,13 @@ function MiniCanal({ rotulo, valor }: { rotulo: string; valor: string }) {
   return (
     <div className="flex min-w-0 flex-col">
       <span className="rotulo">{rotulo}</span>
-      <span className="tabular mt-1 truncate text-[17px] font-bold leading-none">{valor}</span>
+      <span
+        className="tabular mt-1 truncate font-bold leading-none"
+        style={{ fontSize: "var(--fs-kpi-sm)" }}
+        title={valor}
+      >
+        {valor}
+      </span>
     </div>
   );
 }

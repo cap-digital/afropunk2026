@@ -198,7 +198,7 @@ function MiniDestaque({
         <p className="mt-1 truncate text-[12.5px] font-semibold text-[var(--ink)]" title={c.adName}>
           {c.adName}
         </p>
-        <p className="text-[11.5px] text-[var(--ink-muted)]">{c.bucket?.nome ?? "—"}</p>
+        <p className="truncate text-[11.5px] text-[var(--ink-muted)]">{c.bucket?.nome ?? "—"}</p>
       </div>
       <div className="shrink-0 text-right">
         <span className="tabular block text-[21px] font-bold leading-none text-[var(--ink)]">

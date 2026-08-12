@@ -46,7 +46,10 @@ export function Cartao({
   return (
     <section className={`cartao flex flex-col overflow-hidden ${className}`}>
       {(titulo || acao) && (
-        <header className="cartao-cabecalho flex shrink-0 items-start justify-between gap-3 px-3.5 py-2.5">
+        <header
+          className="cartao-cabecalho flex shrink-0 items-start justify-between gap-3"
+          style={{ padding: "var(--esp-cartao-y) var(--esp-cartao-x)" }}
+        >
           <div className="flex min-w-0 items-start gap-2">
             {Ic && (
               <Ic
@@ -58,12 +61,14 @@ export function Cartao({
             )}
             <div className="min-w-0">
               {titulo && (
-                <h3 className="truncate text-[12.5px] font-semibold leading-tight tracking-tight text-[var(--ink)]">
+                <h3 className="truncate font-semibold leading-tight tracking-tight text-[var(--ink)]"
+                  style={{ fontSize: "var(--fs-titulo-cartao)" }}>
                   {titulo}
                 </h3>
               )}
               {sub && (
-                <p className="mt-0.5 truncate text-[10.5px] leading-tight text-[var(--ink-muted)]">
+                <p className="mt-0.5 truncate leading-tight text-[var(--ink-muted)]"
+                  style={{ fontSize: "var(--fs-sub-cartao)" }}>
                   {sub}
                 </p>
               )}
@@ -72,7 +77,14 @@ export function Cartao({
           {acao && <div className="shrink-0">{acao}</div>}
         </header>
       )}
-      <div className="min-h-0 flex-1 px-3.5 pb-3.5 pt-3">{children}</div>
+      <div
+        className="min-h-0 flex-1"
+        style={{
+          padding: "var(--esp-cartao-y) var(--esp-cartao-x)",
+        }}
+      >
+        {children}
+      </div>
     </section>
   );
 }
@@ -95,7 +107,16 @@ export function Stat({
   tamanho?: "sm" | "md" | "lg";
 }) {
   // Escala reduzida: a anterior foi calibrada em 1366 e estourava em 1280.
-  const t = { sm: "text-[16px]", md: "text-[21px]", lg: "text-[28px]" }[tamanho];
+  /*
+   * Fonte fluida e valor truncável. Eram duas causas somadas: em px fixo o
+   * número não cedia quando a coluna estreitava, e sem `truncate` ele saía da
+   * própria caixa e ia parar em cima do KPI seguinte.
+   */
+  const t = {
+    sm: "var(--fs-kpi-sm)",
+    md: "var(--fs-kpi)",
+    lg: "var(--fs-kpi-lg)",
+  }[tamanho];
   return (
     <div className="flex min-w-0 flex-col justify-center">
       <div className="flex items-center gap-1.5">
@@ -104,11 +125,19 @@ export function Stat({
         )}
         <span className="rotulo truncate">{rotulo}</span>
       </div>
-      <div className={`mt-1 font-bold leading-none tracking-[-0.02em] text-[var(--ink)] ${t}`}>
+      <div
+        className="mt-1 truncate font-bold leading-none tracking-[-0.02em] text-[var(--ink)]"
+        style={{ fontSize: t }}
+        title={valor}
+      >
         {valor}
       </div>
       {sub && (
-        <div className="mt-1 truncate text-[11px] leading-tight text-[var(--ink-muted)]">
+        <div
+          className="mt-1 truncate leading-tight text-[var(--ink-muted)]"
+          style={{ fontSize: "var(--fs-sub-cartao)" }}
+          title={sub}
+        >
           {sub}
         </div>
       )}
@@ -127,12 +156,24 @@ export function Hero({
   sub?: string;
 }) {
   return (
-    <div className="flex flex-col justify-center border-r border-[var(--border)] pr-4">
+    <div className="flex min-w-0 flex-col justify-center border-r border-[var(--border)] pr-4">
       <span className="rotulo">{rotulo}</span>
-      <div className="mt-1.5 whitespace-nowrap text-[25px] font-bold leading-none tracking-[-0.03em] text-[var(--ink)] xl:text-[29px]">
+      <div
+        className="mt-1.5 truncate font-bold leading-none tracking-[-0.03em] text-[var(--ink)]"
+        style={{ fontSize: "var(--fs-hero)" }}
+        title={valor}
+      >
         {valor}
       </div>
-      {sub && <div className="mt-1.5 truncate text-[10.5px] text-[var(--ink-2)]">{sub}</div>}
+      {sub && (
+        <div
+          className="mt-1.5 truncate text-[var(--ink-2)]"
+          style={{ fontSize: "var(--fs-sub-cartao)" }}
+          title={sub}
+        >
+          {sub}
+        </div>
+      )}
     </div>
   );
 }

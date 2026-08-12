@@ -242,11 +242,17 @@ function MiniStat({
   nota?: string;
 }) {
   return (
-    <div className="flex flex-col items-end">
+    <div className="flex min-w-0 flex-col items-end">
       <span className="text-[10px] font-semibold uppercase tracking-[0.14em] opacity-60">
         {rotulo}
       </span>
-      <span className="tabular mt-0.5 text-[17px] font-bold leading-none">{valor}</span>
+      <span
+        className="tabular mt-0.5 truncate font-bold leading-none"
+        style={{ fontSize: "var(--fs-kpi-sm)" }}
+        title={valor}
+      >
+        {valor}
+      </span>
       {nota && <span className="tabular mt-0.5 text-[9px] opacity-50">{nota}</span>}
     </div>
   );
@@ -352,8 +358,12 @@ function MiniStatEsq({
     <div className="flex min-w-0 flex-col">
       <span className="rotulo truncate">{rotulo}</span>
       <span
-        className="tabular mt-0.5 text-[17px] font-bold leading-none"
-        style={destaque ? { color: "var(--good)" } : undefined}
+        className="tabular mt-0.5 truncate font-bold leading-none"
+        style={{
+          fontSize: "var(--fs-kpi-sm)",
+          ...(destaque ? { color: "var(--good)" } : {}),
+        }}
+        title={valor}
       >
         {valor}
       </span>
