@@ -187,7 +187,7 @@ export default async function MetaCampanhas({
               sub="Todas as métricas por campanha"
               className="h-full min-w-0"
             >
-              <div className="max-h-[var(--h-tabela)] overflow-auto">
+              <div className="rola-lateral max-h-[var(--h-tabela)] overflow-auto">
               <table className="w-full" style={{ fontSize: "var(--fs-corpo)" }}>
                 <thead>
                   <tr className="text-left text-[var(--fs-corpo)] uppercase tracking-[0.08em] text-[var(--ink-muted)]">

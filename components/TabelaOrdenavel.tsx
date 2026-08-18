@@ -111,7 +111,7 @@ export function TabelaOrdenavel({
    * `max-h-[var(--h-tabela)]`, e é aí que a rolagem interna entra.
    */
   return (
-    <div className={`max-h-[var(--h-tabela)] overflow-auto ${className}`}>
+    <div className={`rola-lateral max-h-[var(--h-tabela)] overflow-auto ${className}`}>
       <table className="w-full" style={{ fontSize: "var(--fs-corpo)" }}>
         <thead className="sticky top-0 z-[1] bg-[var(--surface-2)]">
           <tr className="uppercase tracking-[0.08em] text-[var(--ink-muted)] [font-size:var(--fs-micro)]">

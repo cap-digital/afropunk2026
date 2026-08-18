@@ -226,7 +226,7 @@ async function Comparativo({
             titulo="Comparativo completo"
             sub="Todas as métricas lado a lado"
           >
-            <div className="max-h-[var(--h-tabela)] overflow-auto">
+            <div className="rola-lateral max-h-[var(--h-tabela)] overflow-auto">
               <table className="w-full" style={{ fontSize: "var(--fs-corpo)" }}>
                 <thead className="sticky top-0 bg-[var(--surface)]">
                   <tr className="text-left text-[var(--fs-corpo)] uppercase tracking-[0.08em] text-[var(--ink-muted)]">

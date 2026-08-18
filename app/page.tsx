@@ -110,7 +110,7 @@ export default async function Capa() {
      * centrada no resto —, e a distância entre as duas se resolve sozinha em
      * qualquer altura de janela.
      */
-    <main className="flex min-h-screen flex-col items-center overflow-hidden bg-[var(--bg)] px-8 py-[5vh]">
+    <main className="flex min-h-screen flex-col items-center overflow-hidden bg-[var(--bg)] px-4 py-[5vh] sm:px-8">
       <header className="flex shrink-0 flex-col items-center gap-3">
         <MarcaAnimada />
         <Losangos qtd={9} cor="var(--surface-3)" />
@@ -142,7 +142,11 @@ export default async function Capa() {
         )}
 
         <div className="flex w-full max-w-[1120px] shrink-0 flex-col gap-4">
-          <div className="grid grid-cols-3 gap-4">
+          {/* Empilha no celular. Em três colunas num aparelho de 390px cada
+              cartão fica com ~110px: o nome da praça quebra em duas linhas e os
+              KPIs viram "R$ …". Um por vez, inteiro, é melhor que três pela
+              metade. */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             {PRACAS.map((p) => (
               <CartaoPraca
                 key={p.slug}
@@ -159,7 +163,7 @@ export default async function Capa() {
           {/* Botão para o comparativo consolidado */}
           <Link
             href={`/${ESCOPO_TODAS}`}
-            className="group flex items-center gap-5 rounded-[6px] border-2 border-[var(--ink)] bg-[var(--ink)] px-5 py-4 text-black transition-colors hover:bg-[var(--ink-2)] hover:border-[var(--ink-2)]"
+            className="group flex flex-col gap-4 rounded-[6px] border-2 border-[var(--ink)] bg-[var(--ink)] px-5 py-4 text-black transition-colors hover:bg-[var(--ink-2)] hover:border-[var(--ink-2)] sm:flex-row sm:items-center sm:gap-5"
           >
             <Losangos qtd={4} cor="#000000" />
             <div className="min-w-0 flex-1">
@@ -169,7 +173,7 @@ export default async function Capa() {
               </p>
             </div>
             {nacional && dados && (
-              <div className="flex items-center gap-7">
+              <div className="flex w-full items-center justify-between gap-5 sm:w-auto sm:justify-normal sm:gap-7">
                 <MiniStat rotulo="Investido" valor={brl(totalInvestimento)} />
                 <MiniStat rotulo="Receita" valor={brl(totalReceita)} />
                 <MiniStat
@@ -181,7 +185,7 @@ export default async function Capa() {
                 />
               </div>
             )}
-            <span className="text-[var(--fs-lg)] leading-none transition-transform group-hover:translate-x-1">
+            <span className="hidden text-[var(--fs-lg)] leading-none transition-transform group-hover:translate-x-1 sm:block">
               →
             </span>
           </Link>
@@ -193,7 +197,7 @@ export default async function Capa() {
           */}
           <Link
             href="/analytics"
-            className="cartao group flex items-center gap-5 px-5 py-4 transition-colors hover:border-[var(--border-forte)] hover:bg-[var(--surface-2)]"
+            className="cartao group flex flex-col gap-4 px-5 py-4 transition-colors hover:border-[var(--border-forte)] hover:bg-[var(--surface-2)] sm:flex-row sm:items-center sm:gap-5"
           >
             <Losangos qtd={4} cor="var(--seq-3)" />
             <div className="min-w-0 flex-1">
@@ -203,13 +207,13 @@ export default async function Capa() {
               </p>
             </div>
             {ga4 && (
-              <div className="hidden items-center gap-7 sm:flex">
+              <div className="flex w-full items-center justify-between gap-5 sm:w-auto sm:justify-normal sm:gap-7">
                 <MiniStat rotulo="Sessões" valor={compact(ga4.sessoes)} />
                 <MiniStat rotulo="Receita" valor={brl(ga4.receita)} />
                 <MiniStat rotulo="Conversão" valor={pct(ga4.taxaConversao * 100, 2)} />
               </div>
             )}
-            <span className="text-[var(--fs-kpi)] leading-none text-[var(--ink-muted)] transition-transform group-hover:translate-x-1">
+            <span className="hidden text-[var(--fs-kpi)] leading-none text-[var(--ink-muted)] transition-transform group-hover:translate-x-1 sm:block">
               →
             </span>
           </Link>

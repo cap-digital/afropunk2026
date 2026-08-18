@@ -140,7 +140,7 @@ export default async function GoogleAds({
 
           <div className="shrink-0">
             <Cartao className="min-w-0">
-              <div className="max-h-[var(--h-tabela)] overflow-auto">
+              <div className="rola-lateral max-h-[var(--h-tabela)] overflow-auto">
                 <table className="w-full" style={{ fontSize: "var(--fs-corpo)" }}>
                   <thead>
                     <tr className="text-left uppercase tracking-[0.08em] text-[var(--ink-muted)] [font-size:var(--fs-micro)]">

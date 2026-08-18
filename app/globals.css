@@ -307,6 +307,18 @@ body {
   background: var(--bg);
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
+  /*
+    Rede de segurança do celular. No desktop o shell é `overflow-hidden` e
+    nada escapa; abaixo de `lg` não havia guarda nenhuma, então bastava UMA
+    linha de KPIs larga demais para a página inteira deslizar para o lado — e
+    o efeito não fica no elemento culpado, ele desloca a tela toda e some com
+    a borda direita de tudo.
+
+    Isto não conserta o excesso, só impede que ele contamine o resto. O
+    conserto de verdade é cada bloco empilhar na largura de telefone, e é o
+    que os `sm:`/`lg:` das páginas fazem.
+  */
+  overflow-x: hidden;
 }
 
 /*
@@ -466,6 +478,20 @@ body::after {
   flex: 1;
   height: 1px;
   background: linear-gradient(90deg, var(--border), rgba(255, 255, 255, 0));
+}
+
+/*
+  Tabela larga em tela estreita: a borda direita do cartão corta a coluna e
+  nada diz que há mais. O desvanecimento avisa — e some sozinho quando a
+  rolagem chega ao fim, porque `mask` acompanha o conteúdo, não o container.
+
+  Só abaixo de `lg`: no desktop a tabela cabe e o efeito seria ruído.
+*/
+@media (max-width: 1023px) {
+  .rola-lateral {
+    -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 2.5rem), transparent);
+    mask-image: linear-gradient(90deg, #000 calc(100% - 2.5rem), transparent);
+  }
 }
 
 /* Item de navegação ativo: barra sólida à esquerda, sem pílula arredondada. */
