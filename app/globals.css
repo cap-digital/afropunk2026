@@ -156,6 +156,13 @@
     e não encolhia com a janela como o resto. Agora vem da mesma escada: o eixo
     é cromo (fica abaixo do corpo) e o valor rotulado é dado (empata com ele).
   */
+  /*
+    Navegação lateral. Degrau próprio, +3px sobre o corpo: a lateral é lida de
+    relance, sempre à mesma distância, e nunca compete por espaço com número —
+    ali cabe mais tipo do que numa célula de tabela.
+  */
+  --fs-nav: 1.43rem;
+
   --fs-eixo: 1.04rem;
   --fs-valor-grafico: 1.14rem;
 

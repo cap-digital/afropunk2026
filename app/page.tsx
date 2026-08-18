@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { Losangos } from "@/components/Marca";
 import { MarcaAnimada } from "@/components/MarcaAnimada";
 import { Sparkline } from "@/components/charts";
@@ -29,6 +28,8 @@ interface ResumoPraca {
   campanhas: number;
   serie: PontoGrafico[];
   ativa: boolean;
+  /** Alguma campanha REALMENTE no ar hoje — o ponto verde depende disto. */
+  emVeiculacao: boolean;
 }
 
 function consolidar(f: FatiaBucket | null, ads: DadosAds | null, slug: string): ResumoPraca {
@@ -59,6 +60,7 @@ function consolidar(f: FatiaBucket | null, ads: DadosAds | null, slug: string): 
     campanhas: (f?.campanhas.length ?? 0) + (g?.campanhas.length ?? 0),
     serie,
     ativa: (f?.ativa ?? false) || (g?.ativa ?? false),
+    emVeiculacao: (f?.campanhas ?? []).some((c) => c.effective_status === "ACTIVE"),
   };
 }
 
@@ -95,17 +97,18 @@ export default async function Capa() {
 
   return (
     /*
-     * Capa em três zonas: marca no alto, seleção no meio, assinatura no pé.
+     * Capa em duas zonas: marca no alto, seleção ocupando o resto.
      *
      * Já foi `justify-between` nos três filhos diretos — cada bloco se espalhava
      * por conta e os vãos saíam irregulares. Depois virou `justify-center` com
      * gap fixo, e aí a capa inteira passou a flutuar no meio da tela, com o
      * mesmo tanto de preto acima da marca e abaixo da assinatura.
      *
-     * Aqui cabeçalho e rodapé são ÂNCORAS (`shrink-0`, nas pontas da coluna) e
-     * só a zona do meio cresce: ela toma toda a folga e centraliza a seleção
-     * dentro do que sobra. A marca sobe, a assinatura desce, e a distância dos
-     * botões até as duas se resolve sozinha em qualquer altura de janela.
+     * O cabeçalho é ÂNCORA (`shrink-0`, no topo) e a zona de baixo cresce:
+     * ela toma toda a folga e centraliza a seleção dentro do que sobra. Com a
+     * assinatura removida do pé, sobrou só um par — marca em cima, escolha
+     * centrada no resto —, e a distância entre as duas se resolve sozinha em
+     * qualquer altura de janela.
      */
     <main className="flex min-h-screen flex-col items-center overflow-hidden bg-[var(--bg)] px-8 py-[5vh]">
       <header className="flex shrink-0 flex-col items-center gap-3">
@@ -213,39 +216,6 @@ export default async function Capa() {
         </div>
       </div>
 
-      <footer className="flex shrink-0 flex-col items-center gap-1.5">
-        <span className="text-[var(--fs-rotulo)] font-semibold uppercase tracking-[0.24em] text-[var(--ink-muted)]">
-          Desenvolvido por
-        </span>
-        <div className="flex items-center gap-4">
-          {/*
-            CAP.CO recortado na caixa dos glifos: o arquivo original tem margem
-            transparente e, na mesma altura em CSS, a marca sairia menor que a
-            do GRAAL. Cortado, as duas alturas de caixa alta batem.
-          */}
-          <Image
-            src="/capco.png"
-            alt="CAP.CO"
-            width={1752}
-            height={536}
-            priority
-            className="h-[1.1875rem] w-auto opacity-90"
-          />
-          <span aria-hidden="true" className="h-4 w-px bg-[var(--border-forte)]" />
-          {/*
-            Versão reversa do logo: o ".hub" do arquivo original é preto e
-            desapareceria no rodapé. O vermelho da marca é preservado.
-          */}
-          <Image
-            src="/graalhub-reverso.png"
-            alt="GRAAL.hub"
-            width={900}
-            height={127}
-            priority
-            className="h-[1.1875rem] w-auto opacity-90"
-          />
-        </div>
-      </footer>
     </main>
   );
 }
@@ -342,11 +312,18 @@ function CartaoPraca({
               <span
                 aria-hidden="true"
                 className="block h-1.5 w-1.5 rounded-full"
-                style={{ background: "var(--good)" }}
+                style={{ background: r.emVeiculacao ? "var(--good)" : "var(--ink-muted)" }}
               />
-              <span className="text-[var(--fs-corpo)] font-semibold uppercase tracking-[0.08em] text-[var(--good)]">
-                {r.campanhas} campanha{r.campanhas > 1 ? "s" : ""} ativa
-                {r.campanhas > 1 ? "s" : ""}
+              {/* "ativas" saiu do texto: desde que campanha pausada passou a
+                  contar, uma praça pode ter quatro campanhas na edição e
+                  nenhuma no ar — era o caso do Rio no dia seguinte ao evento.
+                  O ponto verde agora depende de veiculação de verdade. */}
+              <span
+                className="text-[var(--fs-corpo)] font-semibold uppercase tracking-[0.08em]"
+                style={{ color: r.emVeiculacao ? "var(--good)" : "var(--ink-muted)" }}
+              >
+                {r.campanhas} campanha{r.campanhas > 1 ? "s" : ""}
+                {r.emVeiculacao ? " no ar" : " · encerrada" + (r.campanhas > 1 ? "s" : "")}
               </span>
             </div>
           </>

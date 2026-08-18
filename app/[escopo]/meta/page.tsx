@@ -35,7 +35,7 @@ import {
   PLATAFORMA_LABEL,
   type EscopoSlug,
 } from "@/lib/config";
-import { brl, compact, dec, diaMesCurto, int, pct } from "@/lib/format";
+import { brl, brlCompact, compact, dec, diaMesCurto, int, pct } from "@/lib/format";
 
 export const revalidate = REVALIDATE;
 
@@ -62,7 +62,7 @@ export default async function MetaVisaoGeral({
         <Shell escopo={escopo} titulo="Meta Ads" sub={subtituloEscopo(escopo, undefined, periodo)}>
           <div className="cartao min-h-[26rem] flex-1 lg:h-full">
             <Vazio
-              titulo={`${d.praca?.nome ?? "Este escopo"} ainda não tem campanha ativa no Meta`}
+              titulo={`${d.praca?.nome ?? "Este escopo"} não tem campanha desta edição no Meta`}
               descricao="O painel está pronto e conectado. Assim que a primeira campanha entrar no ar, investimento, entrega, público, posicionamentos e criativos aparecem aqui automaticamente."
             />
           </div>
@@ -133,7 +133,7 @@ async function Comparativo({
     <Shell
       escopo={escopo}
       titulo="Meta Ads · Comparativo"
-      sub={subtituloEscopo(escopo, `${d.campanhas.length} campanhas ativas · ${janela}`, d.periodo)}
+      sub={subtituloEscopo(escopo, `${d.campanhas.length} campanhas · ${janela}`, d.periodo)}
     >
       <Pagina>
         <Secao>Resumo consolidado</Secao>
@@ -146,7 +146,7 @@ async function Comparativo({
           <CartaoKpi
             rotulo="Compras"
             valor={int(t.purchases)}
-            sub={t.purchases > 0 ? `ROAS ${dec(t.roas)}× sobre ${brl(t.spendConversao)}` : "sem conversão"}
+            sub={t.purchases > 0 ? `ROAS ${dec(t.roas)}× sobre ${brlCompact(t.spendConversao)}` : "sem conversão"}
           />
         </GradeKpi>
 
@@ -370,7 +370,7 @@ async function PracaUnica({
     <Shell
       escopo={escopo}
       titulo="Meta Ads"
-      sub={subtituloEscopo(escopo, `${d.campanhas.length} campanhas ativas · ${janela}`, d.periodo)}
+      sub={subtituloEscopo(escopo, `${d.campanhas.length} campanhas · ${janela}`, d.periodo)}
     >
       <Pagina>
         <Secao>Resumo</Secao>

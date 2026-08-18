@@ -48,7 +48,7 @@ export default async function MetaCampanhas({
         <Shell escopo={escopo} titulo="Meta Ads · Campanhas" sub={subtituloEscopo(escopo, undefined, periodo)}>
           <div className="cartao min-h-[26rem] flex-1 lg:h-full">
             <Vazio
-              titulo="Nenhuma campanha ativa"
+              titulo="Nenhuma campanha nesta edição"
               descricao="Assim que uma campanha entrar em veiculação, ela aparece aqui com investimento, entrega, orçamento e série diária."
             />
           </div>
@@ -94,7 +94,7 @@ export default async function MetaCampanhas({
       <Shell
         escopo={escopo}
         titulo="Meta Ads · Campanhas"
-        sub={subtituloEscopo(escopo, `${d.campanhas.length} ativas`)}
+        sub={subtituloEscopo(escopo, `${d.campanhas.length} campanhas`)}
       >
         <Pagina>
           {/* Cartões por campanha */}
@@ -152,7 +152,7 @@ export default async function MetaCampanhas({
           <Linha preencher className="grid grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-[1.4fr_1fr]">
             <Cartao
               titulo="Investimento diário por campanha"
-              sub="Compara o ritmo de gasto entre as campanhas ativas"
+              sub="Compara o ritmo de gasto entre as campanhas da edição"
             >
               <AreaGrafico>
                 <LinhasTempo dados={serieCampanhas} series={seriesCfg} formato="brl" />
@@ -184,7 +184,7 @@ export default async function MetaCampanhas({
           <Linha>
             <Cartao
               titulo="Detalhamento"
-              sub="Todas as métricas por campanha ativa"
+              sub="Todas as métricas por campanha"
               className="h-full min-w-0"
             >
               <div className="max-h-[var(--h-tabela)] overflow-auto">

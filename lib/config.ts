@@ -109,13 +109,26 @@ export function nomeDoEscopo(escopo: EscopoSlug): string {
 /** Ordem de render dos buckets nos comparativos (a ordem validada). */
 export const BUCKETS: Bucket[] = [...PRACAS, NACIONAL];
 
+/** Edição coberta por este painel. Campanha sem esta marca no nome fica fora. */
+export const EDICAO = "2026";
+
 /**
  * Descobre o bucket de uma campanha pelo nome.
  * "[CONVERSAO AFROPUNK - RECIFE 2026] … [RECIFE]" → recife
  * "[ALCANCE AFROPUNK 2026] … [TODAS AS PRACAS]"   → nacional
+ *
+ * O recorte por EDIÇÃO vem antes da tag de praça, e é ele que segura o painel
+ * de pé desde que campanha pausada passou a contar: a conta guarda campanhas de
+ * 2024 e 2025, e três delas — "[ALCANCE] [SSA] [CBO]", "[ALCANCE] [SSA] [CBO]
+ * [NOVA FASE]" e "[CONVERSÃO] [SSA] [ABO]" — casam com a tag `[SSA]` e cairiam
+ * dentro do Salvador, somando gasto de outro ano ao resultado de agora.
+ *
+ * Sem bucket, a campanha some dos dois escopos: `carregarEscopo` filtra por
+ * `bucket !== null` tanto na praça quanto em "todas as praças".
  */
 export function bucketDaCampanha(nome: string): Bucket | null {
   const upper = nome.toUpperCase();
+  if (!upper.includes(EDICAO)) return null;
   // Nacional primeiro: é a tag mais específica.
   if (TAGS_NACIONAL.some((t) => upper.includes(t))) return NACIONAL;
   for (const p of PRACAS) {
