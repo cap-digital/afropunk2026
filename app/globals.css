@@ -157,11 +157,20 @@
     é cromo (fica abaixo do corpo) e o valor rotulado é dado (empata com ele).
   */
   /*
-    Navegação lateral. Degrau próprio, +3px sobre o corpo: a lateral é lida de
-    relance, sempre à mesma distância, e nunca compete por espaço com número —
-    ali cabe mais tipo do que numa célula de tabela.
+    Navegação lateral, em DOIS degraus.
+    
+    Antes era um só, e o resultado é que "Overview", "META ADS" e "Visão geral"
+    tinham exatamente o mesmo corpo — uma lista plana onde nada indica que um
+    item abre os outros. A hierarquia vinha só da indentação e da caixa alta,
+    que é pouco: de relance a lateral inteira lê como um bloco cinza.
+    
+    `--fs-nav` é o nível que abre (Overview, META ADS, GOOGLE ADS) e ganha
+    presença de rótulo de KPI; `--fs-nav-sub` é o que está dentro, um degrau
+    abaixo. A lateral é lida de relance, sempre à mesma distância, e não disputa
+    espaço com número — cabe mais tipo aqui do que numa célula de tabela.
   */
-  --fs-nav: 1.43rem;
+  --fs-nav: 1.78rem;
+  --fs-nav-sub: 1.52rem;
 
   --fs-eixo: 1.04rem;
   --fs-valor-grafico: 1.14rem;
