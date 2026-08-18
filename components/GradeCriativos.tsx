@@ -38,7 +38,7 @@ export function GradeCriativos({ criativos }: { criativos: Criativo[] }) {
               type="button"
               onClick={() => setOrdem(m.chave)}
               aria-pressed={ativo}
-              className={`rounded-md border px-2 py-[5px] text-[var(--fs-corpo)] font-semibold uppercase tracking-[0.08em] transition-colors ${
+              className={`rounded-md border px-2 py-[5px] text-[length:var(--fs-corpo)] font-semibold uppercase tracking-[0.08em] transition-colors ${
                 ativo
                   ? "border-[var(--ink)] bg-[var(--ink)] text-black"
                   : "border-[var(--border-forte)] text-[var(--ink-2)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
@@ -65,7 +65,7 @@ export function GradeCriativos({ criativos }: { criativos: Criativo[] }) {
 
       {totalPaginas > 1 && (
         <div className="flex shrink-0 items-center justify-between border-t border-[var(--border)] pt-2.5">
-          <span className="text-[var(--fs-corpo)] text-[var(--ink-muted)]">
+          <span className="text-[length:var(--fs-corpo)] text-[var(--ink-muted)]">
             <span className="tabular font-bold text-[var(--ink-2)]">
               {inicio + 1}–{Math.min(inicio + POR_PAGINA, ordenados.length)}
             </span>{" "}
@@ -88,7 +88,7 @@ export function GradeCriativos({ criativos }: { criativos: Criativo[] }) {
                 type="button"
                 onClick={() => setPagina(n)}
                 aria-current={n === pagina ? "page" : undefined}
-                className={`h-7 min-w-[1.75rem] rounded-md border px-1.5 text-[var(--fs-corpo)] font-semibold tabular transition-colors ${
+                className={`h-7 min-w-[1.75rem] rounded-md border px-1.5 text-[length:var(--fs-corpo)] font-semibold tabular transition-colors ${
                   n === pagina
                     ? "border-[var(--ink)] bg-[var(--ink)] text-black"
                     : "border-[var(--border-forte)] text-[var(--ink-2)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
@@ -129,7 +129,7 @@ function BotaoPagina({
       onClick={onClick}
       disabled={desabilitado}
       aria-label={rotulo}
-      className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--border-forte)] text-[var(--fs-md)] font-bold leading-none text-[var(--ink-2)] transition-colors hover:border-[var(--ink)] hover:text-[var(--ink)] disabled:opacity-30 disabled:hover:border-[var(--border-forte)] disabled:hover:text-[var(--ink-2)]"
+      className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--border-forte)] text-[length:var(--fs-md)] font-bold leading-none text-[var(--ink-2)] transition-colors hover:border-[var(--ink)] hover:text-[var(--ink)] disabled:opacity-30 disabled:hover:border-[var(--border-forte)] disabled:hover:text-[var(--ink-2)]"
     >
       {children}
     </button>

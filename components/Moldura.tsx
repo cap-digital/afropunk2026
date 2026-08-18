@@ -93,7 +93,7 @@ export function Moldura({
           <button
             type="button"
             onClick={() => setAberto(false)}
-            className="absolute right-3 text-[var(--fs-kpi)] leading-none text-[var(--ink-muted)] lg:hidden"
+            className="absolute right-3 text-[length:var(--fs-kpi)] leading-none text-[var(--ink-muted)] lg:hidden"
             aria-label="Fechar menu"
           >
             ×
@@ -134,7 +134,7 @@ export function Moldura({
                 {/* `leading-[1.2]`: `truncate` recorta o que passar da caixa da
                     linha, e em caixa alta o til do Ã e a cedilha do Ç saem dela
                     com entrelinha fechada — "PRAÇAS" perdia a cedilha. */}
-                <span className="marca min-w-0 flex-1 truncate text-[var(--fs-nav)] leading-[1.2] text-[var(--ink)]">
+                <span className="marca min-w-0 flex-1 truncate text-[length:var(--fs-nav)] leading-[1.2] text-[var(--ink)]">
                   {escopo ? nomeDoEscopo(escopo) : ""}
                 </span>
                 {/* Ícone no lugar da palavra "trocar": ela ocupava ~50px dos
@@ -214,9 +214,9 @@ export function Moldura({
                   `--fs-lg` e não `--fs-kpi`: o título da página estava saindo
                   MENOR que os botões ao lado, que são cromo. Quem lidera a
                   faixa é o nome da página. */}
-              <h1 className="marca truncate text-[var(--fs-corpo-2)] leading-[1.2] lg:text-[var(--fs-lg)]">{titulo}</h1>
+              <h1 className="marca truncate text-[length:var(--fs-corpo-2)] leading-[1.2] lg:text-[length:var(--fs-lg)]">{titulo}</h1>
               {sub && (
-                <div className="mt-1 truncate text-[var(--fs-micro)] uppercase tracking-[0.08em] leading-[1.3] text-[var(--ink-muted)]">
+                <div className="mt-1 truncate text-[length:var(--fs-micro)] uppercase tracking-[0.08em] leading-[1.3] text-[var(--ink-muted)]">
                   {sub}
                 </div>
               )}

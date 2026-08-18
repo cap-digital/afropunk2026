@@ -44,7 +44,7 @@ export function MarcaAnimada({ largura = 196 }: { largura?: number }) {
 
         {/* ® fica fora do SVG: dentro dele viria no corpo das letras. */}
         <span
-          className="marca-entra absolute right-[5px] top-[6px] text-[var(--fs-micro)] font-bold leading-none text-[var(--ink)]"
+          className="marca-entra absolute right-[5px] top-[6px] text-[length:var(--fs-micro)] font-bold leading-none text-[var(--ink)]"
           style={{ animation: `surgir 0.4s ease-out ${FIM_PREENCHIMENTO}s both` }}
           aria-hidden="true"
         >
@@ -53,7 +53,7 @@ export function MarcaAnimada({ largura = 196 }: { largura?: number }) {
       </span>
 
       <span
-        className="marca-entra text-[var(--fs-corpo)] font-semibold leading-none tracking-[0.42em] text-[var(--ink-2)] pl-[0.42em]"
+        className="marca-entra text-[length:var(--fs-corpo)] font-semibold leading-none tracking-[0.42em] text-[var(--ink-2)] pl-[0.42em]"
         style={{ animation: `surgir 0.5s ease-out ${FIM_PREENCHIMENTO + 0.1}s both` }}
       >
         2026

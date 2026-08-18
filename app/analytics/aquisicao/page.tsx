@@ -144,7 +144,7 @@ export default async function AnalyticsAquisicao({
                   larguraRotulo={132}
                 />
               ) : (
-                <p className="py-8 text-center text-[var(--fs-corpo-2)] text-[var(--ink-muted)]">
+                <p className="py-8 text-center text-[length:var(--fs-corpo-2)] text-[var(--ink-muted)]">
                   Nenhum canal registrou receita neste recorte.
                 </p>
               )}
@@ -201,8 +201,8 @@ export default async function AnalyticsAquisicao({
                     .slice(0, 4)
                     .map((x) => (
                       <div key={x.nome} className="flex items-center justify-between gap-3">
-                        <span className="text-[var(--fs-corpo-2)] text-[var(--ink-2)]">{x.nome}</span>
-                        <span className="tabular text-[var(--fs-corpo-2)] text-[var(--ink-muted)]">
+                        <span className="text-[length:var(--fs-corpo-2)] text-[var(--ink-2)]">{x.nome}</span>
+                        <span className="tabular text-[length:var(--fs-corpo-2)] text-[var(--ink-muted)]">
                           {compact(x.transacoes)} compras ·{" "}
                           <span className="font-bold text-[var(--ink)]">
                             {pct(x.taxaConversao, 2)}
