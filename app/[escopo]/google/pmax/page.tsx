@@ -2,7 +2,7 @@
 import { notFound } from "next/navigation";
 import { IconPhoto, IconTextCaption } from "@tabler/icons-react";
 import { ErroMeta, Linha, Pagina, Shell, subtituloEscopo } from "@/components/Shell";
-import { Cartao, Etiqueta, Hero, Secao, Stat } from "@/components/ui";
+import { Cartao, CartaoKpi, Etiqueta, GradeKpi, Secao } from "@/components/ui";
 import { PecasPmax } from "@/components/PecasPmax";
 import {
   carregarPmax,
@@ -73,22 +73,27 @@ export default async function Pmax({
         }
       >
         <Pagina>
-          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] sm:grid-cols-3 lg:grid-cols-[minmax(15.5rem,1.1fr)_repeat(5,1fr)]">
-            <Hero rotulo="Investido em PMax" valor={brl(t.custo)} sub="grupos de recursos ativos" />
-            <Stat
+          <GradeKpi>
+            <CartaoKpi
+              destaque
+              rotulo="Investido em PMax"
+              valor={brl(t.custo)}
+              sub="grupos de recursos ativos"
+            />
+            <CartaoKpi
               rotulo="Receita"
               valor={brlCompact(t.receita)}
               sub={`${int(t.conversoes)} conversões`}
             />
-            <Stat rotulo="ROAS" valor={t.roas > 0 ? `${dec(t.roas)}×` : "—"} />
-            <Stat rotulo="CPA" valor={t.conversoes > 0 ? brl(t.cpa) : "—"} />
-            <Stat rotulo="Cliques" valor={compact(t.cliques)} sub={`CTR ${pct(t.ctr)}`} />
-            <Stat rotulo="CPC médio" valor={brl(t.cpc)} sub={`${compact(t.impressoes)} impr.`} />
-          </div>
+            <CartaoKpi rotulo="ROAS" valor={t.roas > 0 ? `${dec(t.roas)}×` : "—"} />
+            <CartaoKpi rotulo="CPA" valor={t.conversoes > 0 ? brl(t.cpa) : "—"} />
+            <CartaoKpi rotulo="Cliques" valor={compact(t.cliques)} sub={`CTR ${pct(t.ctr)}`} />
+            <CartaoKpi rotulo="CPC médio" valor={brl(t.cpc)} sub={`${compact(t.impressoes)} impr.`} />
+          </GradeKpi>
 
           <Secao icone={IconPhoto}>Peças e textos por desempenho</Secao>
 
-          <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-[1.6fr_1fr]">
+          <Linha className="grid grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-[1.6fr_1fr]">
             <Cartao
               titulo="Peças do grupo de recursos"
               sub={`${d.imagens.length} peças · sem logo, que entra em todo anúncio e lideraria sempre`}

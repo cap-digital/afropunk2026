@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { ErroMeta, Etiqueta, Shell, subtituloEscopo, Linha, Pagina } from "@/components/Shell";
+import { AreaGrafico, ErroMeta, Etiqueta, Shell, subtituloEscopo, Linha, Pagina } from "@/components/Shell";
 import { Cartao, Stat, StatusAtivo, Vazio } from "@/components/ui";
 import {
   BarrasAgrupadas,
@@ -46,7 +46,7 @@ export default async function MetaCampanhas({
     if (!d.ativo) {
       return (
         <Shell escopo={escopo} titulo="Meta Ads · Campanhas" sub={subtituloEscopo(escopo, undefined, periodo)}>
-          <div className="cartao h-[37.5rem]">
+          <div className="cartao flex min-h-[26rem] flex-1 lg:h-full">
             <Vazio
               titulo="Nenhuma campanha ativa"
               descricao="Assim que uma campanha entrar em veiculação, ela aparece aqui com investimento, entrega, orçamento e série diária."
@@ -149,14 +149,14 @@ export default async function MetaCampanhas({
             })}
           </div>
 
-          <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-[1.4fr_1fr]">
+          <Linha preencher className="grid grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-[1.4fr_1fr]">
             <Cartao
               titulo="Investimento diário por campanha"
               sub="Compara o ritmo de gasto entre as campanhas ativas"
             >
-              <div className="h-[var(--h-grafico)]">
+              <AreaGrafico>
                 <LinhasTempo dados={serieCampanhas} series={seriesCfg} formato="brl" />
-              </div>
+              </AreaGrafico>
             </Cartao>
 
             <Cartao

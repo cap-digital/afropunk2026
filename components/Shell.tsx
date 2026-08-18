@@ -85,26 +85,30 @@ export function subtituloEscopo(
  */
 export function Pagina({ children }: { children: ReactNode }) {
   /*
-   * Empilha e rola — sem amarrar à altura da janela.
+   * A página ocupa a tela inteira — e a folga vai para quem sabe usá-la.
    *
-   * A versão anterior fixava a coluna em `h-full` para que tudo coubesse numa
-   * tela. Isso obrigava todo cartão a caber à força, e o que não cabia sumia
-   * cortado. Como a altura da janela, o zoom, o volume de dado e o comprimento
-   * do texto variam todos ao mesmo tempo, a conta nunca fecha para todo mundo.
+   * Esta é a terceira tentativa e vale registrar por que as duas primeiras
+   * falharam, porque a diferença entre elas e esta é sutil:
    *
-   * Depois veio `min-h-full` + `flex-1` nas linhas, para não sobrar faixa preta
-   * embaixo quando o conteúdo é curto. Trocou um defeito por outro, e por um
-   * pior: a linha esticava até a janela e o cartão junto, mas o conteúdo dele
-   * não — funil de cinco barras em caixa de 900px, tabela de duas linhas em
-   * meia tela de preto. Preencher a tela virou o objetivo, e a proporção entre
-   * caixa e conteúdo, o preço.
+   *   1ª — `h-full` em tudo. Todo cartão era obrigado a caber, e o que não
+   *        cabia sumia cortado.
+   *   2ª — `min-h-full` + `flex-1` em toda linha. A linha esticava até a
+   *        janela e o CARTÃO junto, mas o conteúdo dele não: funil de cinco
+   *        barras numa caixa de 900px.
+   *   3ª — altura de conteúdo em tudo. Sem espaço morto dentro do cartão, mas
+   *        com uma faixa preta no rodapé de toda página curta.
    *
-   * Faixa preta embaixo não é defeito: é a página acabando. Aqui a coluna tem a
-   * altura do que carrega, cada cartão tem a altura do próprio conteúdo, e a
-   * página rola quando precisa. Nada depende do vizinho nem da janela.
+   * O erro comum às duas primeiras foi dar a folga ao CARTÃO. Aqui ela vai
+   * para o GRÁFICO: só a linha marcada com `preencher` cresce, e dentro dela
+   * quem absorve a sobra é a área de plotagem — que fica melhor com mais
+   * altura, ao contrário de uma lista de cinco linhas de texto. Linha de KPI,
+   * de tabela e de cartão de campanha seguem com a altura do que carregam.
    */
   return (
-    <div className="flex flex-col pb-1" style={{ gap: "var(--esp-coluna)" }}>
+    <div
+      className="flex flex-col pb-1 lg:h-full"
+      style={{ gap: "var(--esp-coluna)" }}
+    >
       {children}
     </div>
   );
@@ -122,16 +126,48 @@ export function Pagina({ children }: { children: ReactNode }) {
 export function Linha({
   children,
   className = "",
+  preencher = false,
 }: {
   children: ReactNode;
   className?: string;
+  /**
+   * Esta linha absorve a folga vertical da página. Ligar só onde há gráfico:
+   * é a área de plotagem que melhora com altura extra. Numa linha de tabela ou
+   * de texto, `preencher` só reabre o vazio dentro do cartão.
+   */
+  preencher?: boolean;
 }) {
   /*
    * Sem `lg:flex` aqui: quem chama passa `grid` no className, e `display:flex`
    * sobrepunha o grid — as colunas perdiam o dimensionamento e os cartões
    * vazavam para fora da tela. O display é decisão de quem usa.
    */
-  return <div className={`min-w-0 ${className}`}>{children}</div>;
+  return (
+    <div className={`min-w-0 ${preencher ? "lg:min-h-0 lg:flex-1" : "shrink-0"} ${className}`}>
+      {children}
+    </div>
+  );
+}
+
+/**
+ * Área de plotagem.
+ *
+ * Substitui os `<div className="h-[var(--h-grafico)]">` espalhados pelas
+ * páginas. A diferença é o `h-full`: dentro de uma `Linha preencher`, o
+ * gráfico cresce com ela; fora, o `min-height` segura o piso e ele se comporta
+ * como antes. Um só componente, os dois regimes — e nenhuma página precisa
+ * saber em qual está.
+ */
+export function AreaGrafico({
+  children,
+  className = "",
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={`h-full min-h-[var(--h-grafico)] ${className}`}>{children}</div>
+  );
 }
 
 /** Faixa de erro da Marketing API — mostra o que fazer. */

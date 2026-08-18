@@ -116,19 +116,32 @@
     ele encabeça, e o rótulo de eixo — que é cromo — do mesmo tamanho do dado.
     Quem separa nível aqui é o TAMANHO; peso, caixa alta e cor só reforçam.
   */
-  --fs-micro: 0.62rem;        /* cabeçalho de tabela, etiqueta */
-  --fs-rotulo: 0.68rem;       /* rótulo de KPI, faixa de seção */
-  --fs-sub-cartao: 0.72rem;   /* subtítulo de cartão, contexto de KPI */
-  --fs-corpo: 0.79rem;        /* corpo, navegação, botão */
-  --fs-corpo-2: 0.88rem;      /* corpo enfático, célula em destaque */
-  --fs-titulo-cartao: 0.99rem;/* título de cartão — precisa liderar o corpo */
-  --fs-md: 1.06rem;
-  --fs-kpi-sm: 1.06rem;
-  --fs-kpi: 1.34rem;
-  --fs-lg: 1.5rem;
-  --fs-kpi-lg: 1.72rem;
-  --fs-hero: 2rem;
-  --fs-display: 2.3rem;
+  --fs-micro: 0.66rem;        /* cabeçalho de tabela, etiqueta */
+  --fs-rotulo: 0.87rem;       /* rótulo de KPI, faixa de seção */
+  --fs-sub-cartao: 0.91rem;   /* subtítulo de cartão, contexto de KPI */
+  --fs-corpo: 0.88rem;        /* corpo, navegação, botão */
+  --fs-corpo-2: 0.97rem;      /* corpo enfático, célula em destaque */
+  --fs-titulo-cartao: 1.18rem;/* título de cartão — precisa liderar o corpo */
+  --fs-md: 1.15rem;
+  --fs-kpi-sm: 1.15rem;
+  --fs-kpi: 1.43rem;
+  --fs-lg: 1.69rem;
+  --fs-kpi-lg: 1.85rem;
+  --fs-hero: 2.15rem;
+  --fs-display: 2.45rem;
+
+  /*
+    Famílias. `--fonte-titulo` é Poppins e vale para NOME de coisa — marca,
+    título de página, título de cartão, faixa de seção. `--fonte-dado` é Inter
+    e vale para MEDIDA — KPI, eixo, célula, rótulo, corpo.
+
+    A separação não é estética: em Poppins os dígitos são largos e de larguras
+    diferentes, então coluna de tabela deixa de alinhar e o KPI "dança" quando
+    o número muda. Inter tem `tabular-nums` de verdade, e é por isso que todo
+    número do painel fica nela.
+  */
+  --fonte-titulo: var(--fonte-poppins), var(--fonte-inter), system-ui, sans-serif;
+  --fonte-dado: var(--fonte-inter), system-ui, sans-serif;
 
   /*
     Tipografia DENTRO do gráfico. Estava em px cravado no JS (10 a 12,5) — a
@@ -137,8 +150,8 @@
     e não encolhia com a janela como o resto. Agora vem da mesma escada: o eixo
     é cromo (fica abaixo do corpo) e o valor rotulado é dado (empata com ele).
   */
-  --fs-eixo: 0.72rem;
-  --fs-valor-grafico: 0.79rem;
+  --fs-eixo: 0.8rem;
+  --fs-valor-grafico: 0.88rem;
 
   /*
     Espaçamento do conteúdo. Estes valores foram um dia divididos por 0,7 para
@@ -147,9 +160,18 @@
     caixa de outro. Padding é proporção, não medida absoluta; voltando a
     acompanhar a raiz, a razão texto/caixa fica igual em qualquer tela.
   */
-  --esp-cartao-y: 0.86rem;
-  --esp-cartao-x: 1.02rem;
-  --esp-coluna: 0.95rem;
+  --esp-cartao-y: 1.15rem;
+  --esp-cartao-x: 1.35rem;
+  --esp-coluna: 1.35rem;
+
+  /*
+    Vão entre cartões vizinhos — a "calha" da grade. Era `gap-3.5` cravado em
+    cada página (0,875rem), o que dava ~9px e colava um cartão no outro: sem
+    calha, a borda de 1px é a única coisa separando dois blocos de conteúdo, e
+    a página inteira lê como uma malha só. Aqui a calha vira token e sobe para
+    ~14px, o dobro do filete que ela substitui como separador.
+  */
+  --esp-grade: 1.35rem;
 
   /*
     Ritmo do CROMO — cabeçalho e lateral. Os dois painéis dividem a mesma
@@ -160,9 +182,9 @@
     antes eram 3,5rem cravados para ~2,8rem de texto, e sobravam 4px em cima e
     embaixo — o texto encostava nos limites do painel.
   */
-  --h-chrome: 4.5rem;
-  --esp-chrome-x: 1.15rem;
-  --esp-chrome-y: 0.95rem;
+  --h-chrome: 5.3rem;
+  --esp-chrome-x: 1.35rem;
+  --esp-chrome-y: 1.1rem;
 
   /*
     Alturas de conteúdo. Três medidas, três regras diferentes — e a diferença
@@ -323,10 +345,34 @@ body::after {
 */
 @layer components {
   .marca {
-    font-weight: 900;
-    letter-spacing: -0.04em;
+    font-family: var(--fonte-titulo);
+    /* Poppins vai até 800 no import; 900 cairia num peso sintético e o traço
+       engrossa de forma irregular no caixa alta. */
+    font-weight: 800;
+    letter-spacing: -0.03em;
     text-transform: uppercase;
-    line-height: 0.92;
+    line-height: 0.94;
+  }
+
+  /*
+    Título de cartão e de seção. Poppins em 600, tracking levemente fechado —
+    em geométrica o espacejamento padrão abre demais no corpo pequeno e o
+    título perde a unidade de palavra.
+  */
+  .titulo {
+    font-family: var(--fonte-titulo);
+    font-weight: 600;
+    letter-spacing: -0.012em;
+  }
+
+  /*
+    Tudo que é número volta para Inter mesmo dentro de um bloco em Poppins.
+    Sem isto, um KPI dentro de um cartão com título em Poppins herdaria a
+    família geométrica e as colunas parariam de alinhar.
+  */
+  .tabular {
+    font-family: var(--fonte-dado);
+    font-variant-numeric: tabular-nums;
   }
 }
 
@@ -348,27 +394,41 @@ body::after {
   white-space: nowrap;
 }
 
-.tabular {
-  font-variant-numeric: tabular-nums;
-}
-
 /* Moldura do logo AFROPUNK */
 .moldura {
   border: 2px solid var(--ink);
 }
 
-/* Cartão: painel arredondado sobre o plano preto. */
+/*
+  Cartão: painel arredondado sobre o plano preto.
+
+  O fundo é um gradiente de dois passos, não uma chapa. A diferença entre topo
+  e base é de ~2% de luminosidade — invisível como cor, decisiva como forma:
+  é ela que faz a borda superior "pegar" a luz e o cartão descolar do preto em
+  vez de parecer um retângulo recortado. A sombra larga e rasa faz o resto,
+  apoiando o cartão no fundo sem produzir um halo visível.
+*/
 .cartao {
-  background: var(--surface);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.022), rgba(255, 255, 255, 0) 42%),
+    var(--surface);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 14px;
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.03) inset,
+    0 10px 24px -18px rgba(0, 0, 0, 0.9);
 }
 
 /* Painel flutuante — sidebar e cabeçalho, destacados do plano de fundo. */
 .painel {
-  background: var(--surface);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.026), rgba(255, 255, 255, 0) 46%),
+    var(--surface);
   border: 1px solid var(--border);
   border-radius: 16px;
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.035) inset,
+    0 12px 28px -20px rgba(0, 0, 0, 0.95);
 }
 
 /* Cabeçalho de cartão: filete de separação em vez de espaço vazio. */
@@ -384,13 +444,15 @@ body::after {
 .faixa-secao {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
 }
+/* Filete que esmaece: barra sólida de ponta a ponta compete com a borda dos
+   cartões logo abaixo e a página ganha uma segunda malha de linhas. */
 .faixa-secao::after {
   content: "";
   flex: 1;
   height: 1px;
-  background: var(--border);
+  background: linear-gradient(90deg, var(--border), rgba(255, 255, 255, 0));
 }
 
 /* Item de navegação ativo: barra sólida à esquerda, sem pílula arredondada. */

@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import { ErroMeta, Shell, subtituloEscopo, Linha, Pagina } from "@/components/Shell";
-import { Cartao, ComLeitura, Realce, Stat, Vazio } from "@/components/ui";
+import { AreaGrafico, ErroMeta, Shell, subtituloEscopo, Linha, Pagina } from "@/components/Shell";
+import { Cartao, CartaoKpi, ComLeitura, GradeKpi, Realce, Vazio } from "@/components/ui";
 import { BarrasAgrupadas, BarrasH, EmpilhadaTotal, MapaCalor, type PontoGrafico } from "@/components/charts";
 import { carregarBreakdowns, carregarEscopo } from "@/lib/dados";
 import { periodoDeParams, type ParamsBusca } from "@/lib/periodo";
@@ -37,7 +37,7 @@ export default async function MetaPosicionamentos({
     if (!d.ativo) {
       return (
         <Shell escopo={escopo} titulo="Meta Ads · Posicionamentos" sub={subtituloEscopo(escopo, undefined, periodo)}>
-          <div className="cartao h-[37.5rem]">
+          <div className="cartao flex min-h-[26rem] flex-1 lg:h-full">
             <Vazio
               titulo="Sem dados de posicionamento"
               descricao="O mapa de plataformas e posicionamentos aparece assim que houver entrega registrada."
@@ -122,17 +122,17 @@ export default async function MetaPosicionamentos({
         sub={subtituloEscopo(escopo, undefined, periodo)}
       >
         <Pagina>
-          <div className="cartao grid grid-cols-2 items-center gap-4 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] sm:grid-cols-3 lg:grid-cols-5">
-            <Stat
+          <GradeKpi colunas="lg:grid-cols-5">
+            <CartaoKpi
               rotulo="Plataforma principal"
               valor={PLATAFORMA_LABEL[principal?.chave ?? ""] ?? "—"}
               sub={principal ? `${pct((principal.impressions / totalImpr) * 100, 1)} das impressões` : undefined}
             />
-            <Stat rotulo="Plataformas" valor={String(bd.plataformas.length)} sub="com entrega" />
-            <Stat rotulo="Posicionamentos" valor={String(bd.posicionamentos.length)} sub="combinações ativas" />
-            <Stat rotulo="Impressões" valor={compact(d.total.impressions)} />
-            <Stat rotulo="CPM médio" valor={brl(d.total.cpm)} sub={`CPC ${brl(d.total.cpc)}`} />
-          </div>
+            <CartaoKpi rotulo="Plataformas" valor={String(bd.plataformas.length)} sub="com entrega" />
+            <CartaoKpi rotulo="Posicionamentos" valor={String(bd.posicionamentos.length)} sub="combinações ativas" />
+            <CartaoKpi rotulo="Impressões" valor={compact(d.total.impressions)} />
+            <CartaoKpi rotulo="CPM médio" valor={brl(d.total.cpm)} sub={`CPC ${brl(d.total.cpc)}`} />
+          </GradeKpi>
 
           {/* Dentro de `Linha`, não solto na coluna: `h-full` num filho direto
               da página pede a altura inteira para si, o flex encolhe de volta e
@@ -146,7 +146,7 @@ export default async function MetaPosicionamentos({
             </Cartao>
           </Linha>
 
-          <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-2">
+          <Linha preencher className="grid grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-2">
             <Cartao titulo="Top posicionamentos" sub="Onde o volume realmente acontece">
               <BarrasH dados={porPosicionamento} formato="int" corUnica="var(--seq-2)" larguraRotulo={128} />
             </Cartao>
@@ -156,9 +156,9 @@ export default async function MetaPosicionamentos({
                 titulo="Mix de plataformas por praça"
                 sub="% das impressões de cada praça em cada plataforma"
               >
-                <div className="h-[var(--h-grafico)]">
+                <AreaGrafico>
                   <BarrasAgrupadas dados={mixPorBucket} series={seriesBuckets} formato="pct" />
-                </div>
+                </AreaGrafico>
               </Cartao>
             ) : (
               <Cartao

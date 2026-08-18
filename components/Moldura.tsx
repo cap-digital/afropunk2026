@@ -65,7 +65,10 @@ export function Moldura({
   };
 
   return (
-    <div className="flex min-h-screen w-full gap-4 bg-[var(--bg)] p-3 lg:h-screen lg:min-h-[40.0rem] lg:overflow-hidden lg:p-4">
+    <div
+      className="flex min-h-screen w-full bg-[var(--bg)] p-3 lg:h-screen lg:min-h-[40.0rem] lg:overflow-hidden"
+      style={{ gap: "var(--esp-grade)", padding: "var(--esp-grade)" }}
+    >
       {/* Fundo escuro por trás da gaveta */}
       {aberto && (
         <div
@@ -188,7 +191,7 @@ export function Moldura({
           conta como conteúdo — era o que criava barra horizontal e vertical
           numa página que cabia inteira. Fora do scroller, o
           `overflow-hidden` do shell apara e nada rola. */}
-      <div className="relative flex min-w-0 flex-1 flex-col gap-3 lg:gap-4">
+      <div className="relative flex min-w-0 flex-1 flex-col" style={{ gap: "var(--esp-grade)" }}>
         {/* Camada de recorte própria: a marca d'água sangra para fora da caixa
             de propósito e, sendo absoluta, essa sangria entra na altura do
             conteúdo do pai — 105px fantasma em toda página. Confinada aqui,

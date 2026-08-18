@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import { ErroMeta, Linha, Pagina, Shell, subtituloEscopo } from "@/components/Shell";
-import { Cartao, ComLeitura, Realce, Secao, Stat, Vazio } from "@/components/ui";
+import { AreaGrafico, ErroMeta, Linha, Pagina, Shell, subtituloEscopo } from "@/components/Shell";
+import { Cartao, CartaoKpi, ComLeitura, GradeKpi, Realce, Secao, Vazio } from "@/components/ui";
 import { BarrasAgrupadas, BarrasH, EmpilhadaTotal, Piramide, type PontoGrafico } from "@/components/charts";
 import { carregarBreakdowns, carregarEscopo } from "@/lib/dados";
 import { periodoDeParams, type ParamsBusca } from "@/lib/periodo";
@@ -136,34 +136,34 @@ export default async function MetaPublico({
         <Pagina>
           <Secao>Quem está sendo alcançado</Secao>
 
-          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] sm:grid-cols-3 lg:grid-cols-5">
-            <Stat
+          <GradeKpi colunas="lg:grid-cols-5">
+            <CartaoKpi
               rotulo="Faixa dominante"
               valor={porFaixa[0]?.faixa ?? "—"}
               sub={
                 porFaixa[0] ? `${pct((porFaixa[0].total / totalImpr) * 100, 1)} das impressões` : undefined
               }
             />
-            <Stat rotulo="Feminino" valor={pct((totalF / totalGen) * 100, 1)} sub={`${compact(totalF)} impressões`} />
-            <Stat rotulo="Masculino" valor={pct((totalM / totalGen) * 100, 1)} sub={`${compact(totalM)} impressões`} />
-            <Stat rotulo="Alcance total" valor={compact(d.total.reach)} sub={`freq. ${dec(d.total.frequency)}`} />
-            <Stat
+            <CartaoKpi rotulo="Feminino" valor={pct((totalF / totalGen) * 100, 1)} sub={`${compact(totalF)} impressões`} />
+            <CartaoKpi rotulo="Masculino" valor={pct((totalM / totalGen) * 100, 1)} sub={`${compact(totalM)} impressões`} />
+            <CartaoKpi rotulo="Alcance total" valor={compact(d.total.reach)} sub={`freq. ${dec(d.total.frequency)}`} />
+            <CartaoKpi
               rotulo={d.comparativo ? "Regiões atingidas" : "Impressões"}
               valor={d.comparativo ? int(bd.regioes.length) : compact(d.total.impressions)}
               sub={d.comparativo ? "com entrega registrada" : `CTR ${pct(d.total.ctr)}`}
             />
-          </div>
+          </GradeKpi>
 
           <Secao>Idade e gênero</Secao>
 
-          <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-[1.15fr_1fr]">
+          <Linha preencher className="grid grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-[1.15fr_1fr]">
             <Cartao
               titulo="Pirâmide etária"
               sub="Impressões por faixa e gênero — barras divergentes a partir do zero"
             >
-              <div className="h-[var(--h-grafico)]">
+              <AreaGrafico>
                 <Piramide dados={piramide} corF="var(--par-a)" corM="var(--par-b)" formato="int" />
-              </div>
+              </AreaGrafico>
             </Cartao>
 
             <Cartao
@@ -175,9 +175,9 @@ export default async function MetaPublico({
               }
             >
               {d.comparativo ? (
-                <div className="h-[var(--h-grafico)]">
+                <AreaGrafico>
                   <BarrasAgrupadas dados={perfilPorBucket} series={seriesBuckets} formato="pct" />
-                </div>
+                </AreaGrafico>
               ) : (
                 <ComLeitura
                   leitura={
@@ -232,7 +232,7 @@ export default async function MetaPublico({
             Regiões só faz sentido no comparativo: no escopo de uma praça a
             segmentação é o próprio estado dela, e o gráfico vira uma barra só.
           */}
-          <Linha className={d.comparativo ? "grid grid-cols-2 gap-3.5" : ""}>
+          <Linha className={d.comparativo ? "grid grid-cols-2 gap-[var(--esp-grade)]" : ""}>
             {d.comparativo && (
               <Cartao
                 titulo="Regiões"

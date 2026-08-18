@@ -63,7 +63,9 @@ export function ComLeitura({
 }) {
   return (
     <div className="flex h-full flex-col gap-4">
-      <div className="flex min-h-0 flex-1 flex-col justify-center gap-5">{children}</div>
+      <div className="flex min-h-0 flex-1 flex-col justify-center gap-5 [&>*:only-child]:min-h-0">
+        {children}
+      </div>
       {leitura && <Leitura>{leitura}</Leitura>}
     </div>
   );
@@ -85,7 +87,7 @@ export function Secao({ children, icone: Ic = IconPointFilled }: { children: Rea
           crescia acima da caixa do texto e a faixa lia como dois elementos
           soltos em vez de uma linha só. */}
       <Ic size="0.6rem" stroke={2} className="shrink-0 text-[var(--ink-muted)]" aria-hidden="true" />
-      <h2 className="shrink-0 text-[var(--fs-rotulo)] font-semibold uppercase tracking-[0.16em] text-[var(--ink-2)]">
+      <h2 className="titulo shrink-0 text-[var(--fs-rotulo)] uppercase tracking-[0.14em] text-[var(--ink-2)]">
         {children}
       </h2>
     </div>
@@ -142,7 +144,7 @@ export function Cartao({
             )}
             <div className="min-w-0">
               {titulo && (
-                <h3 className="truncate font-semibold leading-tight tracking-tight text-[var(--ink)]"
+                <h3 className="titulo truncate leading-tight text-[var(--ink)]"
                   style={{ fontSize: "var(--fs-titulo-cartao)" }}>
                   {titulo}
                 </h3>
@@ -167,6 +169,102 @@ export function Cartao({
         {children}
       </div>
     </section>
+  );
+}
+
+/**
+ * Grade de KPI — um cartão por indicador.
+ *
+ * O consolidado era UM retângulo largo com seis números empilhados dentro,
+ * separados só por filete vertical. Isso lê como tabela, não como painel: os
+ * seis pesam igual, nenhum é o número da página, e o olho varre da esquerda
+ * para a direita como se fosse uma linha de planilha.
+ *
+ * Em cartões separados cada indicador ganha a própria superfície, e a calha
+ * entre eles faz o trabalho que o filete não fazia — separar de verdade. O
+ * primeiro cartão pede `destaque` e ocupa duas colunas: é o que restabelece a
+ * hierarquia que o bloco único tinha achatado.
+ */
+export function GradeKpi({
+  children,
+  colunas = "lg:grid-cols-4 xl:grid-cols-7",
+}: {
+  children: ReactNode;
+  /** Classes de grade para `lg` em diante — o destaque conta como 2 colunas. */
+  colunas?: string;
+}) {
+  return (
+    <div
+      className={`grid shrink-0 grid-cols-2 sm:grid-cols-3 ${colunas}`}
+      style={{ gap: "var(--esp-grade)" }}
+    >
+      {children}
+    </div>
+  );
+}
+
+/**
+ * Cartão de KPI. `destaque` é o número que lidera a página: ocupa duas
+ * colunas, ganha o corpo maior da escala e um filete de acento no topo.
+ */
+export function CartaoKpi({
+  rotulo,
+  valor,
+  sub,
+  icone: Ic,
+  destaque = false,
+  acento,
+}: {
+  rotulo: string;
+  valor: string;
+  sub?: string;
+  icone?: Icone;
+  destaque?: boolean;
+  /** Cor do filete do cartão em destaque — só a praça a fornece. */
+  acento?: string;
+}) {
+  return (
+    <div
+      className={`cartao group relative flex min-w-0 flex-col justify-center overflow-hidden transition-colors hover:border-[var(--border-forte)] ${
+        destaque ? "col-span-2" : ""
+      }`}
+      style={{ padding: "var(--esp-cartao-y) var(--esp-cartao-x)" }}
+    >
+      {destaque && (
+        // Filete de acento sangrando de ponta a ponta no topo: é o único lugar
+        // do cromo onde a cor da praça aparece, e serve para dizer QUAL cartão
+        // é o principal sem aumentar mais a tipografia.
+        <span
+          aria-hidden="true"
+          className="absolute inset-x-0 top-0 h-[2px]"
+          style={{
+            background: `linear-gradient(90deg, ${acento ?? "var(--ink)"}, transparent)`,
+          }}
+        />
+      )}
+      <div className="flex items-center gap-1.5">
+        {Ic && (
+          <Ic size="0.8125rem" stroke={1.9} className="shrink-0 text-[var(--ink-muted)]" aria-hidden="true" />
+        )}
+        <span className="rotulo truncate">{rotulo}</span>
+      </div>
+      <div
+        className="tabular mt-1.5 truncate font-bold leading-none tracking-[-0.025em] text-[var(--ink)]"
+        style={{ fontSize: destaque ? "var(--fs-hero)" : "var(--fs-kpi)" }}
+        title={valor}
+      >
+        {valor}
+      </div>
+      {sub && (
+        <div
+          className="mt-1.5 truncate leading-tight text-[var(--ink-muted)]"
+          style={{ fontSize: "var(--fs-sub-cartao)" }}
+          title={sub}
+        >
+          {sub}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -342,7 +440,7 @@ export function Vazio({
     <div className="flex h-full flex-col items-center justify-center gap-3 py-8 text-center">
       <Ic size="1.625rem" stroke={1.5} className="text-[var(--ink-muted)]" aria-hidden="true" />
       <p className="marca text-[var(--fs-md)] leading-[1.15] text-[var(--ink-2)]">{titulo}</p>
-      <p className="max-w-[46ch] text-[var(--fs-corpo)] leading-relaxed text-[var(--ink-muted)]">
+      <p className="max-w-[46ch] text-[var(--fs-corpo-2)] leading-relaxed text-[var(--ink-muted)]">
         {descricao}
       </p>
     </div>

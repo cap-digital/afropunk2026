@@ -174,7 +174,7 @@ export function DestaqueCriativo({ criativos }: { criativos: Criativo[] }) {
   const maisInvestido = [...comDados].sort((a, b) => b.m.spend - a.m.spend)[0];
 
   return (
-    <div className="grid grid-cols-2 gap-3.5">
+    <div className="grid grid-cols-2 gap-[var(--esp-grade)]">
       <MiniDestaque rotulo="Maior CTR" c={melhor} metrica={pct(melhor.m.ctr)} />
       <MiniDestaque
         rotulo="Maior investimento"

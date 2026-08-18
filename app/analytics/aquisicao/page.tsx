@@ -1,5 +1,5 @@
 import { ErroGA4, Linha, Pagina, ShellAnalytics } from "@/components/Shell";
-import { Cartao, ComLeitura, Hero, Realce, Secao, Stat } from "@/components/ui";
+import { Cartao, CartaoKpi, ComLeitura, GradeKpi, Realce, Secao } from "@/components/ui";
 import { BarrasH, EmpilhadaTotal, type PontoGrafico } from "@/components/charts";
 import { carregarAquisicaoGA4, type LinhaCanal } from "@/lib/analytics";
 import { explicarErroGA4, GA4Error, REVALIDATE_GA4, ROTULO_PADRAO } from "@/lib/ga4";
@@ -84,13 +84,14 @@ export default async function AnalyticsAquisicao({
         <Pagina>
           <Secao>Origem do tráfego</Secao>
 
-          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] sm:grid-cols-3 lg:grid-cols-[minmax(16rem,1.1fr)_repeat(4,1fr)]">
-            <Hero
+          <GradeKpi colunas="lg:grid-cols-3 xl:grid-cols-6">
+            <CartaoKpi
+              destaque
               rotulo="Sessões"
               valor={compact(t.sessoes)}
               sub={`${d.canais.length} canais com tráfego`}
             />
-            <Stat
+            <CartaoKpi
               rotulo="Canal líder"
               valor={d.canais[0]?.nome ?? "—"}
               sub={
@@ -99,7 +100,7 @@ export default async function AnalyticsAquisicao({
                   : undefined
               }
             />
-            <Stat
+            <CartaoKpi
               rotulo="Melhor conversão"
               valor={melhorConversao ? melhorConversao.nome : "—"}
               sub={
@@ -108,8 +109,8 @@ export default async function AnalyticsAquisicao({
                   : "sem canal qualificado"
               }
             />
-            <Stat rotulo="Receita" valor={brlCompact(t.receita)} sub={brl(t.receita)} />
-            <Stat
+            <CartaoKpi rotulo="Receita" valor={brlCompact(t.receita)} sub={brl(t.receita)} />
+            <CartaoKpi
               rotulo="Mobile"
               valor={pct(
                 ((d.dispositivos.find((x) => x.nome === "mobile")?.sessoes ?? 0) /
@@ -119,11 +120,11 @@ export default async function AnalyticsAquisicao({
               )}
               sub="das sessões"
             />
-          </div>
+          </GradeKpi>
 
           <Secao>Canais</Secao>
 
-          <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-2">
+          <Linha className="grid grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-2">
             <Cartao
               titulo="Sessões por canal"
               sub="Agrupamento padrão do GA4"
@@ -152,7 +153,7 @@ export default async function AnalyticsAquisicao({
 
           <Secao>Origens e dispositivos</Secao>
 
-          <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-[1.3fr_1fr]">
+          <Linha className="grid grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-[1.3fr_1fr]">
             <Cartao
               titulo="Origem e mídia"
               sub="A fonte exata, antes do agrupamento em canais"

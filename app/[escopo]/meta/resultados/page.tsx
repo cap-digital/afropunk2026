@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import { ErroMeta, Shell, subtituloEscopo, Linha, Pagina } from "@/components/Shell";
-import { Cartao, Hero, Secao, Stat, Vazio } from "@/components/ui";
+import { AreaGrafico, ErroMeta, Shell, subtituloEscopo, Linha, Pagina } from "@/components/Shell";
+import { Cartao, CartaoKpi, GradeKpi, Secao, Vazio } from "@/components/ui";
 import { BarrasH, LinhasTempo, type PontoGrafico, type SerieTempo } from "@/components/charts";
 import { carregarConjuntos, carregarEscopo } from "@/lib/dados";
 import { periodoDeParams, type ParamsBusca } from "@/lib/periodo";
@@ -31,7 +31,7 @@ export default async function MetaResultados({
     if (!d.ativo) {
       return (
         <Shell escopo={escopo} titulo="Meta Ads · Resultados" sub={subtituloEscopo(escopo, undefined, periodo)}>
-          <div className="cartao h-[37.5rem]">
+          <div className="cartao flex min-h-[26rem] flex-1 lg:h-full">
             <Vazio
               titulo="Sem resultados registrados"
               descricao="Receita, ROAS, compras e CPA aparecem aqui assim que a primeira campanha de conversão começar a converter."
@@ -92,60 +92,61 @@ export default async function MetaResultados({
         <Pagina>
           <Secao>Retorno</Secao>
 
-          <div className="cartao grid grid-cols-2 items-center gap-4 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] sm:grid-cols-3 lg:grid-cols-[minmax(16rem,1.1fr)_repeat(5,1fr)]">
-            <Hero
+          <GradeKpi>
+            <CartaoKpi
+              destaque
               rotulo="Receita atribuída"
               valor={brl(t.purchaseValue)}
               sub={`${int(t.purchases)} compras · ${brl(t.receitaConversao)} em conversão`}
             />
-            <Stat
+            <CartaoKpi
               rotulo="Investimento total"
               valor={brl(t.spend)}
               sub={`${brl(t.spendConversao)} em conversão`}
             />
-            <Stat
+            <CartaoKpi
               rotulo="ROAS"
               valor={t.roas > 0 ? `${dec(t.roas)}×` : "—"}
               sub={t.roas > 0 ? "sobre o investimento em conversão" : "sem receita"}
             />
-            <Stat
+            <CartaoKpi
               rotulo="CPA"
               valor={t.purchasesConversao > 0 ? brl(t.cpa) : "—"}
               sub={t.purchasesConversao > 0 ? "só campanhas de conversão" : "sem compra"}
             />
-            <Stat rotulo="Ticket médio" valor={t.purchases > 0 ? brl(ticketMedio) : "—"} />
-            <Stat
+            <CartaoKpi rotulo="Ticket médio" valor={t.purchases > 0 ? brl(ticketMedio) : "—"} />
+            <CartaoKpi
               rotulo="Resultado bruto"
               valor={brl(lucroBruto)}
               sub={lucroBruto >= 0 ? "receita acima do investido" : "ainda abaixo do investido"}
             />
-          </div>
+          </GradeKpi>
 
           <Secao>Evolução</Secao>
 
-          <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-2">
+          <Linha preencher className="grid grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-2">
             <Cartao
               titulo="Evolução do ROAS"
               sub="Receita do dia ÷ investimento em conversão do dia"
             >
-              <div className="h-[var(--h-grafico)]">
+              <AreaGrafico>
                 <LinhasTempo dados={serieRoas} series={seriesRoas} formato="roas" />
-              </div>
+              </AreaGrafico>
             </Cartao>
 
             <Cartao
               titulo="Receita × investimento por dia"
               sub="Mesma unidade (R$), então cabem no mesmo eixo"
             >
-              <div className="h-[var(--h-grafico)]">
+              <AreaGrafico>
                 <LinhasTempo dados={serieReceita} series={seriesReceita} formato="brl" />
-              </div>
+              </AreaGrafico>
             </Cartao>
           </Linha>
 
           <Secao>Onde a receita nasce</Secao>
 
-          <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-[1.25fr_1fr]">
+          <Linha className="grid grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-[1.25fr_1fr]">
             <Cartao
               titulo="Receita por conjunto de anúncios"
               sub={

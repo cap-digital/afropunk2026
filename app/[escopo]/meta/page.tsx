@@ -1,6 +1,15 @@
 import { notFound } from "next/navigation";
-import { ErroMeta, Shell, subtituloEscopo, Linha, Pagina } from "@/components/Shell";
-import { Cartao, ComLeitura, Hero, Realce, Secao, Stat, Vazio } from "@/components/ui";
+import { AreaGrafico, ErroMeta, Shell, subtituloEscopo, Linha, Pagina } from "@/components/Shell";
+import {
+  Cartao,
+  CartaoKpi,
+  ComLeitura,
+  GradeKpi,
+  Realce,
+  Secao,
+  Stat,
+  Vazio,
+} from "@/components/ui";
 import {
   AreaTempo,
   BarrasAgrupadas,
@@ -51,7 +60,7 @@ export default async function MetaVisaoGeral({
     if (!d.ativo) {
       return (
         <Shell escopo={escopo} titulo="Meta Ads" sub={subtituloEscopo(escopo, undefined, periodo)}>
-          <div className="cartao h-[37.5rem]">
+          <div className="cartao flex min-h-[26rem] flex-1 lg:h-full">
             <Vazio
               titulo={`${d.praca?.nome ?? "Este escopo"} ainda não tem campanha ativa no Meta`}
               descricao="O painel está pronto e conectado. Assim que a primeira campanha entrar no ar, investimento, entrega, público, posicionamentos e criativos aparecem aqui automaticamente."
@@ -128,35 +137,35 @@ async function Comparativo({
     >
       <Pagina>
         <Secao>Resumo consolidado</Secao>
-        <div className="cartao grid grid-cols-2 items-center gap-4 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] sm:grid-cols-3 lg:grid-cols-[minmax(16rem,1.15fr)_repeat(5,1fr)]">
-          <Hero rotulo="Investimento total" valor={brl(t.spend)} sub={`${janela} · ${d.conta.currency}`} />
-          <Stat rotulo="Impressões" valor={compact(t.impressions)} sub={`freq. ${dec(t.frequency)}`} />
-          <Stat rotulo="Alcance" valor={compact(t.reach)} sub="pessoas únicas" />
-          <Stat rotulo="Cliques" valor={compact(t.clicks)} sub={`CTR ${pct(t.ctr)}`} />
-          <Stat rotulo="CPM" valor={brl(t.cpm)} sub={`CPC ${brl(t.cpc)}`} />
-          <Stat
+        <GradeKpi>
+          <CartaoKpi destaque rotulo="Investimento total" valor={brl(t.spend)} sub={`${janela} · ${d.conta.currency}`} />
+          <CartaoKpi rotulo="Impressões" valor={compact(t.impressions)} sub={`freq. ${dec(t.frequency)}`} />
+          <CartaoKpi rotulo="Alcance" valor={compact(t.reach)} sub="pessoas únicas" />
+          <CartaoKpi rotulo="Cliques" valor={compact(t.clicks)} sub={`CTR ${pct(t.ctr)}`} />
+          <CartaoKpi rotulo="CPM" valor={brl(t.cpm)} sub={`CPC ${brl(t.cpc)}`} />
+          <CartaoKpi
             rotulo="Compras"
             valor={int(t.purchases)}
             sub={t.purchases > 0 ? `ROAS ${dec(t.roas)}× sobre ${brl(t.spendConversao)}` : "sem conversão"}
           />
-        </div>
+        </GradeKpi>
 
         <Secao>Evolução</Secao>
-        <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-[1.3fr_1fr]">
+        <Linha preencher className="grid grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-[1.3fr_1fr]">
           <Cartao
             titulo="Investimento diário por praça"
             sub="Campanhas iniciadas em 31/07 e 03/08 — a série cresce a cada dia"
           >
-            <div className="h-[var(--h-grafico)]">
+            <AreaGrafico>
               <LinhasTempo dados={serie} series={series} formato="brl" />
-            </div>
+            </AreaGrafico>
           </Cartao>
 
           <Cartao
             titulo="Volume entregue"
             sub="Impressões vs. alcance — a distância entre as barras é a repetição"
           >
-            <div className="h-[var(--h-grafico)]">
+            <AreaGrafico>
               <BarrasAgrupadas
                 dados={volumes}
                 series={[
@@ -165,12 +174,12 @@ async function Comparativo({
                 ]}
                 formato="int"
               />
-            </div>
+            </AreaGrafico>
           </Cartao>
         </Linha>
 
         <Secao>Praça a praça</Secao>
-        <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-[1fr_1.35fr]">
+        <Linha className="grid grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-[1fr_1.35fr]">
           <Cartao
             titulo="Divisão do investimento"
             sub="Parte do todo · inclui a campanha nacional"
@@ -365,13 +374,13 @@ async function PracaUnica({
     >
       <Pagina>
         <Secao>Resumo</Secao>
-        <div className="cartao grid grid-cols-2 items-center gap-4 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] sm:grid-cols-3 lg:grid-cols-[minmax(16rem,1.15fr)_repeat(5,1fr)]">
-          <Hero rotulo="Investido" valor={brl(t.spend)} sub={`${janela} · ${d.conta.currency}`} />
-          <Stat rotulo="Impressões" valor={compact(t.impressions)} />
-          <Stat rotulo="Alcance" valor={compact(t.reach)} sub={`freq. ${dec(t.frequency)}`} />
-          <Stat rotulo="CTR" valor={pct(t.ctr)} sub={`${compact(t.clicks)} cliques`} />
-          <Stat rotulo="CPM" valor={brl(t.cpm)} sub={`CPC ${brl(t.cpc)}`} />
-          <Stat
+        <GradeKpi>
+          <CartaoKpi destaque rotulo="Investido" valor={brl(t.spend)} sub={`${janela} · ${d.conta.currency}`} />
+          <CartaoKpi rotulo="Impressões" valor={compact(t.impressions)} />
+          <CartaoKpi rotulo="Alcance" valor={compact(t.reach)} sub={`freq. ${dec(t.frequency)}`} />
+          <CartaoKpi rotulo="CTR" valor={pct(t.ctr)} sub={`${compact(t.clicks)} cliques`} />
+          <CartaoKpi rotulo="CPM" valor={brl(t.cpm)} sub={`CPC ${brl(t.cpc)}`} />
+          <CartaoKpi
             rotulo={t.purchases > 0 ? "ROAS" : "Compras"}
             valor={t.purchases > 0 ? `${dec(t.roas)}×` : "0"}
             sub={
@@ -380,21 +389,21 @@ async function PracaUnica({
                 : "sem conversão no período"
             }
           />
-        </div>
+        </GradeKpi>
 
         <Secao>Ritmo e conversão</Secao>
-        <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-[1.5fr_1fr]">
+        <Linha preencher className="grid grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-[1.5fr_1fr]">
           <Cartao
             titulo="Investimento por dia"
             sub="Ritmo de gasto desde o início da veiculação"
           >
-            <div className="h-[var(--h-grafico)]">
+            <AreaGrafico>
               <AreaTempo
                 dados={d.serie}
                 series={[{ chave: "spend", nome: "Investimento", cor: praca.cor }]}
                 formato="brl"
               />
-            </div>
+            </AreaGrafico>
           </Cartao>
 
           <Cartao
@@ -424,7 +433,7 @@ async function PracaUnica({
         </Linha>
 
         <Secao>Entrega e verba</Secao>
-        <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-3">
+        <Linha className="grid grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-3">
           <Cartao titulo="Onde as impressões acontecem" sub="Plataformas de veiculação">
             <BarrasH dados={plataformas} formato="int" corUnica="var(--seq-2)" larguraRotulo={104} />
           </Cartao>
