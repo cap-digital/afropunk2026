@@ -110,25 +110,31 @@
     momentos diferentes, quebrando a hierarquia — o rótulo alcançava o corpo do
     texto no zoom.
 
+    Terceiro patamar desta escada (o pedido foi +2px e depois +3px). O que
+    sobe é SÓ a fonte — padding, calha e altura de gráfico ficam onde estão,
+    senão a tela inteira só dá zoom e a proporção texto/caixa não muda. Os
+    degraus grandes sobem menos que os pequenos de propósito: somar o mesmo
+    tanto de px em todos achataria a hierarquia por cima.
+
     UMA escada, nove degraus, cada um com um passo perceptível de ~1,12. Antes
     havia duplicatas (`rotulo` = `micro`, `corpo-2` = `titulo-cartao`) e a
     hierarquia colapsava: o título do cartão saía do mesmo tamanho do corpo que
     ele encabeça, e o rótulo de eixo — que é cromo — do mesmo tamanho do dado.
     Quem separa nível aqui é o TAMANHO; peso, caixa alta e cor só reforçam.
   */
-  --fs-micro: 0.66rem;        /* cabeçalho de tabela, etiqueta */
-  --fs-rotulo: 0.87rem;       /* rótulo de KPI, faixa de seção */
-  --fs-sub-cartao: 0.91rem;   /* subtítulo de cartão, contexto de KPI */
-  --fs-corpo: 0.88rem;        /* corpo, navegação, botão */
-  --fs-corpo-2: 0.97rem;      /* corpo enfático, célula em destaque */
-  --fs-titulo-cartao: 1.18rem;/* título de cartão — precisa liderar o corpo */
-  --fs-md: 1.15rem;
-  --fs-kpi-sm: 1.15rem;
-  --fs-kpi: 1.43rem;
-  --fs-lg: 1.69rem;
-  --fs-kpi-lg: 1.85rem;
-  --fs-hero: 2.15rem;
-  --fs-display: 2.45rem;
+  --fs-micro: 0.86rem;        /* cabeçalho de tabela, etiqueta */
+  --fs-rotulo: 1.13rem;       /* rótulo de KPI, faixa de seção */
+  --fs-sub-cartao: 1.18rem;   /* subtítulo de cartão, contexto de KPI */
+  --fs-corpo: 1.14rem;        /* corpo, navegação, botão */
+  --fs-corpo-2: 1.26rem;      /* corpo enfático, célula em destaque */
+  --fs-titulo-cartao: 1.53rem;/* título de cartão — precisa liderar o corpo */
+  --fs-md: 1.4rem;
+  --fs-kpi-sm: 1.4rem;
+  --fs-kpi: 1.72rem;
+  --fs-lg: 1.99rem;
+  --fs-kpi-lg: 2.13rem;
+  --fs-hero: 2.45rem;
+  --fs-display: 2.74rem;
 
   /*
     Famílias. `--fonte-titulo` é Poppins e vale para NOME de coisa — marca,
@@ -150,8 +156,8 @@
     e não encolhia com a janela como o resto. Agora vem da mesma escada: o eixo
     é cromo (fica abaixo do corpo) e o valor rotulado é dado (empata com ele).
   */
-  --fs-eixo: 0.8rem;
-  --fs-valor-grafico: 0.88rem;
+  --fs-eixo: 1.04rem;
+  --fs-valor-grafico: 1.14rem;
 
   /*
     Espaçamento do conteúdo. Estes valores foram um dia divididos por 0,7 para
@@ -182,7 +188,7 @@
     antes eram 3,5rem cravados para ~2,8rem de texto, e sobravam 4px em cima e
     embaixo — o texto encostava nos limites do painel.
   */
-  --h-chrome: 5.3rem;
+  --h-chrome: 6.2rem;
   --esp-chrome-x: 1.35rem;
   --esp-chrome-y: 1.1rem;
 

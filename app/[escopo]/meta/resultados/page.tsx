@@ -31,7 +31,7 @@ export default async function MetaResultados({
     if (!d.ativo) {
       return (
         <Shell escopo={escopo} titulo="Meta Ads · Resultados" sub={subtituloEscopo(escopo, undefined, periodo)}>
-          <div className="cartao flex min-h-[26rem] flex-1 lg:h-full">
+          <div className="cartao min-h-[26rem] flex-1 lg:h-full">
             <Vazio
               titulo="Sem resultados registrados"
               descricao="Receita, ROAS, compras e CPA aparecem aqui assim que a primeira campanha de conversão começar a converter."

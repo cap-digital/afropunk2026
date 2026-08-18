@@ -46,7 +46,7 @@ export default async function MetaCampanhas({
     if (!d.ativo) {
       return (
         <Shell escopo={escopo} titulo="Meta Ads · Campanhas" sub={subtituloEscopo(escopo, undefined, periodo)}>
-          <div className="cartao flex min-h-[26rem] flex-1 lg:h-full">
+          <div className="cartao min-h-[26rem] flex-1 lg:h-full">
             <Vazio
               titulo="Nenhuma campanha ativa"
               descricao="Assim que uma campanha entrar em veiculação, ela aparece aqui com investimento, entrega, orçamento e série diária."

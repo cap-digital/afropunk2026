@@ -60,7 +60,7 @@ export default async function MetaVisaoGeral({
     if (!d.ativo) {
       return (
         <Shell escopo={escopo} titulo="Meta Ads" sub={subtituloEscopo(escopo, undefined, periodo)}>
-          <div className="cartao flex min-h-[26rem] flex-1 lg:h-full">
+          <div className="cartao min-h-[26rem] flex-1 lg:h-full">
             <Vazio
               titulo={`${d.praca?.nome ?? "Este escopo"} ainda não tem campanha ativa no Meta`}
               descricao="O painel está pronto e conectado. Assim que a primeira campanha entrar no ar, investimento, entrega, público, posicionamentos e criativos aparecem aqui automaticamente."
