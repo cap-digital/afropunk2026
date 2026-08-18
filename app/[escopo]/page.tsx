@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ErroMeta, Linha, Pagina, Shell, subtituloEscopo } from "@/components/Shell";
-import { Cartao, ComLeitura, Etiqueta, Hero, Realce, Secao, Stat } from "@/components/ui";
+import { AreaGrafico, ErroMeta, Linha, Pagina, Shell, subtituloEscopo } from "@/components/Shell";
+import { Cartao, CartaoKpi, ComLeitura, Etiqueta, GradeKpi, Realce, Secao } from "@/components/ui";
 import { AreaTempo, EmpilhadaTotal, type PontoGrafico } from "@/components/charts";
 import { carregarEscopo } from "@/lib/dados";
 import { carregarAds, METRICAS_ADS_ZERO, tentarAds } from "@/lib/ads";
 import { periodoDeParams, type ParamsBusca } from "@/lib/periodo";
 import { explicarErroMeta, MetaError, REVALIDATE } from "@/lib/meta";
-import { ehEscopoValido, ESCOPOS, type EscopoSlug } from "@/lib/config";
+import { ehEscopoValido, ESCOPOS, ESCOPO_TODAS, PRACA_POR_SLUG, type EscopoSlug } from "@/lib/config";
 import { brl, brlCompact, compact, dec, diaMesCurto, int, pct } from "@/lib/format";
 
 export const revalidate = REVALIDATE;
@@ -120,6 +120,10 @@ export default async function VisaoGeralGlobal({
     const ctr = impressoes > 0 ? (cliques / impressoes) * 100 : 0;
 
     const conectados = canais.filter((c) => c.conectado);
+    // Cor da praça só para o filete do KPI principal — o resto do cromo segue
+    // preto e branco, como manda o design system da casa.
+    const acentoPraca =
+      escopo === ESCOPO_TODAS ? "var(--todas)" : PRACA_POR_SLUG[escopo]?.cor;
     const janela =
       d.primeiroDia && d.ultimoDia
         ? `${diaMesCurto(d.primeiroDia)} – ${diaMesCurto(d.ultimoDia)}`
@@ -179,37 +183,32 @@ export default async function VisaoGeralGlobal({
         <Pagina>
           <Secao>Consolidado de mídia</Secao>
 
-          <div
-            className="cartao grid shrink-0 grid-cols-2 items-center gap-4 sm:grid-cols-3 lg:grid-cols-[minmax(15.5rem,1.1fr)_repeat(5,1fr)]"
-            style={{ padding: "var(--esp-cartao-y) var(--esp-cartao-x)" }}
-          >
-            <Hero
+          <GradeKpi>
+            <CartaoKpi
+              destaque
+              acento={acentoPraca}
               rotulo="Investimento total"
               valor={brl(investimento)}
               sub={`${janela} · ${conectados.length} ${conectados.length === 1 ? "canal" : "canais"}`}
             />
-            <Stat
-              rotulo="Receita"
-              valor={brlCompact(receita)}
-              sub={brl(receita)}
-            />
-            <Stat
+            <CartaoKpi rotulo="Receita" valor={brlCompact(receita)} sub={brl(receita)} />
+            <CartaoKpi
               rotulo="ROAS"
               valor={roas > 0 ? `${dec(roas)}×` : "—"}
               sub={roas > 0 ? `conversão: ${brlCompact(invConversao)}` : "sem receita"}
             />
-            <Stat rotulo="Compras" valor={int(conversoes)} sub="Meta + Google" />
-            <Stat
+            <CartaoKpi rotulo="Compras" valor={int(conversoes)} sub="Meta + Google" />
+            <CartaoKpi
               rotulo="CPA"
               valor={convConversao > 0 ? brl(cpa) : "—"}
               sub={convConversao > 0 ? "só conversão" : undefined}
             />
-            <Stat rotulo="Impressões" valor={compact(impressoes)} sub={`CTR ${pct(ctr)}`} />
-          </div>
+            <CartaoKpi rotulo="Impressões" valor={compact(impressoes)} sub={`CTR ${pct(ctr)}`} />
+          </GradeKpi>
 
           <Secao>Canais</Secao>
 
-          <div className="grid shrink-0 grid-cols-1 gap-3.5 lg:grid-cols-2">
+          <div className="grid shrink-0 grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-2">
             {canais.map((c) => {
               const share = investimento > 0 ? (c.investimento / investimento) * 100 : 0;
               return (
@@ -281,7 +280,7 @@ export default async function VisaoGeralGlobal({
 
           <Secao>Meta × Google</Secao>
 
-          <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-[1.35fr_1fr]">
+          <Linha preencher className="grid grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-[1.35fr_1fr]">
             <Cartao
               titulo="Investimento diário por canal"
               sub={
@@ -290,7 +289,7 @@ export default async function VisaoGeralGlobal({
                   : "Google entra nesta série quando a praça tiver campanha no canal"
               }
             >
-              <div className="h-[var(--h-grafico)]">
+              <AreaGrafico>
                 <AreaTempo
                   dados={serie}
                   series={[
@@ -300,7 +299,7 @@ export default async function VisaoGeralGlobal({
                   formato="brl"
                   empilhar
                 />
-              </div>
+              </AreaGrafico>
             </Cartao>
 
             {/* Barras agrupadas de investimento × receita não cabiam aqui: as
@@ -342,9 +341,10 @@ export default async function VisaoGeralGlobal({
                   // Compras é contagem, não moeda — a faixa carrega o próprio formato.
                   { rotulo: "Compras", valor: (c: Canal) => c.conversoes, formato: "int" },
                 ] as const).map((faixa) => (
-                  <div key={faixa.rotulo} className="flex flex-col gap-2">
+                  <div key={faixa.rotulo} className="flex min-h-0 flex-1 flex-col gap-2">
                     <span className="rotulo">{faixa.rotulo}</span>
                     <EmpilhadaTotal
+                      esticar
                       segmentos={conectados.map((c) => ({
                         nome: c.nome,
                         valor: faixa.valor(c),

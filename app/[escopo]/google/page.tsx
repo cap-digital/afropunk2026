@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import { ErroMeta, Linha, Pagina, Shell, subtituloEscopo } from "@/components/Shell";
-import { Cartao, Etiqueta, Hero, Secao, Stat } from "@/components/ui";
+import { AreaGrafico, ErroMeta, Linha, Pagina, Shell, subtituloEscopo } from "@/components/Shell";
+import { Cartao, CartaoKpi, Etiqueta, GradeKpi, Secao } from "@/components/ui";
 import { AreaTempo, Medidor, type SerieTempo } from "@/components/charts";
 import { carregarAds, CANAL_LABEL, type FatiaCanalAds } from "@/lib/ads";
 import { explicarErroAds, GoogleAdsError, REVALIDATE_ADS } from "@/lib/googleAds";
@@ -75,26 +75,30 @@ export default async function GoogleAds({
         acoes={<Etiqueta variante="contorno">Conectado</Etiqueta>}
       >
         <Pagina>
-          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] sm:grid-cols-3 lg:grid-cols-[minmax(16rem,1.1fr)_repeat(5,1fr)]">
-            <Hero rotulo="Investido" valor={brl(t.custo)} sub={`${janela} · BRL`} />
-            <Stat
+          <GradeKpi>
+            <CartaoKpi destaque rotulo="Investido" valor={brl(t.custo)} sub={`${janela} · BRL`} />
+            <CartaoKpi
               rotulo="Receita"
               valor={brlCompact(t.receita)}
               sub={`${brl(t.receita)} · ${int(t.conversoes)} conversões`}
             />
-            <Stat
+            <CartaoKpi
               rotulo="ROAS"
               valor={t.roas > 0 ? `${dec(t.roas)}×` : "—"}
               sub="média dos dois canais"
             />
-            <Stat
+            <CartaoKpi
               rotulo="CPA"
               valor={t.conversoes > 0 ? brl(t.cpa) : "—"}
               sub={t.conversoes > 0 ? "custo por conversão" : undefined}
             />
-            <Stat rotulo="Cliques" valor={compact(t.cliques)} sub={`CTR ${pct(t.ctr)}`} />
-            <Stat rotulo="CPC médio" valor={brl(t.cpc)} sub={`${compact(t.impressoes)} impressões`} />
-          </div>
+            <CartaoKpi rotulo="Cliques" valor={compact(t.cliques)} sub={`CTR ${pct(t.ctr)}`} />
+            <CartaoKpi
+              rotulo="CPC médio"
+              valor={brl(t.cpc)}
+              sub={`${compact(t.impressoes)} impressões`}
+            />
+          </GradeKpi>
 
           <Secao>Pesquisa × Performance Max</Secao>
 
@@ -102,14 +106,14 @@ export default async function GoogleAds({
               esconder que os dois produtos entram em ritmos diferentes. Ao
               lado, cada canal com ROAS e CPA próprios — a média do Google
               esconde que Pesquisa e PMax rendem em ordens distintas. */}
-          <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-[1fr_330px]">
+          <Linha preencher className="grid grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-[1fr_330px]">
             <Cartao
               titulo="Investimento por dia"
               sub="Empilhado por canal — a pilha inteira é o total do dia"
             >
-              <div className="h-[var(--h-grafico)]">
+              <AreaGrafico>
                 <AreaTempo dados={d.serie} series={seriesCusto} formato="brl" empilhar />
-              </div>
+              </AreaGrafico>
             </Cartao>
 
             <Cartao className="flex flex-col justify-center gap-2.5">
@@ -136,7 +140,7 @@ export default async function GoogleAds({
 
           <div className="shrink-0">
             <Cartao className="min-w-0">
-              <div className="max-h-[var(--h-tabela)] overflow-auto">
+              <div className="rola-lateral max-h-[var(--h-tabela)] overflow-auto">
                 <table className="w-full" style={{ fontSize: "var(--fs-corpo)" }}>
                   <thead>
                     <tr className="text-left uppercase tracking-[0.08em] text-[var(--ink-muted)] [font-size:var(--fs-micro)]">

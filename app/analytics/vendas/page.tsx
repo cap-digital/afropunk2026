@@ -1,5 +1,5 @@
-import { ErroGA4, Linha, Pagina, ShellAnalytics } from "@/components/Shell";
-import { Cartao, Hero, Secao, Stat } from "@/components/ui";
+import { AreaGrafico, ErroGA4, Linha, Pagina, ShellAnalytics } from "@/components/Shell";
+import { Cartao, CartaoKpi, GradeKpi, Secao } from "@/components/ui";
 import { BarrasAgrupadas, BarrasH, EmpilhadaTotal, type PontoGrafico } from "@/components/charts";
 import { FunilEventos } from "@/components/FunilEventos";
 import { carregarVendasGA4 } from "@/lib/analytics";
@@ -39,32 +39,33 @@ export default async function AnalyticsVendas({
         <Pagina>
           <Secao>Receita do site</Secao>
 
-          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] sm:grid-cols-3 lg:grid-cols-[minmax(16rem,1.1fr)_repeat(4,1fr)]">
-            <Hero
+          <GradeKpi colunas="lg:grid-cols-3 xl:grid-cols-6">
+            <CartaoKpi
+              destaque
               rotulo="Receita em ingressos"
               valor={brlCompact(receitaTotal)}
               sub={`${brl(receitaTotal)} · ${int(ingressosTotal)} ingressos`}
             />
             {d.eventos.slice(0, 3).map((e) => (
-              <Stat
+              <CartaoKpi
                 key={e.itemName}
                 rotulo={e.bucket?.nome ?? e.itemName}
                 valor={brlCompact(e.receita)}
                 sub={`${int(e.ingressos)} ingressos · ${pct((e.receita / (receitaTotal || 1)) * 100, 1)}`}
               />
             ))}
-            <Stat
+            <CartaoKpi
               rotulo="Ticket médio"
               valor={ingressosTotal > 0 ? brl(receitaTotal / ingressosTotal) : "—"}
               sub={`${int(t.transacoes)} compras no site`}
             />
-          </div>
+          </GradeKpi>
 
           <Secao>Comparativo entre eventos</Secao>
 
-          <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-[1.25fr_1fr]">
+          <Linha preencher className="grid grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-[1.25fr_1fr]">
             {/* Coluna esquerda: receita em cima, ingressos embaixo */}
-            <div className="flex min-h-0 flex-col gap-3.5">
+            <div className="flex min-h-0 flex-col gap-[var(--esp-grade)]">
               <Cartao
                 titulo="Receita por evento"
                 sub="Cor identifica a praça"
@@ -88,7 +89,7 @@ export default async function AnalyticsVendas({
                 sub="Vendidos vs. adicionados ao carrinho"
                
               >
-                <div className="h-[var(--h-grafico)]">
+                <AreaGrafico>
                   <BarrasAgrupadas
                     dados={d.eventos.map((e) => ({
                       nome: e.bucket?.nome ?? e.itemName,
@@ -101,7 +102,7 @@ export default async function AnalyticsVendas({
                     ]}
                     formato="int"
                   />
-                </div>
+                </AreaGrafico>
               </Cartao>
             </div>
 

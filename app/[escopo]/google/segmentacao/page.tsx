@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { ErroMeta, Linha, Pagina, Shell, subtituloEscopo } from "@/components/Shell";
-import { Cartao, Hero, Secao, Stat } from "@/components/ui";
+import { Cartao, CartaoKpi, GradeKpi, Secao } from "@/components/ui";
 import { BarrasH, EmpilhadaTotal, MapaCalor, type PontoGrafico } from "@/components/charts";
 import { carregarSegmentacao, DIA_LABEL } from "@/lib/adsDetalhe";
 import { explicarErroAds, GoogleAdsError, REVALIDATE_ADS } from "@/lib/googleAds";
@@ -94,26 +94,27 @@ export default async function Segmentacao({
         sub={subtituloEscopo(escopo, `${d.cidades.length} cidades com entrega`)}
       >
         <Pagina>
-          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] sm:grid-cols-3 lg:grid-cols-[minmax(15.5rem,1.1fr)_repeat(4,1fr)]">
-            <Hero
+          <GradeKpi colunas="lg:grid-cols-3 xl:grid-cols-6">
+            <CartaoKpi
+              destaque
               rotulo="Investido"
               valor={brl(t.custo)}
               sub={`${compact(t.impressoes)} impressões · CTR ${pct(t.ctr)}`}
             />
             {d.dispositivos.slice(0, 2).map((x) => (
-              <Stat
+              <CartaoKpi
                 key={x.nome}
                 rotulo={x.nome}
                 valor={pct(t.custo > 0 ? (x.m.custo / t.custo) * 100 : 0, 1)}
                 sub={`${brlCompact(x.m.custo)} · ROAS ${x.m.roas > 0 ? `${dec(x.m.roas)}×` : "—"}`}
               />
             ))}
-            <Stat
+            <CartaoKpi
               rotulo="Cidade que mais gasta"
               valor={cidades[0]?.nome ?? "—"}
               sub={cidades[0] ? `${brl(cidades[0].m.custo)} · ${int(cidades[0].m.conversoes)} conv.` : undefined}
             />
-            <Stat
+            <CartaoKpi
               rotulo="Melhor hora"
               valor={melhorHora && melhorHora.m.conversoes > 0 ? melhorHora.nome : "—"}
               sub={
@@ -122,14 +123,14 @@ export default async function Segmentacao({
                   : "sem conversão no recorte"
               }
             />
-          </div>
+          </GradeKpi>
 
           <Secao>Quando e onde</Secao>
 
           {/* Sem gráfico de investimento por faixa ao lado do mapa: as duas
               formas responderiam a mesma pergunta e, somadas, não sobrava
               altura para nenhuma das duas caber em 768px. */}
-          <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-[1.1fr_1fr]">
+          <Linha className="grid grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-[1.1fr_1fr]">
             <Cartao
               titulo="Cliques por dia e faixa de horário"
               sub="Faixas de 3 horas — só dias com entrega"
@@ -166,7 +167,7 @@ export default async function Segmentacao({
 
           <Secao>Aparelho</Secao>
 
-          <div className="grid shrink-0 grid-cols-1 gap-3.5 lg:grid-cols-[280px_1fr]">
+          <div className="grid shrink-0 grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-[280px_1fr]">
             <Cartao className="flex flex-col justify-center">
               <span className="rotulo">Investimento por aparelho</span>
               <div className="mt-2">

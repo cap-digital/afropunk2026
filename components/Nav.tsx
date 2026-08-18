@@ -37,25 +37,33 @@ function Item({
   href,
   children,
   icone: Ic,
+  nivel = "sub",
 }: {
   href: string;
   children: React.ReactNode;
   icone: Icone;
+  /** "topo" para o que abre um bloco; "sub" para o que vive dentro dele. */
+  nivel?: "topo" | "sub";
 }) {
   const path = usePathname();
   const ativo = path === href;
+  const topo = nivel === "topo";
 
   return (
     <Link
       href={href}
       aria-current={ativo ? "page" : undefined}
-      className={`flex items-center gap-2 rounded-lg px-2.5 py-[0.42rem] text-[var(--fs-corpo)] font-medium leading-[1.3] transition-colors ${
+      className={`flex items-center gap-2 rounded-lg px-2.5 py-[0.42rem] font-medium leading-[1.3] transition-colors ${
+        topo ? "text-[var(--fs-nav)]" : "text-[var(--fs-nav-sub)]"
+      } ${
         ativo
           ? "nav-ativo border border-[var(--ui-bdr)] bg-[var(--ui-bg)] text-[var(--ink)]"
           : "border border-transparent text-[var(--ink-2)] hover:bg-[var(--surface-2)] hover:text-[var(--ink)]"
       }`}
     >
-      <Ic size="0.875rem" stroke={1.8} className="shrink-0" aria-hidden="true" />
+      {/* Ícone em `em`, não em `rem`: assim ele acompanha o degrau do próprio
+          item em vez de ficar do mesmo tamanho nos dois níveis. */}
+      <Ic size="1.15em" stroke={1.8} className="shrink-0" aria-hidden="true" />
       <span className="min-w-0 truncate">{children}</span>
     </Link>
   );
@@ -107,13 +115,13 @@ function Grupo({
         type="button"
         onClick={alternar}
         aria-expanded={aberto}
-        className="flex items-center gap-2 rounded-lg px-2.5 py-[0.42rem] text-left text-[var(--ink-muted)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--ink-2)]"
+        className="flex items-center gap-2 rounded-lg px-2.5 py-[0.42rem] text-left text-[var(--fs-nav)] text-[var(--ink-muted)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--ink-2)]"
       >
-        <Ic size="0.875rem" stroke={1.9} className="shrink-0" aria-hidden="true" />
+        <Ic size="1.15em" stroke={1.9} className="shrink-0" aria-hidden="true" />
         {/* Mesmo tamanho do item filho: "META ADS" aparecia MENOR que
             "Visão geral", que está um nível abaixo dela. A hierarquia agora vem
             da caixa alta, do tracking e da cor — não de encolher o pai. */}
-        <span className="flex-1 text-[var(--fs-corpo)] font-semibold uppercase leading-[1.3] tracking-[0.08em] text-[var(--ink-muted)]">
+        <span className="flex-1 font-semibold uppercase leading-[1.3] tracking-[0.08em] text-[var(--ink-muted)]">
           {titulo}
         </span>
         {estado && (
@@ -125,7 +133,7 @@ function Grupo({
           </span>
         )}
         <IconChevronDown
-          size="0.75rem"
+          size="0.9rem"
           stroke={2.4}
           aria-hidden="true"
           className={`shrink-0 transition-transform duration-200 ${aberto ? "" : "-rotate-90"}`}
@@ -166,7 +174,7 @@ export function NavPlataformas({
     <nav className="flex flex-1 flex-col gap-3 overflow-y-auto px-2.5 py-3.5">
       {/* Consolidado dos canais — fica fora de Meta e Google de propósito. */}
       <div className="flex flex-col gap-0.5">
-        <Item href={base} icone={IconLayoutDashboard}>
+        <Item href={base} icone={IconLayoutDashboard} nivel="topo">
           Overview
         </Item>
       </div>
@@ -241,7 +249,7 @@ export function NavAnalytics() {
   return (
     <nav className="flex flex-1 flex-col gap-3 overflow-y-auto px-2.5 py-3.5">
       <div className="flex flex-col gap-0.5">
-        <p className="px-2 pb-2 text-[var(--fs-corpo)] font-semibold uppercase tracking-[0.08em] text-[var(--ink-muted)]">
+        <p className="px-2 pb-2 text-[var(--fs-nav)] font-semibold uppercase tracking-[0.08em] text-[var(--ink-muted)]">
           Google Analytics
         </p>
         <Item href="/analytics" icone={IconChartPie}>

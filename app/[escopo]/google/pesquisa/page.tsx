@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { IconGauge, IconSearch } from "@tabler/icons-react";
 import { ErroMeta, Linha, Pagina, Shell, subtituloEscopo } from "@/components/Shell";
-import { Cartao, Hero, Secao, Stat } from "@/components/ui";
+import { Cartao, CartaoKpi, GradeKpi, Secao } from "@/components/ui";
 import { EmpilhadaTotal } from "@/components/charts";
 import { TabelaOrdenavel } from "@/components/TabelaOrdenavel";
 import {
@@ -83,22 +83,31 @@ export default async function Pesquisa({
         sub={subtituloEscopo(escopo, `${d.palavras.length} palavras-chave com impressão`)}
       >
         <Pagina>
-          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] sm:grid-cols-3 lg:grid-cols-[minmax(15.5rem,1.1fr)_repeat(5,1fr)]">
-            <Hero rotulo="Investido em Pesquisa" valor={brl(t.custo)} sub="soma das palavras-chave" />
-            <Stat
+          <GradeKpi>
+            <CartaoKpi
+              destaque
+              rotulo="Investido em Pesquisa"
+              valor={brl(t.custo)}
+              sub="soma das palavras-chave"
+            />
+            <CartaoKpi
               rotulo="Receita"
               valor={brlCompact(t.receita)}
               sub={`${int(t.conversoes)} conversões`}
             />
-            <Stat rotulo="ROAS" valor={t.roas > 0 ? `${dec(t.roas)}×` : "—"} />
-            <Stat rotulo="CPC médio" valor={brl(t.cpc)} sub={`CTR ${pct(t.ctr)}`} />
-            <Stat
+            <CartaoKpi rotulo="ROAS" valor={t.roas > 0 ? `${dec(t.roas)}×` : "—"} />
+            <CartaoKpi rotulo="CPC médio" valor={brl(t.cpc)} sub={`CTR ${pct(t.ctr)}`} />
+            <CartaoKpi
               rotulo="Qualidade"
               valor={qualidadeMedia > 0 ? dec(qualidadeMedia) : "—"}
               sub={qualidadeMedia > 0 ? "índice médio · 1 a 10" : "ainda sem índice"}
             />
-            <Stat rotulo="Cliques" valor={compact(t.cliques)} sub={`${compact(t.impressoes)} impr.`} />
-          </div>
+            <CartaoKpi
+              rotulo="Cliques"
+              valor={compact(t.cliques)}
+              sub={`${compact(t.impressoes)} impr.`}
+            />
+          </GradeKpi>
 
           <Secao icone={IconGauge}>Qualidade das palavras</Secao>
 

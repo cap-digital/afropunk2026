@@ -386,11 +386,25 @@ export async function getConta(): Promise<Conta> {
   return graph<Conta>(ACT, { fields: "name,currency,timezone_name,account_status" });
 }
 
+/**
+ * Campanhas da edição — no ar E pausadas.
+ *
+ * Pedia só `ACTIVE`, e isso fazia a praça inteira desaparecer do painel no dia
+ * seguinte ao evento: as campanhas do Rio foram pausadas em 15/08 e levaram
+ * junto todo o histórico de 03 a 15/08, que continua intacto na API. Um painel
+ * de mídia é feito para ser olhado DEPOIS que a campanha acaba — é aí que se
+ * fecha o resultado —, então status de veiculação não pode ser critério de
+ * existência do dado. Ele vira rótulo na tela (`StatusAtivo`), não filtro.
+ *
+ * Quem faz o recorte de edição é `bucketDaCampanha`: sem isso, entrariam as
+ * campanhas pausadas de 2024/2025 que ainda vivem nesta conta — três delas
+ * casam com a tag `[SSA]` e somariam ao Salvador.
+ */
 export async function getCampanhasAtivas(): Promise<Campanha[]> {
   const data = await graphAll<CampanhaBruta>(`${ACT}/campaigns`, {
     fields:
       "id,name,status,effective_status,objective,lifetime_budget,daily_budget,start_time,stop_time",
-    effective_status: JSON.stringify(["ACTIVE"]),
+    effective_status: JSON.stringify(["ACTIVE", "PAUSED"]),
     limit: 200,
   });
   return data.map((c) => ({ ...c, bucket: bucketDaCampanha(c.name) }));

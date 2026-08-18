@@ -2,7 +2,6 @@
 
 import { Suspense, useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { IconArrowsLeftRight, IconChartBar, IconMapPin } from "@tabler/icons-react";
 import { Marca } from "./Marca";
@@ -65,7 +64,10 @@ export function Moldura({
   };
 
   return (
-    <div className="flex min-h-screen w-full gap-4 bg-[var(--bg)] p-3 lg:h-screen lg:min-h-[40.0rem] lg:overflow-hidden lg:p-4">
+    <div
+      className="flex min-h-screen w-full bg-[var(--bg)] p-3 lg:h-screen lg:min-h-[40.0rem] lg:overflow-hidden"
+      style={{ gap: "var(--esp-grade)", padding: "var(--esp-grade)" }}
+    >
       {/* Fundo escuro por trás da gaveta */}
       {aberto && (
         <div
@@ -124,7 +126,7 @@ export function Moldura({
                 className="group flex items-center gap-2 rounded-lg border border-[var(--border-forte)] bg-[var(--surface-2)] px-2.5 py-2.5 transition-colors hover:bg-[var(--surface-3)]"
               >
                 <IconMapPin
-                  size="0.9375rem"
+                  size="1.1rem"
                   stroke={1.9}
                   aria-hidden="true"
                   className="shrink-0 text-[var(--ink-muted)]"
@@ -132,7 +134,7 @@ export function Moldura({
                 {/* `leading-[1.2]`: `truncate` recorta o que passar da caixa da
                     linha, e em caixa alta o til do Ã e a cedilha do Ç saem dela
                     com entrelinha fechada — "PRAÇAS" perdia a cedilha. */}
-                <span className="marca min-w-0 flex-1 truncate text-[var(--fs-corpo-2)] leading-[1.2] text-[var(--ink)]">
+                <span className="marca min-w-0 flex-1 truncate text-[var(--fs-nav)] leading-[1.2] text-[var(--ink)]">
                   {escopo ? nomeDoEscopo(escopo) : ""}
                 </span>
                 {/* Ícone no lugar da palavra "trocar": ela ocupava ~50px dos
@@ -140,7 +142,7 @@ export function Moldura({
                     ficava com 79px para 118px de texto. O rótulo continua no
                     `title` e no `aria-label` do link. */}
                 <IconArrowsLeftRight
-                  size="0.875rem"
+                  size="1.05rem"
                   stroke={1.9}
                   aria-hidden="true"
                   className="shrink-0 text-[var(--ink-muted)] transition-colors group-hover:text-[var(--ink)]"
@@ -159,28 +161,6 @@ export function Moldura({
             />
           ) : null)}
 
-        {/* Assinatura: as duas marcas, com o mesmo filete que separa no rodapé
-            da capa. Recortadas na caixa dos glifos, então batem em altura. */}
-        <div
-          className="flex shrink-0 items-center justify-center gap-2.5 border-t border-[var(--border)]"
-          style={{ padding: "var(--esp-chrome-y) var(--esp-chrome-x)" }}
-        >
-          <Image
-            src="/capco.png"
-            alt="CAP.CO"
-            width={1752}
-            height={536}
-            className="h-[0.875rem] w-auto opacity-85"
-          />
-          <span aria-hidden="true" className="h-3 w-px bg-[var(--border-forte)]" />
-          <Image
-            src="/graalhub-reverso.png"
-            alt="GRAAL.hub"
-            width={900}
-            height={127}
-            className="h-[0.875rem] w-auto opacity-85"
-          />
-        </div>
       </aside>
 
       {/* `relative` aqui e não no <main>: a marca d'água sangra para fora da
@@ -188,7 +168,7 @@ export function Moldura({
           conta como conteúdo — era o que criava barra horizontal e vertical
           numa página que cabia inteira. Fora do scroller, o
           `overflow-hidden` do shell apara e nada rola. */}
-      <div className="relative flex min-w-0 flex-1 flex-col gap-3 lg:gap-4">
+      <div className="relative flex min-w-0 flex-1 flex-col" style={{ gap: "var(--esp-grade)" }}>
         {/* Camada de recorte própria: a marca d'água sangra para fora da caixa
             de propósito e, sendo absoluta, essa sangria entra na altura do
             conteúdo do pai — 105px fantasma em toda página. Confinada aqui,

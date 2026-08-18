@@ -637,14 +637,34 @@ export function BarrasAgrupadas({
 export function EmpilhadaTotal({
   segmentos,
   formato = "brl",
+  esticar = false,
 }: {
   segmentos: { nome: string; valor: number; cor: string }[];
   formato?: Formato;
+  /**
+   * A barra cresce com a altura disponível em vez de ficar em 24px.
+   *
+   * Numa linha que preenche a tela, três faixas de 24px dentro de um cartão de
+   * 500px deixam o conteúdo boiando. Barra é forma, não texto: engrossar não
+   * atrapalha a leitura da proporção — ao contrário, o rótulo de porcentagem
+   * dentro dela fica mais confortável. Quem tem altura fixa mantém `false`.
+   */
+  esticar?: boolean;
 }) {
   const total = segmentos.reduce((a, s) => a + s.valor, 0) || 1;
   return (
-    <div className="flex flex-col gap-2.5">
-      <div className="flex h-6 w-full overflow-hidden rounded-[4px]">
+    <div className={`flex flex-col gap-2.5 ${esticar ? "h-full" : ""}`}>
+      <div
+        /*
+          Teto de 3,25rem no modo esticado: barra é forma, e forma tem uma
+          proporção onde ainda lê como barra. Sem teto, num cartão alto com uma
+          faixa só ela virava uma laje de cor ocupando um terço da tela — o
+          oposto do que "preencher o espaço" deveria significar.
+        */
+        className={`flex w-full overflow-hidden rounded-[5px] ${
+          esticar ? "max-h-[3.25rem] min-h-[1.75rem] flex-1" : "h-6"
+        }`}
+      >
         {segmentos.map((s) => {
           const p = (s.valor / total) * 100;
           if (p <= 0) return null;

@@ -19,7 +19,8 @@ function Bloco({ className = "" }: { className?: string }) {
 export function EsqueletoDash() {
   return (
     <div
-      className="flex min-h-screen w-full gap-4 bg-[var(--bg)] p-3 lg:h-screen lg:min-h-[40.0rem] lg:overflow-hidden lg:p-4"
+      className="flex min-h-screen w-full bg-[var(--bg)] lg:h-screen lg:min-h-[40.0rem] lg:overflow-hidden"
+      style={{ gap: "var(--esp-grade)", padding: "var(--esp-grade)" }}
       aria-busy="true"
       aria-live="polite"
     >
@@ -46,7 +47,7 @@ export function EsqueletoDash() {
         </div>
       </aside>
 
-      <div className="flex min-w-0 flex-1 flex-col gap-3 lg:gap-4">
+      <div className="flex min-w-0 flex-1 flex-col" style={{ gap: "var(--esp-grade)" }}>
         <header
           className="painel flex shrink-0 items-center justify-between gap-3"
           style={{ minHeight: "var(--h-chrome)", padding: "var(--esp-chrome-y) var(--esp-chrome-x)" }}
@@ -63,17 +64,24 @@ export function EsqueletoDash() {
 
         <main className="flex min-h-0 flex-1 flex-col gap-3">
           <Bloco className="h-[0.875rem] w-44 shrink-0" />
-          <div className="cartao grid shrink-0 grid-cols-3 items-center gap-5 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] lg:grid-cols-6">
+          <div
+            className="grid shrink-0 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7"
+            style={{ gap: "var(--esp-grade)" }}
+          >
             {Array.from({ length: 6 }, (_, i) => (
-              <div key={i} className="flex flex-col gap-2">
-                <Bloco className="h-[0.5625rem] w-16" />
-                <Bloco className="h-[1.375rem] w-24" />
-                <Bloco className="h-[0.5625rem] w-20" />
+              <div
+                key={i}
+                className={`cartao flex flex-col justify-center gap-2 ${i === 0 ? "col-span-2" : ""}`}
+                style={{ padding: "var(--esp-cartao-y) var(--esp-cartao-x)" }}
+              >
+                <Bloco className="h-[0.625rem] w-16" />
+                <Bloco className={i === 0 ? "h-[2rem] w-36" : "h-[1.5rem] w-24"} />
+                <Bloco className="h-[0.625rem] w-20" />
               </div>
             ))}
           </div>
           <Bloco className="h-[0.875rem] w-32 shrink-0" />
-          <div className="grid min-h-[14.75rem] flex-1 grid-cols-1 gap-3.5 lg:grid-cols-[1.4fr_1fr]">
+          <div className="grid min-h-[14.75rem] flex-1 grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-[1.4fr_1fr]">
             <div className="cartao" />
             <div className="cartao" />
           </div>

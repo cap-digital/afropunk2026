@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { ErroMeta, Shell, subtituloEscopo, Pagina } from "@/components/Shell";
-import { Cartao, Stat, Vazio } from "@/components/ui";
+import { Cartao, CartaoKpi, GradeKpi, Vazio } from "@/components/ui";
 import { DestaqueCriativo } from "@/components/Criativos";
 import { GradeCriativos } from "@/components/GradeCriativos";
 import { carregarCriativos, carregarEscopo } from "@/lib/dados";
@@ -33,7 +33,7 @@ export default async function MetaCriativos({
     if (criativos.length === 0) {
       return (
         <Shell escopo={escopo} titulo="Meta Ads · Criativos" sub={subtituloEscopo(escopo, undefined, periodo)}>
-          <div className="cartao h-[37.5rem]">
+          <div className="cartao min-h-[26rem] flex-1 lg:h-full">
             <Vazio
               titulo="Nenhum criativo em veiculação"
               descricao="Os anúncios aparecem aqui com preview, métricas e botão direto para o post no Instagram assim que a campanha entrar no ar."
@@ -55,13 +55,13 @@ export default async function MetaCriativos({
         sub={subtituloEscopo(escopo, `${criativos.length} anúncios · ${comPermalink} com link do Instagram`)}
       >
         <Pagina>
-          <div className="grid shrink-0 grid-cols-1 gap-3.5 lg:grid-cols-[1.05fr_1fr]">
-            <div className="cartao grid grid-cols-2 items-center gap-4 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] lg:grid-cols-4">
-              <Stat rotulo="Anúncios" valor={String(criativos.length)} />
-              <Stat rotulo="Investido" valor={brl(total.spend)} />
-              <Stat rotulo="Impressões" valor={compact(total.impressions)} />
-              <Stat rotulo="CTR médio" valor={pct(total.ctr)} />
-            </div>
+          <div className="grid shrink-0 grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-[1.05fr_1fr]">
+            <GradeKpi colunas="lg:grid-cols-4">
+              <CartaoKpi rotulo="Anúncios" valor={String(criativos.length)} />
+              <CartaoKpi rotulo="Investido" valor={brl(total.spend)} />
+              <CartaoKpi rotulo="Impressões" valor={compact(total.impressions)} />
+              <CartaoKpi rotulo="CTR médio" valor={pct(total.ctr)} />
+            </GradeKpi>
             <DestaqueCriativo criativos={criativos} />
           </div>
 

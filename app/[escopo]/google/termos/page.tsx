@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { IconMessageSearch, IconPointFilled, IconRoute } from "@tabler/icons-react";
 import { ErroMeta, Linha, Pagina, Shell, subtituloEscopo } from "@/components/Shell";
-import { Cartao, Hero, Secao, Stat } from "@/components/ui";
+import { Cartao, CartaoKpi, GradeKpi, Secao } from "@/components/ui";
 import { BarrasH } from "@/components/charts";
 import { TabelaOrdenavel } from "@/components/TabelaOrdenavel";
 import { somarAds } from "@/lib/ads";
@@ -77,33 +77,34 @@ export default async function Termos({
         sub={subtituloEscopo(escopo, `${termos.length} palavras-chave com busca`)}
       >
         <Pagina>
-          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] sm:grid-cols-3 lg:grid-cols-[minmax(15.5rem,1.1fr)_repeat(4,1fr)]">
-            <Hero
+          <GradeKpi colunas="lg:grid-cols-3 xl:grid-cols-6">
+            <CartaoKpi
+              destaque
               rotulo="Investido em buscas"
               valor={brl(t.custo)}
               sub={`${compact(t.cliques)} cliques · CTR ${pct(t.ctr)}`}
             />
-            <Stat
+            <CartaoKpi
               rotulo="Receita"
               valor={brlCompact(t.receita)}
               sub={`ROAS ${t.roas > 0 ? `${dec(t.roas)}×` : "—"}`}
             />
-            <Stat
+            <CartaoKpi
               rotulo="Termos"
               valor={int(termos.length)}
               sub="já são palavra-chave"
             />
-            <Stat
+            <CartaoKpi
               rotulo="CPC médio"
               valor={brl(t.cpc)}
               sub={`${compact(t.impressoes)} impressões`}
             />
-            <Stat
+            <CartaoKpi
               rotulo="Tipo que mais rende"
               valor={melhorTipo ? `${dec(melhorTipo.m.roas)}×` : "—"}
               sub={melhorTipo ? melhorTipo.nome.toLowerCase() : "sem receita no recorte"}
             />
-          </div>
+          </GradeKpi>
 
 
           <Secao icone={IconRoute}>Tipo de busca</Secao>

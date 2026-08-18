@@ -1,5 +1,5 @@
-import { ErroGA4, Linha, Pagina, ShellAnalytics } from "@/components/Shell";
-import { Cartao, Hero, Secao, Stat } from "@/components/ui";
+import { AreaGrafico, ErroGA4, Linha, Pagina, ShellAnalytics } from "@/components/Shell";
+import { Cartao, CartaoKpi, GradeKpi, Secao } from "@/components/ui";
 import { AreaTempo, Funil, LinhasTempo, type PontoGrafico } from "@/components/charts";
 import { carregarVisaoGeralGA4 } from "@/lib/analytics";
 import { explicarErroGA4, GA4Error, REVALIDATE_GA4, ROTULO_PADRAO } from "@/lib/ga4";
@@ -49,45 +49,46 @@ export default async function AnalyticsVisaoGeral({
         <Pagina>
           <Secao>Comportamento do site</Secao>
 
-          <div className="cartao grid shrink-0 grid-cols-2 items-center gap-4 px-[var(--esp-cartao-x)] py-[var(--esp-cartao-y)] sm:grid-cols-3 lg:grid-cols-[minmax(16rem,1.1fr)_repeat(5,1fr)]">
-            <Hero
+          <GradeKpi>
+            <CartaoKpi
+              destaque
               rotulo="Sessões"
               valor={compact(t.sessoes)}
               sub={`${compact(t.usuarios)} usuários · ${pct(t.taxaEngajamento * 100, 1)} engajadas`}
             />
-            <Stat
+            <CartaoKpi
               rotulo="Receita"
               valor={brlCompact(t.receita)}
               sub={`${brl(t.receita)} · ${int(t.transacoes)} compras`}
             />
-            <Stat
+            <CartaoKpi
               rotulo="Conversão"
               valor={pct(t.taxaConversao * 100, 2)}
               sub="das sessões compram"
             />
-            <Stat rotulo="Ticket médio" valor={brl(t.ticketMedio)} />
-            <Stat
+            <CartaoKpi rotulo="Ticket médio" valor={brl(t.ticketMedio)} />
+            <CartaoKpi
               rotulo="Novos usuários"
               valor={compact(t.novosUsuarios)}
               sub={`${pct((t.novosUsuarios / (t.usuarios || 1)) * 100, 1)} do total`}
             />
-            <Stat rotulo="Duração média" valor={duracao(t.duracaoMedia)} sub="por sessão" />
-          </div>
+            <CartaoKpi rotulo="Duração média" valor={duracao(t.duracaoMedia)} sub="por sessão" />
+          </GradeKpi>
 
           <Secao>Ritmo</Secao>
 
-          <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-[1.4fr_1fr]">
+          <Linha preencher className="grid grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-[1.4fr_1fr]">
             <Cartao
               titulo="Sessões por dia"
               sub="Os picos coincidem com as aberturas de venda"
             >
-              <div className="h-[var(--h-grafico)]">
+              <AreaGrafico>
                 <AreaTempo
                   dados={serieSessoes}
                   series={[{ chave: "sessoes", nome: "Sessões", cor: "var(--seq-3)" }]}
                   formato="int"
                 />
-              </div>
+              </AreaGrafico>
             </Cartao>
 
             <Cartao
@@ -106,31 +107,31 @@ export default async function AnalyticsVisaoGeral({
 
           <Secao>Receita</Secao>
 
-          <Linha className="grid grid-cols-1 gap-3.5 lg:grid-cols-[1.4fr_1fr]">
+          <Linha className="grid grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-[1.4fr_1fr]">
             <Cartao
               titulo="Receita por dia"
               sub="Valor transacionado no site"
             >
-              <div className="h-[var(--h-grafico)]">
+              <AreaGrafico>
                 <LinhasTempo
                   dados={serieReceita}
                   series={[{ chave: "receita", nome: "Receita", cor: "var(--par-a)" }]}
                   formato="brl"
                 />
-              </div>
+              </AreaGrafico>
             </Cartao>
 
             <Cartao
               titulo="Compras por dia"
               sub="Quantidade de transações"
             >
-              <div className="h-[var(--h-grafico)]">
+              <AreaGrafico>
                 <AreaTempo
                   dados={serieReceita}
                   series={[{ chave: "transacoes", nome: "Compras", cor: "var(--par-b)" }]}
                   formato="int"
                 />
-              </div>
+              </AreaGrafico>
             </Cartao>
           </Linha>
 
