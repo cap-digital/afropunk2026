@@ -90,13 +90,13 @@ function DicaPadrao({ active, payload, label, formato = "int", rotuloEixo }: Dic
   return (
     <Caixa>
       {label !== undefined && (
-        <div className="mb-1.5 text-[length:var(--fs-rotulo)] font-semibold uppercase tracking-[0.08em] text-[var(--ink-muted)]">
+        <div className="mb-1.5 text-[var(--fs-rotulo)] font-semibold uppercase tracking-[0.08em] text-[var(--ink-muted)]">
           {rotuloEixo ? rotuloEixo(String(label)) : label}
         </div>
       )}
       <div className="flex flex-col gap-1">
         {payload.map((p, i) => (
-          <div key={i} className="flex items-center justify-between gap-4 text-[length:var(--fs-corpo-2)]">
+          <div key={i} className="flex items-center justify-between gap-4 text-[var(--fs-corpo-2)]">
             <span className="flex items-center gap-1.5 text-[var(--ink-2)]">
               <span
                 aria-hidden="true"
@@ -137,7 +137,7 @@ function LegendaChips({ payload }: { payload?: ItemLegenda[] }) {
   return (
     <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 pt-1.5">
       {payload.map((p, i) => (
-        <span key={i} className="flex items-center gap-1.5 text-[length:var(--fs-corpo)] text-[var(--ink-2)]">
+        <span key={i} className="flex items-center gap-1.5 text-[var(--fs-corpo)] text-[var(--ink-2)]">
           <span
             aria-hidden="true"
             className="block h-2 w-2 rotate-45"
@@ -683,7 +683,7 @@ export function EmpilhadaTotal({
                   próprio número em cartões de coluna, e o rótulo vazava para o
                   segmento vizinho. O valor exato está sempre na legenda. */}
               {p >= 14 && (
-                <span className="absolute inset-0 flex items-center justify-center text-[length:var(--fs-rotulo)] font-semibold text-black/80">
+                <span className="absolute inset-0 flex items-center justify-center text-[var(--fs-rotulo)] font-semibold text-black/80">
                   {dec(p)}%
                 </span>
               )}
@@ -693,7 +693,7 @@ export function EmpilhadaTotal({
       </div>
       <div className="flex flex-wrap gap-x-4 gap-y-1">
         {segmentos.map((s) => (
-          <span key={s.nome} className="flex items-center gap-1.5 text-[length:var(--fs-corpo)]">
+          <span key={s.nome} className="flex items-center gap-1.5 text-[var(--fs-corpo)]">
             <span
               aria-hidden="true"
               className="block h-2 w-2 rotate-45"
@@ -867,7 +867,7 @@ export function Dispersao({
             const d = payload[0].payload;
             return (
               <Caixa>
-                <div className="mb-1 flex items-center gap-1.5 text-[length:var(--fs-corpo-2)] font-semibold text-[var(--ink)]">
+                <div className="mb-1 flex items-center gap-1.5 text-[var(--fs-corpo-2)] font-semibold text-[var(--ink)]">
                   <span
                     aria-hidden="true"
                     className="block h-2 w-2 rotate-45"
@@ -875,7 +875,7 @@ export function Dispersao({
                   />
                   {d.nome}
                 </div>
-                <div className="tabular flex flex-col gap-0.5 text-[length:var(--fs-corpo-2)] text-[var(--ink-2)]">
+                <div className="tabular flex flex-col gap-0.5 text-[var(--fs-corpo-2)] text-[var(--ink-2)]">
                   <span>CPM {brl(d.x)}</span>
                   <span>CTR {pct(d.y)}</span>
                   <span>Investimento {brl(d.z)}</span>
@@ -932,7 +932,7 @@ export function MapaCalor({
         mostrar uma tabela de cinco por sete.
       */}
       <div
-        className="grid min-h-0 gap-[2px] text-[length:var(--fs-corpo)]"
+        className="grid min-h-0 gap-[2px] text-[var(--fs-corpo)]"
         style={{
           gridTemplateColumns: `${larguraRotulo}px repeat(${colunas.length}, minmax(0,1fr))`,
           gridTemplateRows: `auto repeat(${linhas.length}, var(--h-barra-faixa))`,
@@ -942,7 +942,7 @@ export function MapaCalor({
         {colunas.map((c) => (
           <div
             key={c}
-            className="truncate pb-1 text-center text-[length:var(--fs-rotulo)] font-semibold uppercase tracking-[0.06em] text-[var(--ink-muted)]"
+            className="truncate pb-1 text-center text-[var(--fs-rotulo)] font-semibold uppercase tracking-[0.06em] text-[var(--ink-muted)]"
             title={c}
           >
             {c}
@@ -957,7 +957,7 @@ export function MapaCalor({
               recorta; `leading-none` tira a folga que sobrava da entrelinha.
             */}
             <div
-              className="flex items-center overflow-x-hidden text-ellipsis whitespace-nowrap pr-2 leading-none text-[length:var(--fs-corpo)] text-[var(--ink-2)]"
+              className="flex items-center overflow-x-hidden text-ellipsis whitespace-nowrap pr-2 leading-none text-[var(--fs-corpo)] text-[var(--ink-2)]"
               title={l}
             >
               {l}
@@ -973,7 +973,7 @@ export function MapaCalor({
                   className="flex h-full min-h-0 items-center justify-center rounded-[3px] transition-opacity hover:opacity-80"
                 >
                   <span
-                    className="tabular text-[length:var(--fs-rotulo)] font-semibold"
+                    className="tabular text-[var(--fs-rotulo)] font-semibold"
                     style={{ color: v <= 0 ? "var(--ink-muted)" : claro ? "#0b0b0b" : "#ffffff" }}
                   >
                     {v > 0 ? compact(v) : "–"}
@@ -984,7 +984,7 @@ export function MapaCalor({
           </Fragment>
         ))}
       </div>
-      <div className="mt-auto flex items-center gap-2 pt-1 text-[length:var(--fs-rotulo)] text-[var(--ink-muted)]">
+      <div className="mt-auto flex items-center gap-2 pt-1 text-[var(--fs-rotulo)] text-[var(--ink-muted)]">
         <span>Menos</span>
         {["var(--seq-1)", "var(--seq-2)", "var(--seq-3)", "var(--seq-4)"].map((c) => (
           <span key={c} className="block h-2.5 w-6 rounded-[2px]" style={{ background: c }} />
@@ -1026,14 +1026,14 @@ export function Funil({
         return (
           <div key={e.nome} className="flex flex-col gap-1">
             <div className="flex items-baseline justify-between gap-2">
-              <span className="text-[length:var(--fs-corpo-2)] text-[var(--ink-2)]">{e.nome}</span>
+              <span className="text-[var(--fs-corpo-2)] text-[var(--ink-2)]">{e.nome}</span>
               <span className="flex items-baseline gap-2">
                 {taxa !== null && (
-                  <span className="tabular text-[length:var(--fs-corpo)] text-[var(--ink-muted)]">
+                  <span className="tabular text-[var(--fs-corpo)] text-[var(--ink-muted)]">
                     {dec(taxa)}% vs. etapa anterior
                   </span>
                 )}
-                <span className="tabular text-[length:var(--fs-corpo-2)] font-bold text-[var(--ink)]">
+                <span className="tabular text-[var(--fs-corpo-2)] font-bold text-[var(--ink)]">
                   {int(e.valor)}
                 </span>
               </span>
@@ -1084,7 +1084,7 @@ export function Medidor({
       <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--surface-2)]">
         <div className="h-full rounded-full" style={{ width: `${p}%`, background: cor }} />
       </div>
-      <span className="tabular text-[length:var(--fs-corpo)] text-[var(--ink-muted)]">{dec(p)}% consumido</span>
+      <span className="tabular text-[var(--fs-corpo)] text-[var(--ink-muted)]">{dec(p)}% consumido</span>
     </div>
   );
 }
@@ -1139,13 +1139,13 @@ export function FunilTrapezio({
                 clipPath: `polygon(${(100 - cima) / 2}% 0%, ${(100 + cima) / 2}% 0%, ${(100 + baixo) / 2}% 100%, ${(100 - baixo) / 2}% 100%)`,
               }}
             >
-              <span className="truncate text-[length:var(--fs-corpo-2)] font-semibold uppercase tracking-[0.06em] text-[#0b0b0b]">
+              <span className="truncate text-[var(--fs-corpo-2)] font-semibold uppercase tracking-[0.06em] text-[#0b0b0b]">
                 {e.nome}
               </span>
             </div>
 
             {taxa !== null && (
-              <span className="tabular absolute right-1 top-1/2 -translate-y-1/2 text-[length:var(--fs-md)] font-bold text-[var(--ink-2)]">
+              <span className="tabular absolute right-1 top-1/2 -translate-y-1/2 text-[var(--fs-md)] font-bold text-[var(--ink-2)]">
                 {dec(taxa)}%
               </span>
             )}

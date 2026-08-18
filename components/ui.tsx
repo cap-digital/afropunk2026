@@ -43,7 +43,7 @@ export function Leitura({ children }: { children: ReactNode }) {
         aria-hidden="true"
         className="mt-[0.45em] block h-1.5 w-1.5 shrink-0 rotate-45 bg-[var(--ink-muted)]"
       />
-      <p className="text-[length:var(--fs-corpo)] leading-relaxed text-[var(--ink-2)]">{children}</p>
+      <p className="text-[var(--fs-corpo)] leading-relaxed text-[var(--ink-2)]">{children}</p>
     </div>
   );
 }
@@ -87,7 +87,7 @@ export function Secao({ children, icone: Ic = IconPointFilled }: { children: Rea
           crescia acima da caixa do texto e a faixa lia como dois elementos
           soltos em vez de uma linha só. */}
       <Ic size="0.6rem" stroke={2} className="shrink-0 text-[var(--ink-muted)]" aria-hidden="true" />
-      <h2 className="titulo shrink-0 text-[length:var(--fs-rotulo)] uppercase tracking-[0.14em] text-[var(--ink-2)]">
+      <h2 className="titulo shrink-0 text-[var(--fs-rotulo)] uppercase tracking-[0.14em] text-[var(--ink-2)]">
         {children}
       </h2>
     </div>
@@ -392,7 +392,7 @@ export function Etiqueta({
    */
   const t = TOM[tom];
   const base =
-    "inline-flex shrink-0 items-center whitespace-nowrap rounded px-1.5 py-px text-[length:var(--fs-micro)] font-semibold uppercase leading-[1.35] tracking-[0.06em]";
+    "inline-flex shrink-0 items-center whitespace-nowrap rounded px-1.5 py-px text-[var(--fs-micro)] font-semibold uppercase leading-[1.35] tracking-[0.06em]";
   if (variante === "contorno") {
     return (
       <span
@@ -413,7 +413,7 @@ export function Etiqueta({
 /** Status com ícone + rótulo — cor nunca carrega o significado sozinha. */
 export function StatusAtivo({ ativo }: { ativo: boolean }) {
   return (
-    <span className="inline-flex items-center gap-1 text-[length:var(--fs-micro)] font-semibold uppercase tracking-[0.06em]">
+    <span className="inline-flex items-center gap-1 text-[var(--fs-micro)] font-semibold uppercase tracking-[0.06em]">
       <IconPointFilled
         size="0.6rem"
         aria-hidden="true"
@@ -439,8 +439,8 @@ export function Vazio({
   return (
     <div className="flex h-full flex-col items-center justify-center gap-3 py-8 text-center">
       <Ic size="1.625rem" stroke={1.5} className="text-[var(--ink-muted)]" aria-hidden="true" />
-      <p className="marca text-[length:var(--fs-md)] leading-[1.15] text-[var(--ink-2)]">{titulo}</p>
-      <p className="max-w-[46ch] text-[length:var(--fs-corpo-2)] leading-relaxed text-[var(--ink-muted)]">
+      <p className="marca text-[var(--fs-md)] leading-[1.15] text-[var(--ink-2)]">{titulo}</p>
+      <p className="max-w-[46ch] text-[var(--fs-corpo-2)] leading-relaxed text-[var(--ink-muted)]">
         {descricao}
       </p>
     </div>
@@ -467,7 +467,7 @@ export function BarraMeta({
     <div className="flex flex-col gap-1.5">
       <div className="flex items-baseline justify-between gap-2">
         <span className="rotulo truncate">{rotulo}</span>
-        <span className="tabular shrink-0 text-[length:var(--fs-corpo-2)] text-[var(--ink-2)]">
+        <span className="tabular shrink-0 text-[var(--fs-corpo-2)] text-[var(--ink-2)]">
           {formatar(valor)}{" "}
           <span className="text-[var(--ink-muted)]">/ {formatar(limite)}</span>
         </span>
@@ -481,7 +481,7 @@ export function BarraMeta({
           }}
         />
       </div>
-      <span className="tabular text-[length:var(--fs-corpo)] text-[var(--ink-muted)]">
+      <span className="tabular text-[var(--fs-corpo)] text-[var(--ink-muted)]">
         {p.toFixed(1).replace(".", ",")}% consumido
       </span>
     </div>

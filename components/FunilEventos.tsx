@@ -26,7 +26,7 @@ export function FunilEventos({ eventos }: { eventos: EventoFunil[] }) {
 
   if (!e) {
     return (
-      <p className="pt-8 text-center text-[length:var(--fs-corpo-2)] text-[var(--ink-muted)]">
+      <p className="pt-8 text-center text-[var(--fs-corpo-2)] text-[var(--ink-muted)]">
         Nenhum evento com venda registrada neste recorte.
       </p>
     );
@@ -52,7 +52,7 @@ export function FunilEventos({ eventos }: { eventos: EventoFunil[] }) {
               type="button"
               onClick={() => setAtivo(i)}
               aria-pressed={selecionado}
-              className="flex items-center gap-1.5 rounded-md border px-2 py-[5px] text-[length:var(--fs-corpo)] font-semibold uppercase tracking-[0.08em] transition-colors"
+              className="flex items-center gap-1.5 rounded-md border px-2 py-[5px] text-[var(--fs-corpo)] font-semibold uppercase tracking-[0.08em] transition-colors"
               style={
                 selecionado
                   ? { borderColor: x.cor, background: x.cor, color: "#0b0b0b" }
@@ -93,13 +93,13 @@ export function FunilEventos({ eventos }: { eventos: EventoFunil[] }) {
                 className="block h-2.5 w-2.5 shrink-0 rotate-45"
                 style={{ background: e.cor, opacity: 1 - i * 0.16 }}
               />
-              <span className="min-w-0 flex-1 truncate text-[length:var(--fs-corpo-2)] font-semibold text-[var(--ink-2)]">
+              <span className="min-w-0 flex-1 truncate text-[var(--fs-corpo-2)] font-semibold text-[var(--ink-2)]">
                 {x.nome}
               </span>
-              <span className="tabular shrink-0 text-[length:var(--fs-corpo-2)] font-bold text-[var(--ink)]">
+              <span className="tabular shrink-0 text-[var(--fs-corpo-2)] font-bold text-[var(--ink)]">
                 {int(x.valor)}
               </span>
-              <span className="tabular min-w-[3.875rem] shrink-0 whitespace-nowrap text-right text-[length:var(--fs-corpo-2)] text-[var(--ink-muted)]">
+              <span className="tabular min-w-[3.875rem] shrink-0 whitespace-nowrap text-right text-[var(--fs-corpo-2)] text-[var(--ink-muted)]">
                 {taxa !== null ? `${dec(taxa)}%` : `${dec(doTopo)}%`}
               </span>
             </div>
@@ -108,13 +108,13 @@ export function FunilEventos({ eventos }: { eventos: EventoFunil[] }) {
       </div>
 
       <div className="flex shrink-0 items-center justify-between border-t border-[var(--border)] pt-2.5">
-        <span className="text-[length:var(--fs-corpo)] text-[var(--ink-muted)]">
+        <span className="text-[var(--fs-corpo)] text-[var(--ink-muted)]">
           Do carrinho à compra:{" "}
           <span className="tabular font-bold" style={{ color: e.cor }}>
             {pct(conversao, 1)}
           </span>
         </span>
-        <span className="tabular text-[length:var(--fs-corpo)] text-[var(--ink-muted)]">
+        <span className="tabular text-[var(--fs-corpo)] text-[var(--ink-muted)]">
           {int(e.ingressos)} ingressos ·{" "}
           <span className="font-bold text-[var(--ink)]">{brl(e.receita)}</span>
         </span>

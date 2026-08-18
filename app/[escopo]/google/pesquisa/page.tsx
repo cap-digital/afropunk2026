@@ -117,7 +117,7 @@ export default async function Pesquisa({
           <div className="cartao shrink-0 px-[var(--esp-cartao-x)] py-[calc(var(--esp-cartao-y)*0.82)]">
             <div className="flex items-baseline justify-between gap-3">
               <span className="rotulo">Investimento por índice de qualidade</span>
-              <span className="text-[length:var(--fs-corpo)] text-[var(--ink-muted)]">
+              <span className="text-[var(--fs-corpo)] text-[var(--ink-muted)]">
                 {faixas[0]?.nome === "Alta"
                   ? "A maior fatia está em palavra bem avaliada"
                   : "Boa parte do gasto está fora da faixa alta"}
@@ -159,7 +159,7 @@ export default async function Pesquisa({
             </Cartao>
           </Linha>
 
-          <p className="shrink-0 text-[length:var(--fs-corpo)] leading-relaxed text-[var(--ink-muted)]">
+          <p className="shrink-0 text-[var(--fs-corpo)] leading-relaxed text-[var(--ink-muted)]">
             A mesma palavra em grupos de anúncios diferentes vira uma linha só, e palavras sem
             impressão no período ficam fora. O índice de qualidade continua alimentando a
             distribuição de investimento acima — ele é diagnóstico da conta, não número de

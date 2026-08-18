@@ -123,7 +123,7 @@ export default async function MetaCampanhas({
                     <StatusAtivo ativo={c.effective_status === "ACTIVE"} />
                   </div>
                   <p
-                    className="truncate text-[length:var(--fs-corpo-2)] font-semibold text-[var(--ink)]"
+                    className="truncate text-[var(--fs-corpo-2)] font-semibold text-[var(--ink)]"
                     title={c.name}
                   >
                     {d.comparativo ? (c.bucket?.nome ?? nomeCurtoCampanha(c.name)) : nomeCurtoCampanha(c.name)}
@@ -140,7 +140,7 @@ export default async function MetaCampanhas({
                   {orcamento > 0 ? (
                     <Medidor valor={c.m.spend} limite={orcamento} rotulo="Orçamento" cor={cor} />
                   ) : (
-                    <p className="text-[length:var(--fs-corpo)] leading-tight text-[var(--ink-muted)]">
+                    <p className="text-[var(--fs-corpo)] leading-tight text-[var(--ink-muted)]">
                       Orçamento no conjunto de anúncios
                     </p>
                   )}
@@ -190,7 +190,7 @@ export default async function MetaCampanhas({
               <div className="rola-lateral max-h-[var(--h-tabela)] overflow-auto">
               <table className="w-full" style={{ fontSize: "var(--fs-corpo)" }}>
                 <thead>
-                  <tr className="text-left text-[length:var(--fs-corpo)] uppercase tracking-[0.08em] text-[var(--ink-muted)]">
+                  <tr className="text-left text-[var(--fs-corpo)] uppercase tracking-[0.08em] text-[var(--ink-muted)]">
                     <th className="pb-2 pr-3 font-semibold">Campanha</th>
                     {d.comparativo && <th className="pb-2 pr-3 font-semibold">Praça</th>}
                     <th className="pb-2 pr-3 font-semibold">Objetivo</th>

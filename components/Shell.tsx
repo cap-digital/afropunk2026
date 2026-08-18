@@ -180,9 +180,9 @@ export function ErroMeta({ titulo, detalhe }: { titulo: string; detalhe: string 
           className="block h-2.5 w-2.5 rotate-45"
           style={{ background: "var(--critical)" }}
         />
-        <h2 className="marca text-[length:var(--fs-kpi)]">{titulo}</h2>
+        <h2 className="marca text-[var(--fs-kpi)]">{titulo}</h2>
       </div>
-      <p className="max-w-[80ch] text-[length:var(--fs-corpo-2)] leading-relaxed text-[var(--ink-2)]">{detalhe}</p>
+      <p className="max-w-[80ch] text-[var(--fs-corpo-2)] leading-relaxed text-[var(--ink-2)]">{detalhe}</p>
     </div>
   );
 }
@@ -226,10 +226,10 @@ export function ShellAnalytics({
               aria-hidden="true"
               className="shrink-0 text-[var(--ink-muted)]"
             />
-            <span className="marca min-w-0 flex-1 truncate text-[length:var(--fs-md)] text-[var(--ink)]">
+            <span className="marca min-w-0 flex-1 truncate text-[var(--fs-md)] text-[var(--ink)]">
               Site AFROPUNK
             </span>
-            <span className="shrink-0 text-[length:var(--fs-rotulo)] font-semibold uppercase tracking-[0.08em] text-[var(--ink-muted)] transition-colors group-hover:text-[var(--ink)]">
+            <span className="shrink-0 text-[var(--fs-rotulo)] font-semibold uppercase tracking-[0.08em] text-[var(--ink-muted)] transition-colors group-hover:text-[var(--ink)]">
               sair
             </span>
           </Link>

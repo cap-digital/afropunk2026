@@ -34,7 +34,7 @@ export function BotaoAtualizar({ geradoEm }: { geradoEm: string }) {
         no mesmo corpo dos botões, três blocos de cromo brigavam entre si na
         faixa e o título perdia para todos.
       */}
-      <span className="hidden text-[length:var(--fs-micro)] uppercase tracking-[0.08em] text-[var(--ink-muted)] xl:inline">
+      <span className="hidden text-[var(--fs-micro)] uppercase tracking-[0.08em] text-[var(--ink-muted)] xl:inline">
         Dados de {geradoEm}
       </span>
       <button
@@ -42,7 +42,7 @@ export function BotaoAtualizar({ geradoEm }: { geradoEm: string }) {
         onClick={atualizar}
         disabled={ocupado}
         aria-label="Atualizar dados"
-        className="group flex items-center gap-1.5 rounded-lg border border-[var(--border-forte)] px-2 py-[0.28rem] text-[length:var(--fs-micro)] font-semibold uppercase tracking-[0.06em] text-[var(--ink-2)] transition-colors hover:border-[var(--ink)] hover:text-[var(--ink)] disabled:opacity-50"
+        className="group flex items-center gap-1.5 rounded-lg border border-[var(--border-forte)] px-2 py-[0.28rem] text-[var(--fs-micro)] font-semibold uppercase tracking-[0.06em] text-[var(--ink-2)] transition-colors hover:border-[var(--ink)] hover:text-[var(--ink)] disabled:opacity-50"
       >
         <svg
           width="11"

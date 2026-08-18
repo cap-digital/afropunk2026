@@ -116,7 +116,7 @@ export default async function Pmax({
             </Cartao>
           </Linha>
 
-          <p className="shrink-0 text-[length:var(--fs-corpo)] leading-relaxed text-[var(--ink-muted)]">
+          <p className="shrink-0 text-[var(--fs-corpo)] leading-relaxed text-[var(--ink-muted)]">
             No Performance Max o Google monta cada anúncio combinando várias peças, e a métrica é do
             anúncio que <em>incluiu</em> aquele ativo — a mesma impressão conta para o título, a
             imagem e o logo que apareceram juntos. Por isso a soma das peças passa do total da
@@ -149,9 +149,9 @@ function ListaTexto({ rotulo, itens }: { rotulo: string; itens: AtivoPmax[] }) {
         {itens.map((x, i) => (
           <li
             key={`${x.id}-${i}`}
-            className="flex items-start gap-2 border-b border-[var(--border-sutil)] py-[5px] text-[length:var(--fs-corpo-2)] leading-snug text-[var(--ink-2)] last:border-b-0"
+            className="flex items-start gap-2 border-b border-[var(--border-sutil)] py-[5px] text-[var(--fs-corpo-2)] leading-snug text-[var(--ink-2)] last:border-b-0"
           >
-            <span className="tabular min-w-[1.1rem] shrink-0 text-right text-[length:var(--fs-rotulo)] text-[var(--ink-muted)]">
+            <span className="tabular min-w-[1.1rem] shrink-0 text-right text-[var(--fs-rotulo)] text-[var(--ink-muted)]">
               {i + 1}
             </span>
             {/* Duas linhas em vez de reticência: título e descrição são prosa
@@ -160,7 +160,7 @@ function ListaTexto({ rotulo, itens }: { rotulo: string; itens: AtivoPmax[] }) {
             <span className="line-clamp-2 min-w-0 flex-1" title={x.texto ?? undefined}>
               {x.texto}
             </span>
-            <span className="tabular shrink-0 text-[length:var(--fs-corpo)] font-semibold text-[var(--ink)]">
+            <span className="tabular shrink-0 text-[var(--fs-corpo)] font-semibold text-[var(--ink)]">
               {x.m.receita > 0 ? brlCurto(x.m.receita) : "—"}
             </span>
           </li>

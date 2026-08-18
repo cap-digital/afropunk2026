@@ -39,7 +39,7 @@ export function CartaoCriativo({
     <article className="cartao group flex flex-col overflow-hidden transition-colors hover:border-[var(--border-forte)]">
       <div className="relative aspect-square w-full overflow-hidden bg-[var(--surface-2)]">
         {posicao !== undefined && (
-          <span className="absolute bottom-2 right-2 z-[2] flex h-5 min-w-[1.1875rem] items-center justify-center bg-black/80 px-1 text-[length:var(--fs-rotulo)] font-semibold tabular text-[var(--ink)]">
+          <span className="absolute bottom-2 right-2 z-[2] flex h-5 min-w-[1.1875rem] items-center justify-center bg-black/80 px-1 text-[var(--fs-rotulo)] font-semibold tabular text-[var(--ink)]">
             {posicao}
           </span>
         )}
@@ -51,14 +51,14 @@ export function CartaoCriativo({
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-[length:var(--fs-corpo)] text-[var(--ink-muted)]">
+          <div className="flex h-full items-center justify-center text-[var(--fs-corpo)] text-[var(--ink-muted)]">
             sem preview
           </div>
         )}
 
         {c.bucket && (
           <span
-            className="absolute left-2 top-2 rounded-[3px] px-1.5 py-[3px] text-[length:var(--fs-micro)] font-semibold uppercase tracking-[0.08em] text-black"
+            className="absolute left-2 top-2 rounded-[3px] px-1.5 py-[3px] text-[var(--fs-micro)] font-semibold uppercase tracking-[0.08em] text-black"
             style={{ background: c.bucket.cor }}
           >
             {c.bucket.nome}
@@ -66,7 +66,7 @@ export function CartaoCriativo({
         )}
 
         {!ativo && (
-          <span className="absolute right-1.5 top-1.5 rounded-[3px] bg-black/75 px-1 py-[2px] text-[length:var(--fs-micro)] font-semibold uppercase tracking-[0.08em] text-[var(--ink-2)]">
+          <span className="absolute right-1.5 top-1.5 rounded-[3px] bg-black/75 px-1 py-[2px] text-[var(--fs-micro)] font-semibold uppercase tracking-[0.08em] text-[var(--ink-2)]">
             Pausado
           </span>
         )}
@@ -79,19 +79,19 @@ export function CartaoCriativo({
       */}
       <div className="flex flex-1 flex-col gap-1.5 p-2.5">
         <p
-          className="line-clamp-1 text-[length:var(--fs-corpo-2)] font-semibold leading-tight text-[var(--ink)]"
+          className="line-clamp-1 text-[var(--fs-corpo-2)] font-semibold leading-tight text-[var(--ink)]"
           title={c.adName}
         >
           {c.adName}
         </p>
 
-        <dl className="tabular grid grid-cols-3 gap-1.5 text-[length:var(--fs-corpo)]">
+        <dl className="tabular grid grid-cols-3 gap-1.5 text-[var(--fs-corpo)]">
           {metricas.map((m) => {
             const destacada = m.chave === metricaDestaque;
             return (
               <div key={m.chave} className="min-w-0">
                 <dt
-                  className="truncate text-[length:var(--fs-micro)] font-semibold uppercase tracking-[0.08em]"
+                  className="truncate text-[var(--fs-micro)] font-semibold uppercase tracking-[0.08em]"
                   style={{ color: destacada ? "var(--ink)" : "var(--ink-muted)" }}
                 >
                   {m.curto}
@@ -114,13 +114,13 @@ export function CartaoCriativo({
           dimensões, cards de nome idêntico ficam indistinguíveis na grade.
         */}
         <p
-          className="truncate text-[length:var(--fs-rotulo)] text-[var(--ink-2)]"
+          className="truncate text-[var(--fs-rotulo)] text-[var(--ink-2)]"
           title={`${OBJETIVO_LABEL[c.objetivo] ?? c.objetivo} · ${c.conjuntoNome ?? "—"} · ${c.campanhaNome}`}
         >
           <span className="font-semibold">{OBJETIVO_LABEL[c.objetivo] ?? c.objetivo}</span>
           {c.conjuntoNome ? ` · ${primeiraTag(c.conjuntoNome)}` : ""}
         </p>
-        <p className="tabular truncate text-[length:var(--fs-rotulo)] text-[var(--ink-muted)]">
+        <p className="tabular truncate text-[var(--fs-rotulo)] text-[var(--ink-muted)]">
           {compact(c.m.impressions)} impr. ·{" "}
           {c.m.purchases > 0 ? `${c.m.purchases} compras` : "sem compra"}
         </p>
@@ -131,13 +131,13 @@ export function CartaoCriativo({
             target="_blank"
             rel="noopener noreferrer"
             title="Ver no Instagram"
-            className="mt-auto flex items-center justify-center gap-1 border border-[var(--border-forte)] px-2 py-[5px] text-[length:var(--fs-rotulo)] font-semibold uppercase tracking-[0.08em] text-[var(--ink-2)] transition-colors hover:border-[var(--ink)] hover:text-[var(--ink)]"
+            className="mt-auto flex items-center justify-center gap-1 border border-[var(--border-forte)] px-2 py-[5px] text-[var(--fs-rotulo)] font-semibold uppercase tracking-[0.08em] text-[var(--ink-2)] transition-colors hover:border-[var(--ink)] hover:text-[var(--ink)]"
           >
             <IconeInstagram />
             Instagram
           </a>
         ) : (
-          <span className="mt-auto block border border-dashed border-[var(--border)] px-2 py-[5px] text-center text-[length:var(--fs-rotulo)] uppercase tracking-[0.08em] text-[var(--ink-muted)]">
+          <span className="mt-auto block border border-dashed border-[var(--border)] px-2 py-[5px] text-center text-[var(--fs-rotulo)] uppercase tracking-[0.08em] text-[var(--ink-muted)]">
             Sem link
           </span>
         )}
@@ -204,13 +204,13 @@ function MiniDestaque({
         <div className="flex min-w-0 items-center gap-2">
           <Etiqueta variante="contorno">{rotulo}</Etiqueta>
         </div>
-        <p className="mt-1 truncate text-[length:var(--fs-corpo-2)] font-semibold text-[var(--ink)]" title={c.adName}>
+        <p className="mt-1 truncate text-[var(--fs-corpo-2)] font-semibold text-[var(--ink)]" title={c.adName}>
           {c.adName}
         </p>
-        <p className="truncate text-[length:var(--fs-corpo)] text-[var(--ink-muted)]">{c.bucket?.nome ?? "—"}</p>
+        <p className="truncate text-[var(--fs-corpo)] text-[var(--ink-muted)]">{c.bucket?.nome ?? "—"}</p>
       </div>
       <div className="shrink-0 text-right">
-        <span className="tabular block text-[length:var(--fs-kpi)] font-bold leading-none text-[var(--ink)]">
+        <span className="tabular block text-[var(--fs-kpi)] font-bold leading-none text-[var(--ink)]">
           {metrica}
         </span>
       </div>

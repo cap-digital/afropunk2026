@@ -135,7 +135,7 @@ export default async function AnalyticsVisaoGeral({
             </Cartao>
           </Linha>
 
-          <p className="shrink-0 text-[length:var(--fs-corpo)] leading-relaxed text-[var(--ink-muted)]">
+          <p className="shrink-0 text-[var(--fs-corpo)] leading-relaxed text-[var(--ink-muted)]">
             Sessões, canais e funil são do site inteiro — o checkout é comum aos três eventos e
             não há como atribuí-los por cidade. A divisão por praça está em{" "}
             <span className="font-semibold text-[var(--ink-2)]">Vendas por evento</span>, a partir

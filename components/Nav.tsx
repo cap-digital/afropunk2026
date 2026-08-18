@@ -54,7 +54,7 @@ function Item({
       href={href}
       aria-current={ativo ? "page" : undefined}
       className={`flex items-center gap-2 rounded-lg px-2.5 py-[0.42rem] font-medium leading-[1.3] transition-colors ${
-        topo ? "text-[length:var(--fs-nav)]" : "text-[length:var(--fs-nav-sub)]"
+        topo ? "text-[var(--fs-nav)]" : "text-[var(--fs-nav-sub)]"
       } ${
         ativo
           ? "nav-ativo border border-[var(--ui-bdr)] bg-[var(--ui-bg)] text-[var(--ink)]"
@@ -115,7 +115,7 @@ function Grupo({
         type="button"
         onClick={alternar}
         aria-expanded={aberto}
-        className="flex items-center gap-2 rounded-lg px-2.5 py-[0.42rem] text-left text-[length:var(--fs-nav)] text-[var(--ink-muted)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--ink-2)]"
+        className="flex items-center gap-2 rounded-lg px-2.5 py-[0.42rem] text-left text-[var(--fs-nav)] text-[var(--ink-muted)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--ink-2)]"
       >
         <Ic size="1.15em" stroke={1.9} className="shrink-0" aria-hidden="true" />
         {/* Mesmo tamanho do item filho: "META ADS" aparecia MENOR que
@@ -126,7 +126,7 @@ function Grupo({
         </span>
         {estado && (
           <span
-            className="shrink-0 text-[length:var(--fs-micro)] font-semibold uppercase tracking-[0.06em]"
+            className="shrink-0 text-[var(--fs-micro)] font-semibold uppercase tracking-[0.06em]"
             style={{ color: "var(--critical)" }}
           >
             {estado}
@@ -249,7 +249,7 @@ export function NavAnalytics() {
   return (
     <nav className="flex flex-1 flex-col gap-3 overflow-y-auto px-2.5 py-3.5">
       <div className="flex flex-col gap-0.5">
-        <p className="px-2 pb-2 text-[length:var(--fs-nav)] font-semibold uppercase tracking-[0.08em] text-[var(--ink-muted)]">
+        <p className="px-2 pb-2 text-[var(--fs-nav)] font-semibold uppercase tracking-[0.08em] text-[var(--ink-muted)]">
           Google Analytics
         </p>
         <Item href="/analytics" icone={IconChartPie}>
