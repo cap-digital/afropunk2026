@@ -3,7 +3,7 @@ import Link from "next/link";
 import { IconWorldWww } from "@tabler/icons-react";
 import { Moldura } from "./Moldura";
 import { NavAnalytics } from "./Nav";
-import { Etiqueta } from "./ui";
+import { AreaGrafico, Etiqueta } from "./ui";
 import { ESCOPO_TODAS, nomeDoEscopo, PRACA_POR_SLUG, type EscopoSlug } from "@/lib/config";
 import { canaisDoEscopo, tentarAds } from "@/lib/ads";
 import { rotuloPeriodo } from "@/lib/periodo";
@@ -149,27 +149,6 @@ export function Linha({
   );
 }
 
-/**
- * Área de plotagem.
- *
- * Substitui os `<div className="h-[var(--h-grafico)]">` espalhados pelas
- * páginas. A diferença é o `h-full`: dentro de uma `Linha preencher`, o
- * gráfico cresce com ela; fora, o `min-height` segura o piso e ele se comporta
- * como antes. Um só componente, os dois regimes — e nenhuma página precisa
- * saber em qual está.
- */
-export function AreaGrafico({
-  children,
-  className = "",
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
-  return (
-    <div className={`h-full min-h-[var(--h-grafico)] ${className}`}>{children}</div>
-  );
-}
-
 /** Faixa de erro da Marketing API — mostra o que fazer. */
 export function ErroMeta({ titulo, detalhe }: { titulo: string; detalhe: string }) {
   return (
@@ -187,7 +166,8 @@ export function ErroMeta({ titulo, detalhe }: { titulo: string; detalhe: string 
   );
 }
 
-export { Etiqueta, nomeDoEscopo };
+// `AreaGrafico` vive em ui.tsx (ver nota lá); segue disponível daqui.
+export { AreaGrafico, Etiqueta, nomeDoEscopo };
 
 /**
  * Shell do dashboard GA4. Reaproveita a mesma moldura, trocando a navegação

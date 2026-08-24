@@ -316,12 +316,18 @@ export function AreaTempo({
   formato = "brl",
   altura = "100%",
   empilhar = false,
+  rotuloData = diaMesCurto,
 }: {
   dados: PontoGrafico[];
   series: SerieTempo[];
   formato?: Formato;
   altura?: number | string;
   empilhar?: boolean;
+  /**
+   * Como escrever a data no eixo e na dica. O padrão é o dia ("03 ago"); uma
+   * série agregada por semana passa o intervalo que cada ponto cobre.
+   */
+  rotuloData?: (iso: string) => string;
 }) {
   return (
     <ResponsiveContainer width="100%" height={altura}>
@@ -337,7 +343,7 @@ export function AreaTempo({
         <CartesianGrid stroke={GRID} strokeDasharray="2 4" vertical={false} />
         <XAxis
           dataKey="date"
-          tickFormatter={diaMesCurto}
+          tickFormatter={rotuloData}
           tick={TICK}
           axisLine={{ stroke: EIXO }}
           tickLine={false}
@@ -352,7 +358,7 @@ export function AreaTempo({
         />
         <Tooltip
           cursor={CURSOR_LINHA}
-          content={dica(formato, diaMesCurto)}
+          content={dica(formato, rotuloData)}
         />
         {series.length > 1 && <Legend content={legenda()} />}
         {series.map((s) => (

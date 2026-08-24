@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { AreaGrafico, ErroMeta, Linha, Pagina, Shell, subtituloEscopo } from "@/components/Shell";
+import { ErroMeta, Linha, Pagina, Shell, subtituloEscopo } from "@/components/Shell";
 import { Cartao, CartaoKpi, ComLeitura, Etiqueta, GradeKpi, Realce, Secao } from "@/components/ui";
-import { AreaTempo, EmpilhadaTotal, type PontoGrafico } from "@/components/charts";
+import { EmpilhadaTotal, type PontoGrafico } from "@/components/charts";
+import { CartaoSerieTempo } from "@/components/CartaoSerieTempo";
 import { carregarEscopo } from "@/lib/dados";
 import { carregarAds, METRICAS_ADS_ZERO, tentarAds } from "@/lib/ads";
 import { periodoDeParams, type ParamsBusca } from "@/lib/periodo";
@@ -281,26 +282,27 @@ export default async function VisaoGeralGlobal({
           <Secao>Meta × Google</Secao>
 
           <Linha preencher className="grid grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-[1.35fr_1fr]">
-            <Cartao
-              titulo="Investimento diário por canal"
-              sub={
-                googleAtivo
+            {/* Diário × semanal fica no cartão: a série diária vai inteira e
+                a soma por semana calendário acontece no cliente. */}
+            <CartaoSerieTempo
+              titulo={{
+                dia: "Investimento diário por canal",
+                semana: "Investimento semanal por canal",
+              }}
+              sub={{
+                dia: googleAtivo
                   ? "O Google entrou depois — antes da primeira barra, só há Meta"
-                  : "Google entra nesta série quando a praça tiver campanha no canal"
-              }
-            >
-              <AreaGrafico>
-                <AreaTempo
-                  dados={serie}
-                  series={[
-                    { chave: "meta", nome: "Meta Ads", cor: "var(--par-a)" },
-                    { chave: "google", nome: "Google Ads", cor: "var(--par-b)" },
-                  ]}
-                  formato="brl"
-                  empilhar
-                />
-              </AreaGrafico>
-            </Cartao>
+                  : "Google entra nesta série quando a praça tiver campanha no canal",
+                semana: "Semana calendário, seg–dom — a primeira e a última podem ser parciais",
+              }}
+              dados={serie}
+              series={[
+                { chave: "meta", nome: "Meta Ads", cor: "var(--par-a)" },
+                { chave: "google", nome: "Google Ads", cor: "var(--par-b)" },
+              ]}
+              formato="brl"
+              empilhar
+            />
 
             {/* Barras agrupadas de investimento × receita não cabiam aqui: as
                 duas grandezas diferem por uma ordem de magnitude e os rótulos

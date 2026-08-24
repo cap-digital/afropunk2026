@@ -173,6 +173,31 @@ export function Cartao({
 }
 
 /**
+ * Área de plotagem.
+ *
+ * Substitui os `<div className="h-[var(--h-grafico)]">` espalhados pelas
+ * páginas. A diferença é o `h-full`: dentro de uma `Linha preencher`, o
+ * gráfico cresce com ela; fora, o `min-height` segura o piso e ele se comporta
+ * como antes. Um só componente, os dois regimes — e nenhuma página precisa
+ * saber em qual está.
+ *
+ * Mora aqui, e não em Shell.tsx, porque o Shell importa a camada de dados do
+ * Google (servidor) e um componente de cliente não pode puxá-lo. O Shell
+ * re-exporta, então quem já importava de lá segue igual.
+ */
+export function AreaGrafico({
+  children,
+  className = "",
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={`h-full min-h-[var(--h-grafico)] ${className}`}>{children}</div>
+  );
+}
+
+/**
  * Grade de KPI — um cartão por indicador.
  *
  * O consolidado era UM retângulo largo com seis números empilhados dentro,
