@@ -22,7 +22,7 @@ import type { Periodo } from "./meta";
  *
  * A praça sai do nome da campanha, pelo mesmo mapeador do Meta: os nomes
  * seguem `[PESQUISA] [VENDAS] [AFROPUNK - RIO DE JANEIRO 2026]`, e as tags de
- * praça em lib/config.ts já cobrem "RIO DE JANEIRO" e "SALVADOR". Campanhas
+ * praça em lib/config.ts cobrem "RIO DE JANEIRO", "RECIFE" e "SALVADOR". Campanhas
  * de edições passadas (Belém, São Paulo, 2025/MA) não casam com nenhuma tag e
  * ficam de fora — além de já serem filtradas por `status = ENABLED`.
  */

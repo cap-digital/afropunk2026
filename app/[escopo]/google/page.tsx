@@ -199,8 +199,7 @@ export default async function GoogleAds({
           </div>
 
           <p className="shrink-0 text-[var(--fs-corpo)] leading-relaxed text-[var(--ink-muted)]">
-            A praça vem do nome da campanha, pelo mesmo mapeador usado no Meta. Hoje o Google Ads
-            cobre apenas Rio de Janeiro e Salvador — Recife não tem campanha no canal. Campanhas
+            A praça vem do nome da campanha, pelo mesmo mapeador usado no Meta. Campanhas
             pausadas de edições anteriores (Belém, São Paulo, 2025) ficam fora.
           </p>
         </Pagina>

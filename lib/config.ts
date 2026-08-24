@@ -55,7 +55,7 @@ export const PRACAS: Praca[] = [
     dataISO: "2026-09-12",
     local: "UFPE",
     cor: "#1B9DB2",
-    tags: ["[RECIFE]"],
+    tags: ["[RECIFE]", "RECIFE"],
     regiao: "Pernambuco",
   },
   {
