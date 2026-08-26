@@ -283,7 +283,8 @@ export default async function VisaoGeralGlobal({
 
           <Linha preencher className="grid grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-[1.35fr_1fr]">
             {/* Diário × semanal fica no cartão: a série diária vai inteira e
-                a soma por semana calendário acontece no cliente. */}
+                a soma por semana calendário acontece no cliente. Salvador é a
+                exceção: lê só em semana, então vai sem alternador. */}
             <CartaoSerieTempo
               titulo={{
                 dia: "Investimento diário por canal",
@@ -291,10 +292,11 @@ export default async function VisaoGeralGlobal({
               }}
               sub={{
                 dia: googleAtivo
-                  ? "O Google entrou depois — antes da primeira barra, só há Meta"
+                  ? undefined
                   : "Google entra nesta série quando a praça tiver campanha no canal",
                 semana: "Semana calendário, seg–dom — a primeira e a última podem ser parciais",
               }}
+              fixa={escopo === "salvador" ? "semana" : undefined}
               dados={serie}
               series={[
                 { chave: "meta", nome: "Meta Ads", cor: "var(--par-a)" },

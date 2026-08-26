@@ -24,6 +24,10 @@ const OPCOES: { valor: Granularidade; rotulo: string }[] = [
  * estado, e o cartão que os abriga é quem os junta — por isso ele monta o
  * `Cartao` inteiro em vez de só o corpo. Serve a qualquer escopo: a página do
  * overview é uma só para as praças e para o comparativo.
+ *
+ * `fixa` trava a leitura numa granularidade e some com o alternador: onde a
+ * escolha não é do leitor, o cromo do switch só promete uma opção que não
+ * existe.
  */
 export function CartaoSerieTempo({
   titulo,
@@ -32,6 +36,7 @@ export function CartaoSerieTempo({
   series,
   formato = "brl",
   empilhar = false,
+  fixa,
   className = "",
 }: {
   titulo: Record<Granularidade, string>;
@@ -40,9 +45,11 @@ export function CartaoSerieTempo({
   series: SerieTempo[];
   formato?: Formato;
   empilhar?: boolean;
+  fixa?: Granularidade;
   className?: string;
 }) {
-  const [gran, setGran] = useState<Granularidade>("dia");
+  const [escolha, setEscolha] = useState<Granularidade>("dia");
+  const gran = fixa ?? escolha;
   const semanal = useMemo(
     () => agregarPorSemana(dados, series.map((s) => s.chave)),
     [dados, series],
@@ -54,7 +61,7 @@ export function CartaoSerieTempo({
       className={className}
       titulo={titulo[gran]}
       sub={sub?.[gran]}
-      acao={<Alternador valor={gran} aoMudar={setGran} />}
+      acao={fixa ? undefined : <Alternador valor={gran} aoMudar={setEscolha} />}
     >
       <AreaGrafico>
         <AreaTempo
