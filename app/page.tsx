@@ -17,7 +17,7 @@ export const revalidate = REVALIDATE;
  *
  * A capa leva para a Overview, que soma os dois canais: se o card mostrasse só
  * o Meta, o investimento mudaria de valor ao clicar. ROAS e CPA saem do recorte
- * de conversão dos dois lados (no Google, todas as campanhas ativas são de
+ * de conversão dos dois lados (no Google, todas as campanhas da edição são de
  * venda, então o gasto entra inteiro).
  */
 interface ResumoPraca {

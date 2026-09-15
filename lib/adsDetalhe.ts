@@ -5,6 +5,7 @@ import {
   somarAds,
   METRICAS_ADS_ZERO,
   nomeCanal,
+  STATUS_CAMPANHA,
   type MetricasAds,
 } from "./ads";
 import { bucketDaCampanha, ESCOPO_TODAS, type Bucket, type EscopoSlug } from "./config";
@@ -182,7 +183,7 @@ export async function carregarPesquisa(
              metrics.conversions, metrics.conversions_value,
              metrics.search_impression_share, metrics.search_top_impression_share
       FROM keyword_view
-      WHERE ${P} AND campaign.status = 'ENABLED' AND metrics.impressions > 0
+      WHERE ${P} AND ${STATUS_CAMPANHA} AND metrics.impressions > 0
     `) as Promise<LinhaCrua[]>,
     consultarAds(`
       SELECT campaign.name, ad_group.name, ad_group_ad.ad.id, ad_group_ad.status,
@@ -192,7 +193,7 @@ export async function carregarPesquisa(
              metrics.impressions, metrics.clicks, metrics.cost_micros,
              metrics.conversions, metrics.conversions_value
       FROM ad_group_ad
-      WHERE ${P} AND campaign.status = 'ENABLED'
+      WHERE ${P} AND ${STATUS_CAMPANHA}
     `) as Promise<LinhaCrua[]>,
     // A parcela de impressões só volta quando nenhuma outra métrica de leilão
     // divide a linha — daí a consulta isolada, sem segmentos.
@@ -203,7 +204,7 @@ export async function carregarPesquisa(
              metrics.search_rank_lost_impression_share,
              metrics.top_impression_percentage,
              metrics.absolute_top_impression_percentage
-      FROM campaign WHERE ${P} AND campaign.status = 'ENABLED'
+      FROM campaign WHERE ${P} AND ${STATUS_CAMPANHA}
     `) as Promise<LinhaCrua[]>,
   ]);
 
@@ -390,7 +391,7 @@ export async function carregarTermos(
            metrics.impressions, metrics.clicks, metrics.cost_micros,
            metrics.conversions, metrics.conversions_value
     FROM search_term_view
-    WHERE ${periodoGaql(periodo)} AND campaign.status = 'ENABLED'
+    WHERE ${periodoGaql(periodo)} AND ${STATUS_CAMPANHA}
   `)) as LinhaCrua[];
 
   /**
@@ -490,7 +491,7 @@ export async function carregarPmax(escopo: EscopoSlug, periodo: Periodo): Promis
              asset_group.ad_strength,
              metrics.impressions, metrics.clicks, metrics.cost_micros,
              metrics.conversions, metrics.conversions_value
-      FROM asset_group WHERE ${periodoGaql(periodo)} AND campaign.status = 'ENABLED'
+      FROM asset_group WHERE ${periodoGaql(periodo)} AND ${STATUS_CAMPANHA}
     `) as Promise<LinhaCrua[]>,
     /*
      * Conteúdo E desempenho da peça na mesma consulta. `performance_label` é
@@ -503,7 +504,7 @@ export async function carregarPmax(escopo: EscopoSlug, periodo: Periodo): Promis
              metrics.impressions, metrics.clicks, metrics.cost_micros,
              metrics.conversions, metrics.conversions_value
       FROM asset_group_asset
-      WHERE ${periodoGaql(periodo)} AND campaign.status = 'ENABLED'
+      WHERE ${periodoGaql(periodo)} AND ${STATUS_CAMPANHA}
     `) as Promise<LinhaCrua[]>,
   ]);
 
@@ -653,15 +654,16 @@ export async function carregarSegmentacao(
     consultarAds(`
       SELECT campaign.name, segments.device, metrics.impressions, metrics.clicks,
              metrics.cost_micros, metrics.conversions, metrics.conversions_value
-      FROM campaign WHERE ${P} AND campaign.status = 'ENABLED'
+      FROM campaign WHERE ${P} AND ${STATUS_CAMPANHA}
     `) as Promise<LinhaCrua[]>,
     consultarAds(`
       SELECT campaign.name, segments.day_of_week, segments.hour,
              metrics.impressions, metrics.clicks, metrics.cost_micros, metrics.conversions
-      FROM campaign WHERE ${P} AND campaign.status = 'ENABLED'
+      FROM campaign WHERE ${P} AND ${STATUS_CAMPANHA}
     `) as Promise<LinhaCrua[]>,
     // `geographic_view` não aceita `campaign.status` no WHERE nem `ORDER BY`;
-    // o filtro de campanha ativa é feito aqui, pelo nome.
+    // o recorte de praça e edição é feito aqui, pelo nome — que é o mesmo
+    // critério das outras consultas agora que pausada também conta.
     consultarAds(`
       SELECT campaign.name, segments.geo_target_city, metrics.impressions, metrics.clicks,
              metrics.cost_micros, metrics.conversions, metrics.conversions_value
@@ -687,7 +689,6 @@ export async function carregarSegmentacao(
     .map(([k, v]) => ({ nome: DISPOSITIVO_ADS_LABEL[k] ?? k, m: somarAds(v) }))
     .sort((a, b) => b.m.custo - a.m.custo);
 
-  // Só campanhas ativas entram; as pausadas ainda aparecem no geographic_view.
   const geoNoEscopo = geo.filter((r) => noEscopo(r.campaign?.name, escopo));
   const recursos = [
     ...new Set(

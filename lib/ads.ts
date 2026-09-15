@@ -24,7 +24,8 @@ import type { Periodo } from "./meta";
  * seguem `[PESQUISA] [VENDAS] [AFROPUNK - RIO DE JANEIRO 2026]`, e as tags de
  * praça em lib/config.ts cobrem "RIO DE JANEIRO", "RECIFE" e "SALVADOR". Campanhas
  * de edições passadas (Belém, São Paulo, 2025/MA) não casam com nenhuma tag e
- * ficam de fora — além de já serem filtradas por `status = ENABLED`.
+ * ficam de fora — quem faz esse recorte é a marca da EDIÇÃO em
+ * `bucketDaCampanha`, não o status de veiculação (ver `STATUS_CAMPANHA`).
  */
 
 export interface MetricasAds {
@@ -57,6 +58,13 @@ export interface CampanhaAds {
   canal: string;
   orcamentoDiario: number;
   bucket: Bucket | null;
+  /**
+   * Status de veiculação virou rótulo. Campanha `ENABLED` que já passou da
+   * data de término aparece como "Finalizada" no Google Ads e continua sem
+   * marca aqui — o que precisa de aviso é a que foi pausada à mão, porque o
+   * número dela para no dia da pausa e a tabela não explicaria por quê.
+   */
+  pausada: boolean;
   m: MetricasAds;
 }
 
@@ -154,6 +162,25 @@ export async function tentarAds<T>(p: Promise<T>): Promise<LeituraAds<T>> {
 }
 
 /**
+ * Campanhas que contam: no ar E pausadas.
+ *
+ * O Meta já vive assim desde que o Rio sumiu do painel no dia seguinte ao
+ * evento (`getCampanhasAtivas`, em lib/meta.ts); o Google tinha ficado para
+ * trás com `campaign.status = 'ENABLED'`, e o sintoma reapareceu em Recife:
+ * a PMax foi pausada e levou junto todo o investimento dela — o Overview
+ * mostrava só a Pesquisa, e o item "Performance Max" nem chegava à lateral,
+ * porque `canaisDoEscopo` usava o mesmo filtro. Um painel de mídia é feito
+ * para ser olhado DEPOIS que a campanha acaba: status de veiculação não pode
+ * decidir se o dado existe; ele é rótulo na tela (`CampanhaAds.pausada`).
+ *
+ * O que segura a porta aberta é `bucketDaCampanha`, que exige a marca da
+ * EDIÇÃO antes de olhar a tag de praça — sem isso entrariam as campanhas
+ * pausadas de 2024/2025 que ainda vivem nesta conta. `REMOVED` fica de fora:
+ * campanha excluída não é histórico.
+ */
+export const STATUS_CAMPANHA = "campaign.status IN ('ENABLED', 'PAUSED')";
+
+/**
  * Quais canais do Google existem neste escopo.
  *
  * Consulta própria, sem recorte de data nem métrica: é a mais barata possível e
@@ -164,7 +191,7 @@ export async function tentarAds<T>(p: Promise<T>): Promise<LeituraAds<T>> {
 export async function canaisDoEscopo(escopo: EscopoSlug): Promise<string[]> {
   const linhas = (await consultarAds(
     `SELECT campaign.name, campaign.advertising_channel_type
-     FROM campaign WHERE campaign.status = 'ENABLED'`,
+     FROM campaign WHERE ${STATUS_CAMPANHA}`,
     REVALIDATE_ESTRUTURA,
   )) as LinhaCampanha[];
 
@@ -219,7 +246,7 @@ export function somarAds(lista: MetricasAds[]): MetricasAds {
 // ------------------------------------------------------------------ tipos crus
 
 interface LinhaCampanha {
-  campaign?: { id?: string; name?: string; advertisingChannelType?: string };
+  campaign?: { id?: string; name?: string; advertisingChannelType?: string; status?: string };
   campaignBudget?: { amountMicros?: string };
   metrics?: Record<string, string | number>;
   segments?: { date?: string };
@@ -229,9 +256,9 @@ const PERIODO_GAQL = (de: string, ate: string) =>
   `segments.date BETWEEN '${de}' AND '${ate}'`;
 
 /**
- * Carrega as campanhas ATIVAS do Google Ads no escopo pedido.
- * Escopo de praça → só as campanhas daquela praça; escopo "todas" → todas as
- * que casam com alguma praça.
+ * Carrega as campanhas da EDIÇÃO no escopo pedido — no ar e pausadas (ver
+ * `STATUS_CAMPANHA`). Escopo de praça → só as campanhas daquela praça; escopo
+ * "todas" → todas as que casam com alguma praça.
  */
 export async function carregarAds(
   escopo: EscopoSlug,
@@ -244,18 +271,18 @@ export async function carregarAds(
   const [linhas, dias] = await Promise.all([
     consultarAds(`
       SELECT campaign.id, campaign.name, campaign.advertising_channel_type,
-             campaign_budget.amount_micros,
+             campaign.status, campaign_budget.amount_micros,
              metrics.impressions, metrics.clicks, metrics.cost_micros,
              metrics.conversions, metrics.conversions_value
       FROM campaign
-      WHERE campaign.status = 'ENABLED' AND ${PERIODO_GAQL(de, ate)}
+      WHERE ${STATUS_CAMPANHA} AND ${PERIODO_GAQL(de, ate)}
     `) as Promise<LinhaCampanha[]>,
     consultarAds(`
       SELECT segments.date, campaign.name,
              metrics.cost_micros, metrics.clicks,
              metrics.conversions, metrics.conversions_value
       FROM campaign
-      WHERE campaign.status = 'ENABLED' AND ${PERIODO_GAQL(de, ate)}
+      WHERE ${STATUS_CAMPANHA} AND ${PERIODO_GAQL(de, ate)}
       ORDER BY segments.date
     `) as Promise<LinhaCampanha[]>,
   ]);
@@ -268,6 +295,7 @@ export async function carregarAds(
       canal: r.campaign?.advertisingChannelType ?? "",
       orcamentoDiario: reais(r.campaignBudget?.amountMicros),
       bucket: bucketDaCampanha(r.campaign?.name ?? ""),
+      pausada: r.campaign?.status === "PAUSED",
       m: derivar({
         ...METRICAS_ADS_ZERO,
         custo: reais(m.cost_micros ?? m.costMicros),

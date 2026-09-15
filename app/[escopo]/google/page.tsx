@@ -71,7 +71,7 @@ export default async function GoogleAds({
       <Shell
         escopo={escopo}
         titulo="Google Ads"
-        sub={subtituloEscopo(escopo, `${d.campanhas.length} campanhas ativas · ${janela}`)}
+        sub={subtituloEscopo(escopo, `${d.campanhas.length} campanhas · ${janela}`)}
         acoes={<Etiqueta variante="contorno">Conectado</Etiqueta>}
       >
         <Pagina>
@@ -136,7 +136,7 @@ export default async function GoogleAds({
             </Cartao>
           </Linha>
 
-          <Secao>Campanhas ativas</Secao>
+          <Secao>Campanhas da edição</Secao>
 
           <div className="shrink-0">
             <Cartao className="min-w-0">
@@ -173,7 +173,18 @@ export default async function GoogleAds({
                             </span>
                           </td>
                           <td className="py-2 pr-3 whitespace-nowrap" title={c.nome}>
-                            {nomeCurto(c.nome)}
+                            {/* Só a pausada ganha marca: a que terminou no fim
+                                da veiculação não tem nada a explicar, mas a
+                                pausada à mão tem — o número dela para no dia
+                                da pausa. */}
+                            <span className="flex items-center gap-1.5">
+                              {nomeCurto(c.nome)}
+                              {c.pausada && (
+                                <span className="shrink-0 text-[var(--fs-micro)] font-semibold uppercase tracking-[0.06em] text-[var(--ink-muted)]">
+                                  pausada
+                                </span>
+                              )}
+                            </span>
                           </td>
                           <td className="py-2 pr-3 text-right">{brl(c.m.custo)}</td>
                           <td className="py-2 pr-3 text-right font-semibold text-[var(--ink)]">
@@ -199,8 +210,10 @@ export default async function GoogleAds({
           </div>
 
           <p className="shrink-0 text-[var(--fs-corpo)] leading-relaxed text-[var(--ink-muted)]">
-            A praça vem do nome da campanha, pelo mesmo mapeador usado no Meta. Campanhas
-            pausadas de edições anteriores (Belém, São Paulo, 2025) ficam fora.
+            A praça vem do nome da campanha, pelo mesmo mapeador usado no Meta. Campanha
+            pausada continua contando — o investimento dela já aconteceu —, e o que fica de
+            fora são as edições anteriores (Belém, São Paulo, 2025), que não trazem a marca
+            de 2026 no nome.
           </p>
         </Pagina>
       </Shell>

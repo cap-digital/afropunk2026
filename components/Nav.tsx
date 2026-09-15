@@ -207,8 +207,10 @@ export function NavPlataformas({
 
       {/* Recortes do Google, não os do Meta: aqui não há demografia (Pesquisa e
           PMax não expõem), e em troca há leilão, palavra-chave e termo buscado.
-          O menu segue o que a praça tem no ar — praça sem campanha no Google não
-          ganha o grupo; Salvador não tem PMax e não ganha o item. */}
+          O menu segue os canais que a praça tem na edição — pausados inclusive,
+          senão a praça perderia a página no dia em que a campanha para. Praça
+          sem campanha no Google não ganha o grupo, e canal sem campanha não
+          ganha o item. */}
       {temGoogle && (
         <Grupo
           id="google"

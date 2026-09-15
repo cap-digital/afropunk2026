@@ -23,8 +23,8 @@ export function generateStaticParams() {
  * traduzido uma vez para que o consolidado some maçã com maçã.
  *
  * `investimentoConversao` é o denominador honesto de ROAS/CPA: no Meta só o
- * gasto das campanhas de venda entra; no Google, as três campanhas ativas são
- * de conversão, então o gasto entra inteiro.
+ * gasto das campanhas de venda entra; no Google, todas as campanhas da edição
+ * são de conversão, então o gasto entra inteiro.
  */
 interface Canal {
   slug: string;
@@ -97,8 +97,8 @@ export default async function VisaoGeralGlobal({
         cliques: g.cliques,
         impressoes: g.impressoes,
         roas: g.roas,
-        // Todas as campanhas ativas do Google são de venda, então o recorte de
-        // conversão é o total do canal.
+        // Todas as campanhas do Google na edição são de venda, então o recorte
+        // de conversão é o total do canal.
         investimentoConversao: g.custo,
         receitaConversao: g.receita,
         conversoesConversao: g.conversoes,
