@@ -1,6 +1,5 @@
 import "server-only";
 import crypto from "node:crypto";
-import type { Periodo } from "./meta";
 
 /**
  * Cliente da GA4 Data API.
@@ -16,12 +15,14 @@ const ESCOPO = "https://www.googleapis.com/auth/analytics.readonly";
 /**
  * Recorte padrão do dashboard GA4, quando não há filtro na URL.
  *
- * 30 dias em vez do histórico: a propriedade guarda a edição 2025 também
- * (~80% dos dados), e uma série de mais de um ano achata os picos recentes
- * e infla os totais. Quem quiser mais, muda no filtro de período.
+ * Já foram 30 dias fixos, para manter a edição 2025 fora dos totais — a
+ * propriedade guarda as duas e o ano passado é ~80% do histórico. O recorte
+ * resolvia o problema certo pela via errada: bastava a campanha passar de um
+ * mês para o site aparecer mais curto que a mídia ao lado. Agora a janela
+ * começa na primeira veiculação de 2026 (ver `inicioDaMidia`), que deixa 2025
+ * de fora pelo motivo certo.
  */
-export const DIAS_PADRAO = 30;
-export const ROTULO_PADRAO = "últimos 30 dias";
+export const ROTULO_PADRAO = "desde o início da veiculação";
 
 export const REVALIDATE_GA4 = 300;
 
@@ -118,11 +119,15 @@ export interface Intervalo {
   endDate: string;
 }
 
-/** Traduz o período do dashboard no intervalo da GA4. */
-export function intervaloGA4(periodo: Periodo): Intervalo {
-  return periodo === "maximum"
-    ? { startDate: `${DIAS_PADRAO}daysAgo`, endDate: "today" }
-    : { startDate: periodo.de, endDate: periodo.ate };
+/**
+ * Traduz um intervalo explícito do dashboard no da GA4.
+ *
+ * "Todo o período" não passa por aqui: ele depende de quando a mídia começou,
+ * que é assunto de `lib/janela.ts` — este módulo fala só com o Google
+ * Analytics e não deveria saber que existem campanhas.
+ */
+export function intervaloGA4(p: { de: string; ate: string }): Intervalo {
+  return { startDate: p.de, endDate: p.ate };
 }
 
 interface FiltroString {

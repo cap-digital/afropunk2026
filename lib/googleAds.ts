@@ -283,7 +283,9 @@ export const STATUS_CAMPANHA = "campaign.status IN ('ENABLED', 'PAUSED')";
  * janela abrir cedo demais, e dias sem entrega não geram linha — o primeiro
  * dia exibido continua sendo o primeiro dia COM dado, que sai da série.
  */
-async function inicioDasCampanhas(escopo: EscopoSlug): Promise<string> {
+export async function inicioDasCampanhasAds(
+  escopo: EscopoSlug = ESCOPO_TODAS,
+): Promise<string> {
   const linhas = (await consultarAds(
     `SELECT campaign.name, campaign.start_date
      FROM campaign WHERE ${STATUS_CAMPANHA}`,
@@ -324,7 +326,7 @@ export async function intervaloAds(
   escopo: EscopoSlug = ESCOPO_TODAS,
 ): Promise<{ de: string; ate: string }> {
   if (periodo === "maximum") {
-    return { de: await inicioDasCampanhas(escopo), ate: hojeNaConta() };
+    return { de: await inicioDasCampanhasAds(escopo), ate: hojeNaConta() };
   }
   return { de: periodo.de, ate: periodo.ate };
 }

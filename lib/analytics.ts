@@ -1,5 +1,7 @@
 import "server-only";
 import { consultar, intervaloGA4, type Intervalo, type LinhaGA4 } from "./ga4";
+import { inicioDaMidia } from "./janela";
+import { hojeNaConta } from "./periodo";
 import { PRACAS, type Bucket } from "./config";
 import type { Periodo } from "./meta";
 
@@ -102,6 +104,16 @@ const METRICAS_B = [
   "averagePurchaseRevenue",
 ];
 /** Totais do site, em dois blocos por causa do limite de métricas. */
+/**
+ * Janela do Analytics. "Todo o período" aqui é a janela da MÍDIA desta edição,
+ * não o histórico do site: a propriedade guarda 2025 também, e o ano passado
+ * entraria nos totais de um painel que é da edição 2026 (ver `inicioDaMidia`).
+ */
+async function janelaGA4(periodo: Periodo): Promise<Intervalo> {
+  if (periodo !== "maximum") return intervaloGA4(periodo);
+  return intervaloGA4({ de: await inicioDaMidia(), ate: hojeNaConta() });
+}
+
 async function carregarTotais(intervalo: Intervalo): Promise<TotaisSite> {
   const [a, b] = await Promise.all([
     consultar({ intervalo, metricas: METRICAS_A, limite: 1 }),
@@ -160,7 +172,7 @@ const paraISO = (d: string) =>
   d.length === 8 ? `${d.slice(0, 4)}-${d.slice(4, 6)}-${d.slice(6)}` : d;
 
 export async function carregarVisaoGeralGA4(periodo: Periodo): Promise<VisaoGeralGA4> {
-  const intervalo = intervaloGA4(periodo);
+  const intervalo = await janelaGA4(periodo);
 
   const [totais, dias] = await Promise.all([
     carregarTotais(intervalo),
@@ -220,7 +232,7 @@ function paraCanal(l: LinhaGA4): LinhaCanal {
 }
 
 export async function carregarAquisicaoGA4(periodo: Periodo): Promise<AquisicaoGA4> {
-  const intervalo = intervaloGA4(periodo);
+  const intervalo = await janelaGA4(periodo);
   const mets = ["sessions", "transactions", "purchaseRevenue"];
 
   const [totais, canais, origens, dispositivos] = await Promise.all([
@@ -268,7 +280,7 @@ export interface VendasGA4 {
 }
 
 export async function carregarVendasGA4(periodo: Periodo): Promise<VendasGA4> {
-  const intervalo = intervaloGA4(periodo);
+  const intervalo = await janelaGA4(periodo);
 
   const [totais, itens, categorias] = await Promise.all([
     carregarTotais(intervalo),

@@ -2,7 +2,7 @@ import { AreaGrafico, ErroGA4, Linha, Pagina, ShellAnalytics } from "@/component
 import { Cartao, CartaoKpi, GradeKpi, Secao } from "@/components/ui";
 import { AreaTempo, Funil, LinhasTempo, type PontoGrafico } from "@/components/charts";
 import { carregarVisaoGeralGA4 } from "@/lib/analytics";
-import { explicarErroGA4, GA4Error, REVALIDATE_GA4, ROTULO_PADRAO } from "@/lib/ga4";
+import { explicarErroGA4, GA4Error, REVALIDATE_GA4 } from "@/lib/ga4";
 import { periodoDeParams, rotuloPeriodo, type ParamsBusca } from "@/lib/periodo";
 import { brl, brlCompact, compact, dec, diaMesCurto, int, pct } from "@/lib/format";
 
@@ -44,7 +44,10 @@ export default async function AnalyticsVisaoGeral({
     return (
       <ShellAnalytics
         titulo="Analytics · Visão geral"
-        sub={`Site AFROPUNK · ${janela}${periodo === "maximum" ? ` · ${ROTULO_PADRAO}` : ""}`}
+        /* Sem o rótulo do recorte ao lado: a janela já são as datas reais do
+           primeiro e do último dia com dado, e repetir "desde o início da
+           veiculação" depois delas só dizia a mesma coisa duas vezes. */
+        sub={`Site AFROPUNK · ${janela}`}
       >
         <Pagina>
           <Secao>Comportamento do site</Secao>
@@ -139,8 +142,9 @@ export default async function AnalyticsVisaoGeral({
             Sessões, canais e funil são do site inteiro — o checkout é comum aos três eventos e
             não há como atribuí-los por cidade. A divisão por praça está em{" "}
             <span className="font-semibold text-[var(--ink-2)]">Vendas por evento</span>, a partir
-            dos itens de e-commerce. Sem filtro, o recorte padrão é de {ROTULO_PADRAO} — a
-            propriedade guarda desde 2025, incluindo a edição passada. Média de{" "}
+            dos itens de e-commerce. Sem filtro, o recorte vai do primeiro dia de veiculação
+            desta edição até hoje: a propriedade guarda desde 2025, e a edição passada fica de
+            fora. Média de{" "}
             {dec(t.visualizacoes / (t.sessoes || 1))} visualizações por sessão.
           </p>
         </Pagina>
