@@ -36,6 +36,7 @@ import {
   type EscopoSlug,
 } from "@/lib/config";
 import { brl, brlCompact, compact, dec, diaMesCurto, int, pct } from "@/lib/format";
+import { comImposto } from "@/lib/imposto";
 
 export const revalidate = REVALIDATE;
 
@@ -111,7 +112,8 @@ async function Comparativo({
   const serie: PontoGrafico[] = dias.map((dia) => {
     const linha: PontoGrafico = { date: dia };
     for (const f of fatias) {
-      linha[f.bucket.slug] = f.serie.find((s) => s.date === dia)?.spend ?? 0;
+      // Série de investimento: vai com o imposto, como o KPI e a tabela.
+      linha[f.bucket.slug] = comImposto(f.serie.find((s) => s.date === dia)?.spend ?? 0);
     }
     return linha;
   });
@@ -138,7 +140,14 @@ async function Comparativo({
       <Pagina>
         <Secao>Resumo consolidado</Secao>
         <GradeKpi>
-          <CartaoKpi destaque rotulo="Investimento total" valor={brl(t.spend)} sub={`${janela} · ${d.conta.currency}`} />
+          {/* O valor grande é o que o cliente pagou; a linha de apoio traz o
+              gasto plataforma, que é a base do CPM e do ROAS logo ao lado. */}
+          <CartaoKpi
+            destaque
+            rotulo="Investimento total"
+            valor={brl(comImposto(t.spend))}
+            sub={`${brl(t.spend)} na plataforma · imposto Meta 12,5%`}
+          />
           <CartaoKpi rotulo="Impressões" valor={compact(t.impressions)} sub={`freq. ${dec(t.frequency)}`} />
           <CartaoKpi rotulo="Alcance" valor={compact(t.reach)} sub="pessoas únicas" />
           <CartaoKpi rotulo="Cliques" valor={compact(t.clicks)} sub={`CTR ${pct(t.ctr)}`} />
@@ -154,7 +163,7 @@ async function Comparativo({
         <Linha preencher className="grid grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-[1.3fr_1fr]">
           <Cartao
             titulo="Investimento diário por praça"
-            sub="Campanhas iniciadas em 31/07 e 03/08 — a série cresce a cada dia"
+            sub="Valores com o imposto de 12,5% — a série cresce a cada dia"
           >
             <AreaGrafico>
               <LinhasTempo dados={serie} series={series} formato="brl" />
@@ -182,13 +191,13 @@ async function Comparativo({
         <Linha className="grid grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-[1fr_1.35fr]">
           <Cartao
             titulo="Divisão do investimento"
-            sub="Parte do todo · inclui a campanha nacional"
+            sub="Parte do todo · com imposto · inclui a campanha nacional"
           >
             <div className="flex h-full flex-col justify-between">
               <EmpilhadaTotal
                 segmentos={fatias.filter((f) => f.ativa).map((f) => ({
                   nome: f.bucket.nome,
-                  valor: f.total.spend,
+                  valor: comImposto(f.total.spend),
                   cor: f.bucket.cor,
                 }))}
                 formato="brl"
@@ -224,7 +233,7 @@ async function Comparativo({
 
           <Cartao
             titulo="Comparativo completo"
-            sub="Todas as métricas lado a lado"
+            sub="Investido já com o imposto de 12,5% · CPM e CTR sobre o gasto na plataforma"
           >
             <div className="rola-lateral max-h-[var(--h-tabela)] overflow-auto">
               <table className="w-full" style={{ fontSize: "var(--fs-corpo)" }}>
@@ -256,7 +265,7 @@ async function Comparativo({
                       {f.ativa ? (
                         <>
                           <td className="py-2 pr-2 text-right font-semibold text-[var(--ink)]">
-                            {brl(f.total.spend)}
+                            {brl(comImposto(f.total.spend))}
                           </td>
                           <td className="py-2 pr-2 text-right">{compact(f.total.impressions)}</td>
                           <td className="py-2 pr-2 text-right">{compact(f.total.reach)}</td>
@@ -274,7 +283,7 @@ async function Comparativo({
                   ))}
                   <tr className="border-t-2 border-[var(--border-forte)] font-semibold text-[var(--ink)]">
                     <td className="py-2 pr-2">Total</td>
-                    <td className="py-2 pr-2 text-right">{brl(t.spend)}</td>
+                    <td className="py-2 pr-2 text-right">{brl(comImposto(t.spend))}</td>
                     <td className="py-2 pr-2 text-right">{compact(t.impressions)}</td>
                     <td className="py-2 pr-2 text-right">{compact(t.reach)}</td>
                     <td className="py-2 pr-2 text-right">{dec(t.frequency)}</td>
@@ -320,7 +329,15 @@ async function PracaUnica({
     .filter((c) => c.m.purchaseValue > 0)
     .sort((a, b) => b.m.roas - a.m.roas)[0];
 
-  const orcamento = d.campanhas.reduce((a, c) => a + Number(c.lifetime_budget ?? 0) / 100, 0);
+  // Orçamento vitalício vem em centavos de gasto plataforma. Ele sobe para o
+  // valor pago junto com o consumo: a fração do medidor é a mesma dos dois
+  // jeitos, e assim o cartão inteiro fala na mesma moeda do KPI da página.
+  const orcamento = comImposto(
+    d.campanhas.reduce((a, c) => a + Number(c.lifetime_budget ?? 0) / 100, 0),
+  );
+  const investido = comImposto(t.spend);
+
+  const serieInvestimento = d.serie.map((p) => ({ ...p, spend: comImposto(p.spend) }));
 
   // Começa em cliques no link: impressão não é etapa de funil, é entrega.
   const funil = [
@@ -375,7 +392,12 @@ async function PracaUnica({
       <Pagina>
         <Secao>Resumo</Secao>
         <GradeKpi>
-          <CartaoKpi destaque rotulo="Investido" valor={brl(t.spend)} sub={`${janela} · ${d.conta.currency}`} />
+          <CartaoKpi
+            destaque
+            rotulo="Investido"
+            valor={brl(comImposto(t.spend))}
+            sub={`${brl(t.spend)} na plataforma · imposto Meta 12,5%`}
+          />
           <CartaoKpi rotulo="Impressões" valor={compact(t.impressions)} />
           <CartaoKpi rotulo="Alcance" valor={compact(t.reach)} sub={`freq. ${dec(t.frequency)}`} />
           <CartaoKpi rotulo="CTR" valor={pct(t.ctr)} sub={`${compact(t.clicks)} cliques`} />
@@ -395,11 +417,11 @@ async function PracaUnica({
         <Linha preencher className="grid grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-[1.5fr_1fr]">
           <Cartao
             titulo="Investimento por dia"
-            sub="Ritmo de gasto desde o início da veiculação"
+            sub="Ritmo de gasto desde o início da veiculação · com imposto"
           >
             <AreaGrafico>
               <AreaTempo
-                dados={d.serie}
+                dados={serieInvestimento}
                 series={[{ chave: "spend", nome: "Investimento", cor: praca.cor }]}
                 formato="brl"
               />
@@ -440,14 +462,14 @@ async function PracaUnica({
 
           <Cartao
             titulo="Orçamento"
-            sub={orcamento > 0 ? "Consumo sobre o total contratado" : "Sem orçamento vitalício na campanha"}
+            sub={orcamento > 0 ? "Consumo sobre o total contratado · com imposto" : "Sem orçamento vitalício na campanha"}
           >
             <div className="flex h-full flex-col justify-center gap-4">
               {orcamento > 0 ? (
                 <>
-                  <Medidor valor={t.spend} limite={orcamento} rotulo="Investimento vitalício" cor={praca.cor} />
+                  <Medidor valor={investido} limite={orcamento} rotulo="Investimento vitalício" cor={praca.cor} />
                   <div className="grid grid-cols-2 gap-3">
-                    <Stat rotulo="Restante" valor={brl(Math.max(orcamento - t.spend, 0))} tamanho="sm" />
+                    <Stat rotulo="Restante" valor={brl(Math.max(orcamento - investido, 0))} tamanho="sm" />
                     <Stat rotulo="Custo por compra" valor={t.purchases > 0 ? brl(t.cpa) : "—"} tamanho="sm" />
                   </div>
                 </>
@@ -501,6 +523,10 @@ async function PracaUnica({
  * Linha de destaque por ROAS. `plataforma` fica visível de propósito: quando o
  * Google Ads entrar, os dois canais dividem este cartão e a origem precisa
  * estar clara sem depender de cor.
+ *
+ * O investido aqui é o gasto plataforma, sem o imposto, e o rótulo diz isso: é
+ * o número que dividido pela receita dá o ROAS impresso ao lado. Com o imposto
+ * embutido, a conta que o leitor faz na tela deixaria de fechar.
  */
 function Destaque({
   rotulo,
@@ -552,7 +578,7 @@ function Destaque({
           {nome}
         </p>
         <p className="tabular text-[var(--fs-corpo)] text-[var(--ink-muted)]">
-          {brl(investido ?? 0)} investido · {brl(receita ?? 0)} de receita
+          {brl(investido ?? 0)} na plataforma · {brl(receita ?? 0)} de receita
         </p>
       </div>
       <span

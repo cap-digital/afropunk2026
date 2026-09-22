@@ -10,6 +10,7 @@ import { periodoDeParams, type ParamsBusca } from "@/lib/periodo";
 import { explicarErroMeta, MetaError, REVALIDATE } from "@/lib/meta";
 import { ehEscopoValido, ESCOPOS, ESCOPO_TODAS, PRACA_POR_SLUG, type EscopoSlug } from "@/lib/config";
 import { brl, brlCompact, compact, dec, diaMesCurto, int, pct } from "@/lib/format";
+import { comImposto } from "@/lib/imposto";
 
 export const revalidate = REVALIDATE;
 
@@ -25,6 +26,11 @@ export function generateStaticParams() {
  * `investimentoConversao` é o denominador honesto de ROAS/CPA: no Meta só o
  * gasto das campanhas de venda entra; no Google, todas as campanhas da edição
  * são de conversão, então o gasto entra inteiro.
+ *
+ * `investimento` é o valor PAGO pelo cliente — no Meta, o gasto plataforma com
+ * os 12,5% de imposto de volta (ver lib/imposto.ts); no Google os dois são o
+ * mesmo número. `investimentoPlataforma` guarda o que de fato circulou na
+ * conta de anúncios, e é ele que alimenta ROAS, CPA e o restante da eficiência.
  */
 interface Canal {
   slug: string;
@@ -33,6 +39,8 @@ interface Canal {
   href: string;
   conectado: boolean;
   investimento: number;
+  /** Gasto na plataforma — no Meta, o investimento menos o imposto. */
+  investimentoPlataforma: number;
   receita: number;
   conversoes: number;
   cliques: number;
@@ -75,7 +83,8 @@ export default async function VisaoGeralGlobal({
         cor: "var(--par-a)",
         href: `/${escopo}/meta`,
         conectado: d.ativo,
-        investimento: d.total.spend,
+        investimento: comImposto(d.total.spend),
+        investimentoPlataforma: d.total.spend,
         receita: d.total.purchaseValue,
         conversoes: d.total.purchases,
         cliques: d.total.clicks,
@@ -92,6 +101,8 @@ export default async function VisaoGeralGlobal({
         href: `/${escopo}/google`,
         conectado: googleAtivo,
         investimento: g.custo,
+        // O Google não tem imposto sobre a verba: o custo da API já é o pago.
+        investimentoPlataforma: g.custo,
         receita: g.receita,
         conversoes: g.conversoes,
         cliques: g.cliques,
@@ -107,6 +118,10 @@ export default async function VisaoGeralGlobal({
 
     const soma = (f: (c: Canal) => number) => canais.reduce((a, c) => a + f(c), 0);
     const investimento = soma((c) => c.investimento);
+    const investimentoPlataforma = soma((c) => c.investimentoPlataforma);
+    // Só vale dizer "na plataforma" quando os dois números diferem — sem Meta
+    // no período, a linha de apoio repetiria o KPI.
+    const temImposto = investimento - investimentoPlataforma >= 0.01;
     const receita = soma((c) => c.receita);
     const conversoes = soma((c) => c.conversoes);
     // ROAS e CPA saem do recorte de conversão nos dois lados: dividir a receita
@@ -164,7 +179,7 @@ export default async function VisaoGeralGlobal({
     const datas = [
       ...new Set([...d.serie.map((p) => p.date), ...custoGooglePorDia.keys()]),
     ].sort();
-    const spendMetaPorDia = new Map(d.serie.map((p) => [p.date, p.spend] as const));
+    const spendMetaPorDia = new Map(d.serie.map((p) => [p.date, comImposto(p.spend)] as const));
     const serie: PontoGrafico[] = datas.map((date) => ({
       date,
       meta: spendMetaPorDia.get(date) ?? 0,
@@ -190,7 +205,14 @@ export default async function VisaoGeralGlobal({
               acento={acentoPraca}
               rotulo="Investimento total"
               valor={brl(investimento)}
-              sub={`${janela} · ${conectados.length} ${conectados.length === 1 ? "canal" : "canais"}`}
+              /* Em destaque o que o cliente pagou; embaixo, menor, o que entrou
+                 na plataforma depois do imposto do Meta. Sem a segunda linha o
+                 KPI não fecharia com o CPM nem com o ROAS da mesma tela. */
+              sub={
+                temImposto
+                  ? `${brl(investimentoPlataforma)} na plataforma · imposto Meta 12,5%`
+                  : `${janela} · ${conectados.length} ${conectados.length === 1 ? "canal" : "canais"}`
+              }
             />
             <CartaoKpi rotulo="Receita" valor={brlCompact(receita)} sub={brl(receita)} />
             <CartaoKpi
@@ -259,7 +281,15 @@ export default async function VisaoGeralGlobal({
                     </span>
                   </div>
                   <div className="flex items-end justify-between gap-4 border-t border-[var(--border)] pt-3">
-                    <MiniCanal rotulo="Investido" valor={c.conectado ? brl(c.investimento) : "—"} />
+                    <MiniCanal
+                      rotulo="Investido"
+                      valor={c.conectado ? brl(c.investimento) : "—"}
+                      nota={
+                        c.conectado && c.investimento - c.investimentoPlataforma >= 0.01
+                          ? `${brl(c.investimentoPlataforma)} na plataforma`
+                          : undefined
+                      }
+                    />
                     <MiniCanal rotulo="Receita" valor={c.conectado ? brl(c.receita) : "—"} />
                     <MiniCanal
                       rotulo="ROAS"
@@ -374,7 +404,16 @@ export default async function VisaoGeralGlobal({
   }
 }
 
-function MiniCanal({ rotulo, valor }: { rotulo: string; valor: string }) {
+function MiniCanal({
+  rotulo,
+  valor,
+  nota,
+}: {
+  rotulo: string;
+  valor: string;
+  /** Linha de apoio — hoje só o gasto plataforma do Meta. */
+  nota?: string;
+}) {
   return (
     <div className="flex min-w-0 flex-col">
       <span className="rotulo">{rotulo}</span>
@@ -385,6 +424,11 @@ function MiniCanal({ rotulo, valor }: { rotulo: string; valor: string }) {
       >
         {valor}
       </span>
+      {nota && (
+        <span className="tabular mt-1 truncate text-[var(--fs-micro)] text-[var(--ink-muted)]" title={nota}>
+          {nota}
+        </span>
+      )}
     </div>
   );
 }

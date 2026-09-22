@@ -7,6 +7,7 @@ import { periodoDeParams, type ParamsBusca } from "@/lib/periodo";
 import { explicarErroMeta, MetaError, REVALIDATE } from "@/lib/meta";
 import { ehEscopoValido, ESCOPOS, nomeCurtoCampanha, type EscopoSlug } from "@/lib/config";
 import { brl, dec, diaMesCurto, int } from "@/lib/format";
+import { comImposto } from "@/lib/imposto";
 
 export const revalidate = REVALIDATE;
 
@@ -54,7 +55,7 @@ export default async function MetaResultados({
     const serieReceita: PontoGrafico[] = d.serie.map((p) => ({
       date: p.date,
       receita: p.purchaseValue,
-      investimento: p.spend,
+      investimento: comImposto(p.spend),
     }));
 
     // Só conjuntos que registraram receita — o resto polui a leitura de vendas.
@@ -70,7 +71,10 @@ export default async function MetaResultados({
 
 
     const ticketMedio = t.purchases > 0 ? t.purchaseValue / t.purchases : 0;
-    const lucroBruto = t.purchaseValue - t.spend;
+    // Resultado contra o que o cliente desembolsou, imposto incluído — é o
+    // dinheiro que saiu do bolso dele, não o que sobrou depois da retenção.
+    const investido = comImposto(t.spend);
+    const lucroBruto = t.purchaseValue - investido;
 
     const seriesRoas: SerieTempo[] = [{ chave: "roas", nome: "ROAS", cor }];
     const seriesReceita: SerieTempo[] = [
@@ -101,8 +105,8 @@ export default async function MetaResultados({
             />
             <CartaoKpi
               rotulo="Investimento total"
-              valor={brl(t.spend)}
-              sub={`${brl(t.spendConversao)} em conversão`}
+              valor={brl(investido)}
+              sub={`${brl(t.spend)} na plataforma · ${brl(t.spendConversao)} em conversão`}
             />
             <CartaoKpi
               rotulo="ROAS"
@@ -136,7 +140,7 @@ export default async function MetaResultados({
 
             <Cartao
               titulo="Receita × investimento por dia"
-              sub="Mesma unidade (R$), então cabem no mesmo eixo"
+              sub="Mesma unidade (R$) · investimento com imposto"
             >
               <AreaGrafico>
                 <LinhasTempo dados={serieReceita} series={seriesReceita} formato="brl" />
@@ -173,14 +177,17 @@ export default async function MetaResultados({
 
             <Cartao
               titulo="Detalhamento por conjunto"
-              sub="Ordenado por receita · ROAS em verde quando passa de 1×"
+              /* Aqui o investido fica na plataforma de propósito: é ele que,
+                 dividido na receita da linha ao lado, dá o ROAS da coluna
+                 seguinte. Com imposto, a conta da tela não fecharia. */
+              sub="Investido na plataforma (base do ROAS) · ordenado por receita"
             >
               <div className="rola-lateral max-h-[var(--h-tabela)] overflow-auto">
               <table className="w-full" style={{ fontSize: "var(--fs-corpo)" }}>
                 <thead className="sticky top-0 bg-[var(--surface)]">
                   <tr className="text-left uppercase tracking-[0.08em] text-[var(--ink-muted)] [font-size:var(--fs-micro)]">
                     <th className="pb-2 pr-3 font-semibold">Conjunto</th>
-                    <th className="pb-2 pr-3 text-right font-semibold">Investido</th>
+                    <th className="pb-2 pr-3 text-right font-semibold">Na plataforma</th>
                     <th className="pb-2 pr-3 text-right font-semibold">Receita</th>
                     <th className="pb-2 pr-3 text-right font-semibold">ROAS</th>
                     <th className="pb-2 text-right font-semibold">Compras</th>

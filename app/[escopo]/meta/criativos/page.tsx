@@ -8,6 +8,7 @@ import { periodoDeParams, type ParamsBusca } from "@/lib/periodo";
 import { explicarErroMeta, MetaError, REVALIDATE, somar } from "@/lib/meta";
 import { ehEscopoValido, ESCOPOS, type EscopoSlug } from "@/lib/config";
 import { brl, compact, pct } from "@/lib/format";
+import { comImposto } from "@/lib/imposto";
 
 export const revalidate = REVALIDATE;
 
@@ -58,7 +59,13 @@ export default async function MetaCriativos({
           <div className="grid shrink-0 grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-[1.05fr_1fr]">
             <GradeKpi colunas="lg:grid-cols-4">
               <CartaoKpi rotulo="Anúncios" valor={String(criativos.length)} />
-              <CartaoKpi rotulo="Investido" valor={brl(total.spend)} />
+              {/* O KPI é o valor pago; a galeria abaixo ordena por gasto
+                plataforma, que é a base do CPA e do ROAS de cada peça. */}
+            <CartaoKpi
+              rotulo="Investido"
+              valor={brl(comImposto(total.spend))}
+              sub={`${brl(total.spend)} na plataforma`}
+            />
               <CartaoKpi rotulo="Impressões" valor={compact(total.impressions)} />
               <CartaoKpi rotulo="CTR médio" valor={pct(total.ctr)} />
             </GradeKpi>

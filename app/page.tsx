@@ -8,6 +8,7 @@ import { explicarErroMeta, MetaError, REVALIDATE } from "@/lib/meta";
 import { brl, brlCompact, compact, dec, pct } from "@/lib/format";
 import { ESCOPO_TODAS, NACIONAL, PRACAS } from "@/lib/config";
 import { carregarVisaoGeralGA4, type TotaisSite } from "@/lib/analytics";
+import { comImposto } from "@/lib/imposto";
 import type { PontoGrafico } from "@/components/charts";
 
 export const revalidate = REVALIDATE;
@@ -16,9 +17,11 @@ export const revalidate = REVALIDATE;
  * Números consolidados de uma praça — Meta + Google no mesmo card.
  *
  * A capa leva para a Overview, que soma os dois canais: se o card mostrasse só
- * o Meta, o investimento mudaria de valor ao clicar. ROAS e CPA saem do recorte
- * de conversão dos dois lados (no Google, todas as campanhas da edição são de
- * venda, então o gasto entra inteiro).
+ * o Meta, o investimento mudaria de valor ao clicar. Pelo mesmo motivo o Meta
+ * entra aqui com o imposto de 12,5% embutido — é o valor que a Overview mostra.
+ * ROAS e CPA saem do recorte de conversão dos dois lados, sempre sobre o gasto
+ * plataforma (no Google, todas as campanhas da edição são de venda, então o
+ * gasto entra inteiro).
  */
 interface ResumoPraca {
   investimento: number;
@@ -34,7 +37,7 @@ interface ResumoPraca {
 
 function consolidar(f: FatiaBucket | null, ads: DadosAds | null, slug: string): ResumoPraca {
   const g = ads?.fatias.find((x) => x.bucket.slug === slug) ?? null;
-  const investimento = (f?.total.spend ?? 0) + (g?.total.custo ?? 0);
+  const investimento = comImposto(f?.total.spend ?? 0) + (g?.total.custo ?? 0);
   const invConv = (f?.total.spendConversao ?? 0) + (g?.total.custo ?? 0);
   const receita = (f?.total.receitaConversao ?? 0) + (g?.total.receita ?? 0);
   const compras = (f?.total.purchasesConversao ?? 0) + (g?.total.conversoes ?? 0);
@@ -46,7 +49,7 @@ function consolidar(f: FatiaBucket | null, ads: DadosAds | null, slug: string): 
   const datas = [
     ...new Set([...(f?.serie ?? []).map((p) => p.date), ...custoAdsPorDia.keys()]),
   ].sort();
-  const spendMeta = new Map((f?.serie ?? []).map((p) => [p.date, p.spend] as const));
+  const spendMeta = new Map((f?.serie ?? []).map((p) => [p.date, comImposto(p.spend)] as const));
   const serie: PontoGrafico[] = datas.map((date) => ({
     date,
     spend: (spendMeta.get(date) ?? 0) + (custoAdsPorDia.get(date) ?? 0),
@@ -89,7 +92,7 @@ export default async function Capa() {
   const fatia = (slug: string) => dados?.fatias.find((f) => f.bucket.slug === slug) ?? null;
   const nacional = fatia(NACIONAL.slug);
 
-  const totalInvestimento = (dados?.total.spend ?? 0) + (ads?.total.custo ?? 0);
+  const totalInvestimento = comImposto(dados?.total.spend ?? 0) + (ads?.total.custo ?? 0);
   const totalReceita = (dados?.total.purchaseValue ?? 0) + (ads?.total.receita ?? 0);
   const totalInvConversao = (dados?.total.spendConversao ?? 0) + (ads?.total.custo ?? 0);
   const totalReceitaConversao = (dados?.total.receitaConversao ?? 0) + (ads?.total.receita ?? 0);

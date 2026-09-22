@@ -177,7 +177,7 @@ export function DestaqueCriativo({ criativos }: { criativos: Criativo[] }) {
     <div className="grid grid-cols-2 gap-[var(--esp-grade)]">
       <MiniDestaque rotulo="Maior CTR" c={melhor} metrica={pct(melhor.m.ctr)} />
       <MiniDestaque
-        rotulo="Maior investimento"
+        rotulo="Maior gasto na plataforma"
         c={maisInvestido}
         metrica={brl(maisInvestido.m.spend)}
       />

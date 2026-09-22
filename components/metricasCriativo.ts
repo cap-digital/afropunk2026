@@ -28,6 +28,9 @@ export const METRICAS: Metrica[] = [
     chave: "investimento",
     rotulo: "Maior investimento",
     curto: "Invest.",
+    // Gasto plataforma, sem o imposto de 12,5%: é o mesmo número que divide o
+    // ROAS e o CPA do card ao lado. O valor pago pelo cliente está no KPI do
+    // topo da página, com as duas linhas.
     // Sem centavos: o valor completo não cabe na coluna do card e truncava.
     // Está inteiro na tabela de conjuntos e na página de Resultados.
     valor: (c) => brlCurto(c.m.spend),

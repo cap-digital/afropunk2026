@@ -19,6 +19,7 @@ import {
   type EscopoSlug,
 } from "@/lib/config";
 import { brl, brlCompact, dec, int, pct } from "@/lib/format";
+import { comImposto } from "@/lib/imposto";
 
 export const revalidate = REVALIDATE;
 
@@ -70,7 +71,7 @@ export default async function MetaCampanhas({
     const serieCampanhas: PontoGrafico[] = dias.map((dia) => {
       const linha: PontoGrafico = { date: dia };
       for (const c of d.campanhas) {
-        linha[c.id] = (series.get(c.id) ?? []).find((s) => s.date === dia)?.spend ?? 0;
+        linha[c.id] = comImposto((series.get(c.id) ?? []).find((s) => s.date === dia)?.spend ?? 0);
       }
       return linha;
     });
@@ -86,7 +87,7 @@ export default async function MetaCampanhas({
       nome: d.comparativo
         ? `${c.bucket?.nome ?? "—"}`
         : (OBJETIVO_LABEL[c.objective] ?? c.objective),
-      investimento: c.m.spend,
+      investimento: comImposto(c.m.spend),
       cliques: c.m.clicks,
     }));
 
@@ -110,7 +111,10 @@ export default async function MetaCampanhas({
             }`}
           >
             {d.campanhas.map((c, i) => {
-              const orcamento = Number(c.lifetime_budget ?? 0) / 100;
+              // Orçamento e consumo sobem juntos para o valor pago: a fração
+              // do medidor não muda e o cartão não mistura as duas moedas.
+              const orcamento = comImposto(Number(c.lifetime_budget ?? 0) / 100);
+              const investido = comImposto(c.m.spend);
               const cor = corDa(i, c.bucket?.slug);
               return (
                 <div key={c.id} className="cartao flex flex-col gap-2.5 p-[var(--esp-cartao-y)]">
@@ -134,11 +138,11 @@ export default async function MetaCampanhas({
                       esquerda de um cartão de 800px. Mesmo arranjo do rodapé
                       dos cartões de canal no Overview. */}
                   <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
-                    <Stat rotulo="Investido" valor={brlCompact(c.m.spend)} tamanho="sm" />
+                    <Stat rotulo="Investido" valor={brlCompact(investido)} tamanho="sm" />
                     <Stat rotulo="CTR" valor={pct(c.m.ctr, 1)} tamanho="sm" />
                   </div>
                   {orcamento > 0 ? (
-                    <Medidor valor={c.m.spend} limite={orcamento} rotulo="Orçamento" cor={cor} />
+                    <Medidor valor={investido} limite={orcamento} rotulo="Orçamento" cor={cor} />
                   ) : (
                     <p className="text-[var(--fs-corpo)] leading-tight text-[var(--ink-muted)]">
                       Orçamento no conjunto de anúncios
@@ -152,7 +156,7 @@ export default async function MetaCampanhas({
           <Linha preencher className="grid grid-cols-1 gap-[var(--esp-grade)] lg:grid-cols-[1.4fr_1fr]">
             <Cartao
               titulo="Investimento diário por campanha"
-              sub="Compara o ritmo de gasto entre as campanhas da edição"
+              sub="Compara o ritmo de gasto entre as campanhas · valores com imposto"
             >
               <AreaGrafico>
                 <LinhasTempo dados={serieCampanhas} series={seriesCfg} formato="brl" />
@@ -184,7 +188,7 @@ export default async function MetaCampanhas({
           <Linha>
             <Cartao
               titulo="Detalhamento"
-              sub="Todas as métricas por campanha"
+              sub="Investido com o imposto de 12,5% · CPC e CPM sobre o gasto na plataforma"
               className="h-full min-w-0"
             >
               <div className="rola-lateral max-h-[var(--h-tabela)] overflow-auto">
@@ -230,7 +234,7 @@ export default async function MetaCampanhas({
                         )}
                         <td className="py-2 pr-3">{OBJETIVO_LABEL[c.objective] ?? c.objective}</td>
                         <td className="py-2 pr-3 text-right font-semibold text-[var(--ink)]">
-                          {brl(c.m.spend)}
+                          {brl(comImposto(c.m.spend))}
                         </td>
                         <td className="py-2 pr-3 text-right">{int(c.m.impressions)}</td>
                         <td className="py-2 pr-3 text-right">{int(c.m.reach)}</td>
