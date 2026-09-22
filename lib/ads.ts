@@ -5,6 +5,7 @@ import {
   GoogleAdsError,
   intervaloAds,
   REVALIDATE_ESTRUTURA,
+  STATUS_CAMPANHA,
 } from "./googleAds";
 import {
   BUCKETS,
@@ -39,6 +40,9 @@ export interface MetricasAds {
   roas: number;
   cpa: number;
 }
+
+/** Reexportado: o filtro nasceu aqui e mudou de casa para quebrar um ciclo. */
+export { STATUS_CAMPANHA };
 
 export const METRICAS_ADS_ZERO: MetricasAds = {
   custo: 0,
@@ -162,25 +166,6 @@ export async function tentarAds<T>(p: Promise<T>): Promise<LeituraAds<T>> {
 }
 
 /**
- * Campanhas que contam: no ar E pausadas.
- *
- * O Meta já vive assim desde que o Rio sumiu do painel no dia seguinte ao
- * evento (`getCampanhasAtivas`, em lib/meta.ts); o Google tinha ficado para
- * trás com `campaign.status = 'ENABLED'`, e o sintoma reapareceu em Recife:
- * a PMax foi pausada e levou junto todo o investimento dela — o Overview
- * mostrava só a Pesquisa, e o item "Performance Max" nem chegava à lateral,
- * porque `canaisDoEscopo` usava o mesmo filtro. Um painel de mídia é feito
- * para ser olhado DEPOIS que a campanha acaba: status de veiculação não pode
- * decidir se o dado existe; ele é rótulo na tela (`CampanhaAds.pausada`).
- *
- * O que segura a porta aberta é `bucketDaCampanha`, que exige a marca da
- * EDIÇÃO antes de olhar a tag de praça — sem isso entrariam as campanhas
- * pausadas de 2024/2025 que ainda vivem nesta conta. `REMOVED` fica de fora:
- * campanha excluída não é histórico.
- */
-export const STATUS_CAMPANHA = "campaign.status IN ('ENABLED', 'PAUSED')";
-
-/**
  * Quais canais do Google existem neste escopo.
  *
  * Consulta própria, sem recorte de data nem métrica: é a mais barata possível e
@@ -266,7 +251,7 @@ export async function carregarAds(
 ): Promise<DadosAds> {
   const praca = escopo === ESCOPO_TODAS ? null : PRACA_POR_SLUG[escopo];
   const comparativo = praca === null;
-  const { de, ate } = intervaloAds(periodo);
+  const { de, ate } = await intervaloAds(periodo, escopo);
 
   const [linhas, dias] = await Promise.all([
     consultarAds(`

@@ -86,8 +86,14 @@ function noEscopo(nome: string | undefined, escopo: EscopoSlug): Bucket | null |
   return b?.slug === escopo ? b : false;
 }
 
-const periodoGaql = (periodo: Periodo) => {
-  const { de, ate } = intervaloAds(periodo);
+/**
+ * Recorte de data da consulta. Assíncrono porque "todo o período" vai perguntar
+ * à API quando a campanha mais antiga DO ESCOPO começou — sem isso a ponta de
+ * baixo seria uma data fixa, e já foi uma janela de 30 dias disfarçada de
+ * histórico. Cada página chama uma vez e reaproveita a string.
+ */
+const periodoGaql = async (periodo: Periodo, escopo: EscopoSlug) => {
+  const { de, ate } = await intervaloAds(periodo, escopo);
   return `segments.date BETWEEN '${de}' AND '${ate}'`;
 };
 
@@ -169,7 +175,7 @@ export async function carregarPesquisa(
   escopo: EscopoSlug,
   periodo: Periodo,
 ): Promise<DadosPesquisa> {
-  const P = periodoGaql(periodo);
+  const P = await periodoGaql(periodo, escopo);
 
   const [kw, ads, share] = await Promise.all([
     consultarAds(`
@@ -385,13 +391,14 @@ export async function carregarTermos(
   escopo: EscopoSlug,
   periodo: Periodo,
 ): Promise<DadosTermos> {
+  const P = await periodoGaql(periodo, escopo);
   const linhas = (await consultarAds(`
     SELECT campaign.name, search_term_view.search_term, search_term_view.status,
            segments.search_term_match_type,
            metrics.impressions, metrics.clicks, metrics.cost_micros,
            metrics.conversions, metrics.conversions_value
     FROM search_term_view
-    WHERE ${periodoGaql(periodo)} AND ${STATUS_CAMPANHA}
+    WHERE ${P} AND ${STATUS_CAMPANHA}
   `)) as LinhaCrua[];
 
   /**
@@ -485,13 +492,15 @@ export interface DadosPmax {
 
 
 export async function carregarPmax(escopo: EscopoSlug, periodo: Periodo): Promise<DadosPmax> {
+  const P = await periodoGaql(periodo, escopo);
+
   const [gruposCrus, ativosCrus] = await Promise.all([
     consultarAds(`
       SELECT campaign.name, asset_group.id, asset_group.name, asset_group.status,
              asset_group.ad_strength,
              metrics.impressions, metrics.clicks, metrics.cost_micros,
              metrics.conversions, metrics.conversions_value
-      FROM asset_group WHERE ${periodoGaql(periodo)} AND ${STATUS_CAMPANHA}
+      FROM asset_group WHERE ${P} AND ${STATUS_CAMPANHA}
     `) as Promise<LinhaCrua[]>,
     /*
      * Conteúdo E desempenho da peça na mesma consulta. `performance_label` é
@@ -504,7 +513,7 @@ export async function carregarPmax(escopo: EscopoSlug, periodo: Periodo): Promis
              metrics.impressions, metrics.clicks, metrics.cost_micros,
              metrics.conversions, metrics.conversions_value
       FROM asset_group_asset
-      WHERE ${periodoGaql(periodo)} AND ${STATUS_CAMPANHA}
+      WHERE ${P} AND ${STATUS_CAMPANHA}
     `) as Promise<LinhaCrua[]>,
   ]);
 
@@ -648,7 +657,7 @@ export async function carregarSegmentacao(
   escopo: EscopoSlug,
   periodo: Periodo,
 ): Promise<DadosSegmentacao> {
-  const P = periodoGaql(periodo);
+  const P = await periodoGaql(periodo, escopo);
 
   const [disp, horas, geo] = await Promise.all([
     consultarAds(`

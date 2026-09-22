@@ -1,6 +1,11 @@
 import "server-only";
 import { JWT } from "google-auth-library";
-import { PISO_HISTORICO } from "./config";
+import {
+  bucketDaCampanha,
+  ESCOPO_TODAS,
+  PISO_HISTORICO,
+  type EscopoSlug,
+} from "./config";
 import type { Periodo } from "./meta";
 import { hojeNaConta } from "./periodo";
 
@@ -248,6 +253,56 @@ async function buscarPagina(
 const res0k = (tentativa: number) => tentativa === 1;
 
 /**
+ * Campanhas que contam: no ar E pausadas.
+ *
+ * O Meta já vive assim desde que o Rio sumiu do painel no dia seguinte ao
+ * evento (`getCampanhasAtivas`, em lib/meta.ts); o Google tinha ficado para
+ * trás com `campaign.status = 'ENABLED'`, e o sintoma reapareceu em Recife:
+ * a PMax foi pausada e levou junto todo o investimento dela — o Overview
+ * mostrava só a Pesquisa, e o item "Performance Max" nem chegava à lateral,
+ * porque `canaisDoEscopo` usava o mesmo filtro. Um painel de mídia é feito
+ * para ser olhado DEPOIS que a campanha acaba: status de veiculação não pode
+ * decidir se o dado existe; ele é rótulo na tela (`CampanhaAds.pausada`).
+ *
+ * O que segura a porta aberta é `bucketDaCampanha`, que exige a marca da
+ * EDIÇÃO antes de olhar a tag de praça — sem isso entrariam as campanhas
+ * pausadas de 2024/2025 que ainda vivem nesta conta. `REMOVED` fica de fora:
+ * campanha excluída não é histórico.
+ */
+export const STATUS_CAMPANHA = "campaign.status IN ('ENABLED', 'PAUSED')";
+
+/**
+ * Primeiro dia que as campanhas do escopo podem ter entregue.
+ *
+ * `campaign.start_date` não precisa de recorte de data (não é segmento) e não
+ * traz métrica: é a consulta mais barata da casa e muda uma vez por edição,
+ * por isso vai no cache estrutural.
+ *
+ * O piso é a data de início da campanha mais antiga EM TELA, não do histórico
+ * da conta: uma campanha configurada para começar antes de veicular só faz a
+ * janela abrir cedo demais, e dias sem entrega não geram linha — o primeiro
+ * dia exibido continua sendo o primeiro dia COM dado, que sai da série.
+ */
+async function inicioDasCampanhas(escopo: EscopoSlug): Promise<string> {
+  const linhas = (await consultarAds(
+    `SELECT campaign.name, campaign.start_date
+     FROM campaign WHERE ${STATUS_CAMPANHA}`,
+    REVALIDATE_ESTRUTURA,
+  )) as { campaign?: { name?: string; startDate?: string } }[];
+
+  let inicio: string | null = null;
+  for (const r of linhas) {
+    const bucket = bucketDaCampanha(r.campaign?.name ?? "");
+    if (!bucket) continue;
+    if (escopo !== ESCOPO_TODAS && bucket.slug !== escopo) continue;
+    const dia = r.campaign?.startDate;
+    // ISO compara bem como texto — não vale construir Date para isto.
+    if (dia && (inicio === null || dia < inicio)) inicio = dia;
+  }
+  return inicio ?? PISO_HISTORICO;
+}
+
+/**
  * Intervalo do dashboard no formato GAQL (`segments.date BETWEEN`).
  *
  * `"maximum"` é o "Todo o período" do seletor, e aqui ele já significou os
@@ -257,10 +312,19 @@ const res0k = (tentativa: number) => tentativa === 1;
  * mil, e o consolidado Meta + Google somava maçã (vida inteira, via
  * `date_preset=maximum`) com laranja (mês corrido).
  *
+ * Agora a ponta de baixo vem das campanhas do escopo. Sem `escopo` — chamada
+ * que não sabe de qual praça está falando — vale a edição inteira, que é o
+ * mesmo número com uma janela mais larga: dia sem entrega não vira linha.
+ *
  * O fim é hoje no fuso da conta, não em UTC: depois das 21h de Brasília o
  * `toISOString` já está no dia seguinte e a ponta pedia um dia que não existe.
  */
-export function intervaloAds(periodo: Periodo): { de: string; ate: string } {
-  if (periodo === "maximum") return { de: PISO_HISTORICO, ate: hojeNaConta() };
+export async function intervaloAds(
+  periodo: Periodo,
+  escopo: EscopoSlug = ESCOPO_TODAS,
+): Promise<{ de: string; ate: string }> {
+  if (periodo === "maximum") {
+    return { de: await inicioDasCampanhas(escopo), ate: hojeNaConta() };
+  }
   return { de: periodo.de, ate: periodo.ate };
 }

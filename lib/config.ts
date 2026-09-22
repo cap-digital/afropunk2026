@@ -113,16 +113,12 @@ export const BUCKETS: Bucket[] = [...PRACAS, NACIONAL];
 export const EDICAO = "2026";
 
 /**
- * Piso de "todo o período" nas consultas que exigem data nas duas pontas.
+ * Piso de último recurso para "todo o período" no Google.
  *
- * O Meta tem `date_preset=maximum` e resolve isso sozinho; a Google Ads API
- * não tem equivalente — `segments.date` precisa de um BETWEEN, e o que estava
- * lá era uma janela de 30 dias que se fazia passar por histórico inteiro.
- *
- * Um piso largo não custa nada: só existem linhas nos dias em que houve
- * entrega, e quem recorta a edição é `bucketDaCampanha`, pela marca no nome.
- * A data está antes de qualquer campanha de 2026 ir ao ar, inclusive a
- * pré-venda, então "todo o período" volta a ser todo o período.
+ * O normal é o piso sair da própria campanha em tela — a mais antiga do escopo
+ * manda (ver `intervaloAds`). Esta data só entra quando não há nenhuma: sem
+ * campanha não há linha para trazer, e a consulta ainda precisa de um BETWEEN
+ * válido. Está antes de qualquer campanha de 2026 ir ao ar, pré-venda incluída.
  */
 export const PISO_HISTORICO = "2025-01-01";
 
