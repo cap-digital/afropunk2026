@@ -3,6 +3,13 @@
  * Rode com:  node --env-file=.env.local scripts/testar-google-ads.mjs
  *
  * Vai por etapas e para na primeira que falhar, dizendo o que corrigir.
+ *
+ * Com um GAQL como argumento, roda ESSA consulta no lugar da padrão e imprime
+ * o erro inteiro que a API devolve — que é o que falta quando o painel mostra
+ * só "Request contains an invalid argument":
+ *
+ *   node --env-file=.env.local scripts/testar-google-ads.mjs \
+ *     "SELECT campaign.name, campaign.start_date FROM campaign WHERE campaign.status IN ('ENABLED','PAUSED')"
  */
 import { JWT } from "google-auth-library";
 
@@ -57,6 +64,13 @@ try {
 }
 
 console.log("\n4. CHAMADA À API");
+const gaql =
+  process.argv.slice(2).join(" ").trim() ||
+  `SELECT campaign.id, campaign.name, campaign.status, campaign.advertising_channel_type,
+   metrics.impressions, metrics.clicks, metrics.cost_micros, metrics.conversions,
+   metrics.conversions_value
+   FROM campaign WHERE segments.date DURING LAST_30_DAYS`;
+
 const versoes = [process.env.GOOGLE_ADS_API_VERSION, "v25"].filter(Boolean);
 const cliente = soDigitos(process.env.GOOGLE_ADS_CUSTOMER_ID);
 const login = soDigitos(process.env.GOOGLE_ADS_LOGIN_CUSTOMER_ID);
@@ -71,15 +85,17 @@ for (const v of [...new Set(versoes)]) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      query: `SELECT campaign.id, campaign.name, campaign.status, campaign.advertising_channel_type,
-              metrics.impressions, metrics.clicks, metrics.cost_micros, metrics.conversions,
-              metrics.conversions_value
-              FROM campaign WHERE segments.date DURING LAST_30_DAYS`,
+      query: gaql,
     }),
   });
   const j = await res.json().catch(() => ({}));
   if (res.ok) {
     ok(`${v} respondeu · ${(j.results ?? []).length} linhas`);
+    // Consulta do usuário: o que importa é o JSON cru, não a tabela de campanhas.
+    if (process.argv.length > 2) {
+      console.log(JSON.stringify(j.results ?? [], null, 2));
+      process.exit(0);
+    }
     console.log("\n5. CAMPANHAS");
     for (const r of j.results ?? []) {
       const m = r.metrics ?? {}, c = r.campaign ?? {};
@@ -94,5 +110,7 @@ for (const v of [...new Set(versoes)]) {
     process.exit(0);
   }
   erro(`${v}: HTTP ${res.status} — ${j.error?.message ?? "sem detalhe"}`);
+  // A causa real mora em error.details; é ela que o painel não mostrava.
+  if (j.error?.details) console.log(JSON.stringify(j.error.details, null, 2));
 }
 process.exit(1);
