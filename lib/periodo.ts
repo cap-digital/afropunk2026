@@ -40,7 +40,19 @@ const FORMATO_ISO = new Intl.DateTimeFormat("en-CA", {
   day: "2-digit",
 });
 
-export const hojeNaConta = (): string => FORMATO_ISO.format(new Date());
+/**
+ * Montado a partir das partes, não do `format` direto: `en-CA` devolve
+ * "2026-09-22" só quando o runtime tem ICU completo. Num Node compilado sem
+ * ele, o locale cai para `en-US` e a mesma chamada devolve "09/22/2026" — que
+ * atravessa o código como se fosse data ISO e só falha lá na ponta, virando
+ * um BETWEEN inválido no meio de uma consulta.
+ */
+export const hojeNaConta = (): string => {
+  const p = Object.fromEntries(
+    FORMATO_ISO.formatToParts(new Date()).map((x) => [x.type, x.value]),
+  );
+  return `${p.year}-${p.month}-${p.day}`;
+};
 
 /** Soma (ou subtrai) dias a uma data ISO, ao meio-dia UTC para escapar do horário de verão. */
 export function somaDias(iso: string, dias: number): string {

@@ -49,11 +49,54 @@ export class GoogleAdsError extends Error {
     message: string,
     readonly code: number,
     readonly detalhe?: string,
+    /**
+     * O que a API recusou, nas palavras dela, e em qual consulta.
+     *
+     * "Request contains an invalid argument" sozinho não diz nada: a página
+     * cai inteira e resta adivinhar qual das cinco consultas da rota quebrou e
+     * por quê. O Google manda a causa exata em `error.details` — código do
+     * erro, mensagem e campo — e ela vinha sendo jogada fora na hora de montar
+     * o `GoogleAdsError`.
+     */
+    readonly especifico?: string,
   ) {
     super(message);
     this.name = "GoogleAdsError";
   }
 }
+
+/** Formato REST do erro: a causa útil mora em `details[].errors[]`. */
+interface FalhaAds {
+  errors?: {
+    errorCode?: Record<string, string>;
+    message?: string;
+    location?: { fieldPathElements?: { fieldName?: string }[] };
+  }[];
+}
+
+/** "queryError.UNRECOGNIZED_FIELD: Field is not selectable (campaign.x)" */
+function causaDoErro(details: unknown): string | undefined {
+  if (!Array.isArray(details)) return undefined;
+  const partes: string[] = [];
+  for (const d of details as FalhaAds[]) {
+    for (const e of d?.errors ?? []) {
+      const [tipo, valor] = Object.entries(e.errorCode ?? {})[0] ?? [];
+      const campo = e.location?.fieldPathElements
+        ?.map((f) => f.fieldName)
+        .filter(Boolean)
+        .join(".");
+      partes.push(
+        [tipo && valor ? `${tipo}.${valor}` : null, e.message, campo ? `em ${campo}` : null]
+          .filter(Boolean)
+          .join(" — "),
+      );
+    }
+  }
+  return partes.length ? partes.join(" | ") : undefined;
+}
+
+/** A consulta que falhou, em uma linha, para caber na tela de erro. */
+const resumoGaql = (gaql: string) => gaql.replace(/\s+/g, " ").trim().slice(0, 160);
 
 export function explicarErroAds(e: GoogleAdsError): string {
   switch (e.code) {
@@ -73,7 +116,7 @@ export function explicarErroAds(e: GoogleAdsError): string {
       if (ehTransitorio(e.code, e.detalhe)) {
         return "A Google Ads API respondeu com falha temporária nas três tentativas. Não é erro de configuração — use Atualizar em alguns instantes.";
       }
-      return e.detalhe ? `${e.message} — ${e.detalhe}` : e.message;
+      return [e.message, e.especifico, e.detalhe].filter(Boolean).join(" — ");
   }
 }
 
@@ -139,7 +182,7 @@ export async function tokenAds(): Promise<string> {
 
 interface RespostaBusca {
   results?: Record<string, unknown>[];
-  error?: { code: number; message: string; status?: string };
+  error?: { code: number; message: string; status?: string; details?: unknown };
 }
 
 /**
@@ -237,7 +280,12 @@ async function buscarPagina(
 
     const http = erro?.code ?? res.status;
     const status = erro?.status;
-    ultimo = new GoogleAdsError(erro?.message ?? `HTTP ${res.status}`, http, status);
+    ultimo = new GoogleAdsError(
+      erro?.message ?? `HTTP ${res.status}`,
+      http,
+      status,
+      [causaDoErro(erro?.details), `consulta: ${resumoGaql(gaql)}`].filter(Boolean).join(" — "),
+    );
 
     if (!ehTransitorio(http, status) || tentativa === TENTATIVAS) throw ultimo;
 
@@ -286,11 +334,22 @@ export const STATUS_CAMPANHA = "campaign.status IN ('ENABLED', 'PAUSED')";
 export async function inicioDasCampanhasAds(
   escopo: EscopoSlug = ESCOPO_TODAS,
 ): Promise<string> {
-  const linhas = (await consultarAds(
-    `SELECT campaign.name, campaign.start_date
-     FROM campaign WHERE ${STATUS_CAMPANHA}`,
-    REVALIDATE_ESTRUTURA,
-  )) as { campaign?: { name?: string; startDate?: string } }[];
+  /*
+   * Esta consulta é conveniência, não pré-requisito: ela só escolhe ONDE a
+   * janela começa, e o piso largo dá o mesmo total (dia sem entrega não vira
+   * linha). Deixá-la derrubar `carregarAds` foi o erro — o painel inteiro
+   * ficou sem Google por causa da consulta mais dispensável das três.
+   */
+  let linhas: { campaign?: { name?: string; startDate?: string } }[];
+  try {
+    linhas = (await consultarAds(
+      `SELECT campaign.name, campaign.start_date
+       FROM campaign WHERE ${STATUS_CAMPANHA}`,
+      REVALIDATE_ESTRUTURA,
+    )) as typeof linhas;
+  } catch {
+    return PISO_HISTORICO;
+  }
 
   let inicio: string | null = null;
   for (const r of linhas) {
