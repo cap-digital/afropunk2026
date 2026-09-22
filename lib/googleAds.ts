@@ -1,6 +1,8 @@
 import "server-only";
 import { JWT } from "google-auth-library";
+import { PISO_HISTORICO } from "./config";
 import type { Periodo } from "./meta";
+import { hojeNaConta } from "./periodo";
 
 /**
  * Cliente da Google Ads API por REST.
@@ -245,14 +247,20 @@ async function buscarPagina(
 /** Só a primeira tentativa participa do cache de dados do Next. */
 const res0k = (tentativa: number) => tentativa === 1;
 
-/** Intervalo do dashboard no formato GAQL (`segments.date BETWEEN`). */
+/**
+ * Intervalo do dashboard no formato GAQL (`segments.date BETWEEN`).
+ *
+ * `"maximum"` é o "Todo o período" do seletor, e aqui ele já significou os
+ * ÚLTIMOS 30 DIAS — o que fazia o Google entrar no painel pela metade sem
+ * nada na tela dizendo isso: no Salvador, uma campanha de Pesquisa iniciada
+ * antes da janela aparecia com R$ 5,3 mil onde o gerenciador mostrava R$ 8,0
+ * mil, e o consolidado Meta + Google somava maçã (vida inteira, via
+ * `date_preset=maximum`) com laranja (mês corrido).
+ *
+ * O fim é hoje no fuso da conta, não em UTC: depois das 21h de Brasília o
+ * `toISOString` já está no dia seguinte e a ponta pedia um dia que não existe.
+ */
 export function intervaloAds(periodo: Periodo): { de: string; ate: string } {
-  if (periodo === "maximum") {
-    const hoje = new Date();
-    const inicio = new Date(hoje);
-    inicio.setDate(inicio.getDate() - 29);
-    const iso = (d: Date) => d.toISOString().slice(0, 10);
-    return { de: iso(inicio), ate: iso(hoje) };
-  }
+  if (periodo === "maximum") return { de: PISO_HISTORICO, ate: hojeNaConta() };
   return { de: periodo.de, ate: periodo.ate };
 }
