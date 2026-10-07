@@ -249,7 +249,9 @@ export default async function MetaPublico({
               sub={
                 d.comparativo
                   ? "Aparelho usado para ver o anúncio"
-                  : `Aparelho usado para ver o anúncio · ${d.praca?.uf ?? ""} concentra toda a entrega`
+                  : d.praca?.absorveNacional
+                    ? "Aparelho usado para ver o anúncio"
+                    : `Aparelho usado para ver o anúncio · ${d.praca?.uf ?? ""} concentra toda a entrega`
               }
             >
               <BarrasH dados={dispositivos} formato="int" corUnica="var(--seq-3)" larguraRotulo={120} />

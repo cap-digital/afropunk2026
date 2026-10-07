@@ -66,6 +66,15 @@ export default async function MetaCampanhas({
         ? (d.fatias.find((f) => f.bucket.slug === slugBucket)?.bucket.cor ?? "var(--seq-2)")
         : TONS[i % TONS.length];
 
+    // Na praça a série leva o objetivo — a não ser que ele se repita (em
+    // Salvador há dois Alcance), e aí vai o nome curto da campanha.
+    const objetivo = (c: (typeof d.campanhas)[number]) => OBJETIVO_LABEL[c.objective] ?? c.objective;
+    const repetidos = new Set(
+      d.campanhas.map(objetivo).filter((o, i, todos) => todos.indexOf(o) !== i),
+    );
+    const rotuloNaPraca = (c: (typeof d.campanhas)[number]) =>
+      repetidos.has(objetivo(c)) ? nomeCurtoCampanha(c.name) : objetivo(c);
+
     const dias = [
       ...new Set(d.campanhas.flatMap((c) => (series.get(c.id) ?? []).map((s) => s.date))),
     ].sort();
@@ -80,14 +89,12 @@ export default async function MetaCampanhas({
       chave: c.id,
       nome: d.comparativo
         ? `${OBJETIVO_LABEL[c.objective] ?? c.objective} · ${c.bucket?.nome ?? "—"}`
-        : (OBJETIVO_LABEL[c.objective] ?? c.objective),
+        : rotuloNaPraca(c),
       cor: corDa(i, c.bucket?.slug),
     }));
 
     const comparativo: PontoGrafico[] = d.campanhas.map((c) => ({
-      nome: d.comparativo
-        ? `${c.bucket?.nome ?? "—"}`
-        : (OBJETIVO_LABEL[c.objective] ?? c.objective),
+      nome: d.comparativo ? `${c.bucket?.nome ?? "—"}` : rotuloNaPraca(c),
       investimento: comImposto(c.m.spend),
       cliques: c.m.clicks,
     }));

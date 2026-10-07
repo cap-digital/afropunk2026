@@ -4,10 +4,13 @@ import {
   ESCOPO_TODAS,
   PRACA_POR_SLUG,
   PRACAS,
+  bucketNoEscopo,
   bucketNoRecorte,
+  bucketsDaPraca,
   type Bucket,
   type EscopoSlug,
   type Praca,
+  type PracaSlug,
   type RecortePracas,
 } from "./config";
 import {
@@ -79,9 +82,7 @@ export async function carregarEscopo(
   const comparativo = praca === null;
 
   const [conta, todas] = await Promise.all([getConta(), getCampanhasAtivas()]);
-  const doEscopo = comparativo
-    ? todas.filter((c) => bucketNoRecorte(c.bucket, recorte))
-    : todas.filter((c) => c.bucket?.slug === escopo);
+  const doEscopo = todas.filter((c) => bucketNoEscopo(c.bucket, escopo, recorte));
 
   const ids = doEscopo.map((c) => c.id);
   const [insights, series] = await Promise.all([
@@ -110,7 +111,8 @@ export async function carregarEscopo(
   const bucketsDoEscopo: Bucket[] =
     praca === null ? BUCKETS.filter((b) => bucketNoRecorte(b, recorte)) : [praca];
   const fatias: FatiaBucket[] = bucketsDoEscopo.map((b) => {
-    const cs = campanhas.filter((c) => c.bucket?.slug === b.slug);
+    // Na praça a fatia é o escopo inteiro — em Salvador, nacional inclusa.
+    const cs = praca ? campanhas : campanhas.filter((c) => c.bucket?.slug === b.slug);
     return {
       bucket: b,
       campanhas: cs,
@@ -204,6 +206,28 @@ export async function carregarBreakdowns(d: DadosEscopo): Promise<Breakdowns> {
     regioes: agrupar(flat(reg)),
     dispositivos: agrupar(flat(dev)),
     porBucket,
+  };
+}
+
+/**
+ * A fatia de uma praça montada a partir do comparativo, com os mesmos buckets
+ * que o escopo dela usa. A capa lê tudo numa chamada só e monta cada cartão
+ * aqui — sem isto o cartão de Salvador contaria uma campanha a menos que a
+ * página para onde ele leva.
+ */
+export function fatiaDaPraca(d: DadosEscopo, slug: PracaSlug): FatiaBucket | null {
+  const slugs = bucketsDaPraca(slug);
+  const partes = d.fatias.filter((f) => slugs.includes(f.bucket.slug));
+  const propria = partes.find((f) => f.bucket.slug === slug);
+  if (!propria) return null;
+  if (partes.length === 1) return propria;
+  const campanhas = partes.flatMap((f) => f.campanhas);
+  return {
+    bucket: propria.bucket,
+    campanhas,
+    total: campanhas.length ? somar(campanhas.map((c) => c.m)) : METRICAS_ZERO,
+    serie: fundirSeries(partes.map((f) => f.serie)),
+    ativa: partes.some((f) => f.ativa),
   };
 }
 

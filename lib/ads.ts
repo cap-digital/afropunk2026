@@ -10,6 +10,7 @@ import {
 import {
   BUCKETS,
   bucketDaCampanha,
+  bucketNoEscopo,
   bucketNoRecorte,
   ESCOPO_TODAS,
   PRACA_POR_SLUG,
@@ -185,8 +186,7 @@ export async function canaisDoEscopo(escopo: EscopoSlug): Promise<string[]> {
   const canais = new Set<string>();
   for (const r of linhas) {
     const bucket = bucketDaCampanha(r.campaign?.name ?? "");
-    if (!bucket) continue;
-    if (escopo !== ESCOPO_TODAS && bucket.slug !== escopo) continue;
+    if (!bucketNoEscopo(bucket, escopo)) continue;
     const canal = r.campaign?.advertisingChannelType;
     if (canal) canais.add(canal);
   }
@@ -297,15 +297,14 @@ export async function carregarAds(
   });
 
   // Só o que casa com alguma praça: campanhas de edições passadas ficam fora.
-  const campanhas = comparativo
-    ? todas.filter((c) => bucketNoRecorte(c.bucket, recorte))
-    : todas.filter((c) => c.bucket?.slug === escopo);
+  const campanhas = todas.filter((c) => bucketNoEscopo(c.bucket, escopo, recorte));
   const nomesNoEscopo = new Set(campanhas.map((c) => c.nome));
 
   const bucketsDoEscopo: Bucket[] =
     praca === null ? BUCKETS.filter((b) => bucketNoRecorte(b, recorte)) : [praca];
   const fatias: FatiaAds[] = bucketsDoEscopo.map((b) => {
-    const cs = campanhas.filter((c) => c.bucket?.slug === b.slug);
+    // Na praça a fatia é o escopo inteiro — em Salvador, nacional inclusa.
+    const cs = praca ? campanhas : campanhas.filter((c) => c.bucket?.slug === b.slug);
     return {
       bucket: b,
       campanhas: cs,

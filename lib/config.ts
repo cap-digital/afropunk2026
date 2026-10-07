@@ -31,6 +31,8 @@ export interface Praca extends Bucket {
   tags: string[];
   /** Nome da região no breakdown do Meta, para atribuir a campanha nacional. */
   regiao: string;
+  /** A campanha nacional entra inteira no escopo desta praça. */
+  absorveNacional?: boolean;
 }
 
 export const PRACAS: Praca[] = [
@@ -69,6 +71,7 @@ export const PRACAS: Praca[] = [
     cor: "#C08A12",
     tags: ["[SSA]", "SALVADOR"],
     regiao: "Bahia",
+    absorveNacional: true,
   },
 ];
 
@@ -172,10 +175,32 @@ export function bucketNoRecorte(bucket: Bucket | null, recorte: RecortePracas): 
   return bucket !== null && (recorte === null || recorte.includes(bucket.slug));
 }
 
+/**
+ * Buckets que compõem o escopo de uma praça: ela mesma e, em Salvador, a
+ * campanha nacional. No comparativo a nacional segue como bucket próprio.
+ */
+export function bucketsDaPraca(slug: PracaSlug): string[] {
+  return PRACA_POR_SLUG[slug].absorveNacional ? [slug, NACIONAL.slug] : [slug];
+}
+
+/**
+ * O bucket pertence ao escopo? Regra única de Meta e Google: no comparativo,
+ * qualquer bucket dentro do recorte de praças; numa praça, os dela.
+ */
+export function bucketNoEscopo(
+  bucket: Bucket | null,
+  escopo: EscopoSlug,
+  recorte: RecortePracas = null,
+): boolean {
+  if (bucket === null) return false;
+  if (escopo === ESCOPO_TODAS) return bucketNoRecorte(bucket, recorte);
+  return bucketsDaPraca(escopo).includes(bucket.slug);
+}
+
 /** A campanha pertence ao escopo? No escopo "todas", tudo pertence. */
 export function campanhaNoEscopo(nome: string, escopo: EscopoSlug): boolean {
   if (escopo === ESCOPO_TODAS) return true;
-  return bucketDaCampanha(nome)?.slug === escopo;
+  return bucketNoEscopo(bucketDaCampanha(nome), escopo);
 }
 
 export const OBJETIVO_LABEL: Record<string, string> = {

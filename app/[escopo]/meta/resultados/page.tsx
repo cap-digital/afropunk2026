@@ -67,7 +67,7 @@ export default async function MetaResultados({
     const receitaPorConjunto: PontoGrafico[] = conjuntosComReceita.slice(0, 7).map((c) => ({
       nome: c.nome.length > 26 ? `${c.nome.slice(0, 25)}…` : c.nome,
       valor: c.m.purchaseValue,
-      cor: c.bucket?.cor ?? cor,
+      cor: d.comparativo ? (c.bucket?.cor ?? cor) : cor,
     }));
 
 

@@ -2,11 +2,11 @@ import Link from "next/link";
 import { Losangos } from "@/components/Marca";
 import { MarcaAnimada } from "@/components/MarcaAnimada";
 import { Sparkline } from "@/components/charts";
-import { carregarEscopo, type FatiaBucket } from "@/lib/dados";
-import { carregarAds, tentarAds, type DadosAds } from "@/lib/ads";
+import { carregarEscopo, fatiaDaPraca, type FatiaBucket } from "@/lib/dados";
+import { carregarAds, somarAds, tentarAds, type DadosAds } from "@/lib/ads";
 import { explicarErroMeta, MetaError, REVALIDATE } from "@/lib/meta";
 import { brl, brlCompact, compact, dec, pct } from "@/lib/format";
-import { ESCOPO_TODAS, NACIONAL, PRACAS } from "@/lib/config";
+import { bucketsDaPraca, ESCOPO_TODAS, NACIONAL, PRACAS, type PracaSlug } from "@/lib/config";
 import { carregarVisaoGeralGA4, type TotaisSite } from "@/lib/analytics";
 import { comImposto } from "@/lib/imposto";
 import type { PontoGrafico } from "@/components/charts";
@@ -35,8 +35,17 @@ interface ResumoPraca {
   emVeiculacao: boolean;
 }
 
-function consolidar(f: FatiaBucket | null, ads: DadosAds | null, slug: string): ResumoPraca {
-  const g = ads?.fatias.find((x) => x.bucket.slug === slug) ?? null;
+function consolidar(f: FatiaBucket | null, ads: DadosAds | null, praca: PracaSlug): ResumoPraca {
+  // Os mesmos buckets do escopo da praça: em Salvador, a nacional junto.
+  const slugs = bucketsDaPraca(praca);
+  const fatiasAds = ads?.fatias.filter((x) => slugs.includes(x.bucket.slug)) ?? [];
+  const g = fatiasAds.length
+    ? {
+        total: somarAds(fatiasAds.map((x) => x.total)),
+        campanhas: fatiasAds.flatMap((x) => x.campanhas),
+        ativa: fatiasAds.some((x) => x.ativa),
+      }
+    : null;
   const investimento = comImposto(f?.total.spend ?? 0) + (g?.total.custo ?? 0);
   const invConv = (f?.total.spendConversao ?? 0) + (g?.total.custo ?? 0);
   const receita = (f?.total.receitaConversao ?? 0) + (g?.total.receita ?? 0);
@@ -44,7 +53,9 @@ function consolidar(f: FatiaBucket | null, ads: DadosAds | null, slug: string): 
 
   // Série do Meta somada ao custo diário do Google daquela praça.
   const custoAdsPorDia = new Map(
-    (ads?.serie ?? []).map((p) => [p.date, Number(p[`custo_${slug}`] ?? 0)] as const),
+    (ads?.serie ?? []).map(
+      (p) => [p.date, slugs.reduce((a, s) => a + Number(p[`custo_${s}`] ?? 0), 0)] as const,
+    ),
   );
   const datas = [
     ...new Set([...(f?.serie ?? []).map((p) => p.date), ...custoAdsPorDia.keys()]),
@@ -158,7 +169,7 @@ export default async function Capa() {
                 marca={p.marca}
                 local={p.local}
                 cor={p.cor}
-                r={consolidar(fatia(p.slug), ads, p.slug)}
+                r={consolidar(dados && fatiaDaPraca(dados, p.slug), ads, p.slug)}
               />
             ))}
           </div>

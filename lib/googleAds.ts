@@ -2,6 +2,7 @@ import "server-only";
 import { JWT } from "google-auth-library";
 import {
   bucketDaCampanha,
+  bucketNoEscopo,
   ESCOPO_TODAS,
   PISO_HISTORICO,
   type EscopoSlug,
@@ -354,8 +355,7 @@ export async function inicioDasCampanhasAds(
   let inicio: string | null = null;
   for (const r of linhas) {
     const bucket = bucketDaCampanha(r.campaign?.name ?? "");
-    if (!bucket) continue;
-    if (escopo !== ESCOPO_TODAS && bucket.slug !== escopo) continue;
+    if (!bucketNoEscopo(bucket, escopo)) continue;
     const dia = r.campaign?.startDate;
     // ISO compara bem como texto — não vale construir Date para isto.
     if (dia && (inicio === null || dia < inicio)) inicio = dia;

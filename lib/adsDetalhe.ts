@@ -10,8 +10,7 @@ import {
 } from "./ads";
 import {
   bucketDaCampanha,
-  bucketNoRecorte,
-  ESCOPO_TODAS,
+  bucketNoEscopo,
   type Bucket,
   type EscopoSlug,
   type RecortePracas,
@@ -93,8 +92,7 @@ function noEscopo(
   recorte: RecortePracas,
 ): Bucket | null | false {
   const b = bucketDaCampanha(nome ?? "");
-  if (escopo === ESCOPO_TODAS) return bucketNoRecorte(b, recorte) ? b : false;
-  return b?.slug === escopo ? b : false;
+  return bucketNoEscopo(b, escopo, recorte) ? b : false;
 }
 
 /**
