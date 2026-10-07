@@ -6,7 +6,7 @@ import { EmpilhadaTotal, type PontoGrafico } from "@/components/charts";
 import { CartaoSerieTempo } from "@/components/CartaoSerieTempo";
 import { carregarEscopo } from "@/lib/dados";
 import { carregarAds, METRICAS_ADS_ZERO, tentarAds } from "@/lib/ads";
-import { periodoDeParams, type ParamsBusca } from "@/lib/periodo";
+import { periodoDeParams, recorteDeBusca, type ParamsBusca } from "@/lib/periodo";
 import { explicarErroMeta, MetaError, REVALIDATE } from "@/lib/meta";
 import { ehEscopoValido, ESCOPOS, ESCOPO_TODAS, PRACA_POR_SLUG, type EscopoSlug } from "@/lib/config";
 import { brl, brlCompact, compact, dec, diaMesCurto, int, pct } from "@/lib/format";
@@ -62,13 +62,14 @@ export default async function VisaoGeralGlobal({
   if (!ehEscopoValido(params.escopo)) notFound();
   const escopo = params.escopo as EscopoSlug;
   const periodo = periodoDeParams(searchParams);
+  const recorte = recorteDeBusca(searchParams);
 
   try {
     // O Google não pode derrubar a página, mas também não pode sumir em
     // silêncio: falha de leitura vira aviso, não "praça sem campanha".
     const [d, leitura] = await Promise.all([
-      carregarEscopo(escopo, periodo),
-      tentarAds(carregarAds(escopo, periodo)),
+      carregarEscopo(escopo, periodo, recorte),
+      tentarAds(carregarAds(escopo, periodo, recorte)),
     ]);
 
     const ads = leitura.dados;

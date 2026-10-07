@@ -147,6 +147,31 @@ export function bucketDaCampanha(nome: string): Bucket | null {
   return null;
 }
 
+/**
+ * Recorte de praças dentro de "todas as praças": os slugs de bucket que ficam
+ * em tela. `null` é "todas" — o padrão, e o que vale fora do comparativo, onde
+ * a praça já é o escopo.
+ */
+export type RecortePracas = string[] | null;
+
+/**
+ * Lê `?pracas=salvador,rio-de-janeiro` da URL. Slug desconhecido é ignorado; se
+ * nada sobrar, ou se sobrarem todas, volta `null` — a mesma URL limpa de sempre.
+ */
+export function recorteDeParams(valor: string | string[] | undefined): RecortePracas {
+  const bruto = Array.isArray(valor) ? valor.join(",") : (valor ?? "");
+  const pedidos = new Set(bruto.split(",").map((s) => s.trim()));
+  // Na ordem validada de BUCKETS, não na ordem da URL: a cor de cada série
+  // depende da vizinha.
+  const slugs = BUCKETS.map((b) => b.slug).filter((s) => pedidos.has(s));
+  return slugs.length === 0 || slugs.length === BUCKETS.length ? null : slugs;
+}
+
+/** O bucket entra no recorte? Sem recorte, entra tudo. */
+export function bucketNoRecorte(bucket: Bucket | null, recorte: RecortePracas): boolean {
+  return bucket !== null && (recorte === null || recorte.includes(bucket.slug));
+}
+
 /** A campanha pertence ao escopo? No escopo "todas", tudo pertence. */
 export function campanhaNoEscopo(nome: string, escopo: EscopoSlug): boolean {
   if (escopo === ESCOPO_TODAS) return true;

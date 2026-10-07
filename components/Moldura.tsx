@@ -5,10 +5,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IconArrowsLeftRight, IconChartBar, IconMapPin } from "@tabler/icons-react";
 import { Marca } from "./Marca";
-import { NavPlataformas } from "./Nav";
+import { NavComBusca, NavPlataformas } from "./Nav";
 import { BotaoAtualizar } from "./BotaoAtualizar";
 import { FiltroPeriodo } from "./FiltroPeriodo";
-import { nomeDoEscopo, type EscopoSlug } from "@/lib/config";
+import { FiltroPracas } from "./FiltroPracas";
+import { ESCOPO_TODAS, nomeDoEscopo, type EscopoSlug } from "@/lib/config";
 
 /**
  * Moldura do dashboard.
@@ -148,17 +149,34 @@ export function Moldura({
                   className="shrink-0 text-[var(--ink-muted)] transition-colors group-hover:text-[var(--ink)]"
                 />
               </Link>
+              {escopo === ESCOPO_TODAS && (
+                <Suspense fallback={null}>
+                  <FiltroPracas />
+                </Suspense>
+              )}
             </>
           )}
         </div>
 
         {navegacao ??
           (escopo ? (
-            <NavPlataformas
-              escopo={escopo}
-              canaisGoogle={canaisGoogle ?? []}
-              googleIndisponivel={googleIndisponivel ?? false}
-            />
+            // Fallback sem a busca: `useSearchParams` pede fronteira de
+            // Suspense, e a lateral não pode sumir enquanto ela resolve.
+            <Suspense
+              fallback={
+                <NavPlataformas
+                  escopo={escopo}
+                  canaisGoogle={canaisGoogle ?? []}
+                  googleIndisponivel={googleIndisponivel ?? false}
+                />
+              }
+            >
+              <NavComBusca
+                escopo={escopo}
+                canaisGoogle={canaisGoogle ?? []}
+                googleIndisponivel={googleIndisponivel ?? false}
+              />
+            </Suspense>
           ) : null)}
 
       </aside>

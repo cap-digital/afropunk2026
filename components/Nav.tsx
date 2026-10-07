@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   IconArrowsSplit,
@@ -35,11 +35,14 @@ type Icone = TablerIcon;
  */
 function Item({
   href,
+  busca = "",
   children,
   icone: Ic,
   nivel = "sub",
 }: {
   href: string;
+  /** Query que acompanha o link (`?de=…&pracas=…`), já com o `?`. */
+  busca?: string;
   children: React.ReactNode;
   icone: Icone;
   /** "topo" para o que abre um bloco; "sub" para o que vive dentro dele. */
@@ -51,7 +54,7 @@ function Item({
 
   return (
     <Link
-      href={href}
+      href={`${href}${busca}`}
       aria-current={ativo ? "page" : undefined}
       className={`flex items-center gap-2 rounded-lg px-2.5 py-[0.42rem] font-medium leading-[1.3] transition-colors ${
         topo ? "text-[var(--fs-nav)]" : "text-[var(--fs-nav-sub)]"
@@ -148,12 +151,33 @@ function Grupo({
  * Navegação do dashboard: por PLATAFORMA, nunca por praça.
  * A praça é o escopo, escolhido na capa — para trocar, volta-se para lá.
  */
+/** Filtros que valem para o painel inteiro e seguem o usuário de página em página. */
+const PARAMS_PERSISTENTES = ["de", "ate", "pracas"];
+
+/**
+ * Navegação que leva junto o período e o recorte de praças. Sem isso, trocar
+ * de página voltava para "todas as praças, todo o período" sem aviso.
+ */
+export function NavComBusca(props: Omit<Parameters<typeof NavPlataformas>[0], "busca">) {
+  const sp = useSearchParams();
+  const q = new URLSearchParams();
+  for (const k of PARAMS_PERSISTENTES) {
+    const v = sp.get(k);
+    if (v) q.set(k, v);
+  }
+  const s = q.toString().replace(/%2C/g, ",");
+  return <NavPlataformas {...props} busca={s ? `?${s}` : ""} />;
+}
+
 export function NavPlataformas({
   escopo,
   canaisGoogle,
   googleIndisponivel = false,
+  busca = "",
 }: {
   escopo: EscopoSlug;
+  /** Query preservada nos links (ver `NavComBusca`). */
+  busca?: string;
   /** Canais com campanha ativa; item sem dado não entra no menu. */
   canaisGoogle: string[];
   /** Leitura do Google falhou — mostra tudo, para a página exibir o motivo. */
@@ -174,7 +198,7 @@ export function NavPlataformas({
     <nav className="flex flex-1 flex-col gap-3 overflow-y-auto px-2.5 py-3.5">
       {/* Consolidado dos canais — fica fora de Meta e Google de propósito. */}
       <div className="flex flex-col gap-0.5">
-        <Item href={base} icone={IconLayoutDashboard} nivel="topo">
+        <Item href={base} busca={busca} icone={IconLayoutDashboard} nivel="topo">
           Overview
         </Item>
       </div>
@@ -185,22 +209,22 @@ export function NavPlataformas({
         icone={IconBrandMeta}
         contemRotaAtiva={path.startsWith(`${base}/meta`)}
       >
-        <Item href={`${base}/meta`} icone={IconChartAreaLine}>
+        <Item href={`${base}/meta`} busca={busca} icone={IconChartAreaLine}>
           Visão geral
         </Item>
-        <Item href={`${base}/meta/resultados`} icone={IconTargetArrow}>
+        <Item href={`${base}/meta/resultados`} busca={busca} icone={IconTargetArrow}>
           Resultados
         </Item>
-        <Item href={`${base}/meta/campanhas`} icone={IconSpeakerphone}>
+        <Item href={`${base}/meta/campanhas`} busca={busca} icone={IconSpeakerphone}>
           Campanhas
         </Item>
-        <Item href={`${base}/meta/criativos`} icone={IconPhoto}>
+        <Item href={`${base}/meta/criativos`} busca={busca} icone={IconPhoto}>
           Criativos
         </Item>
-        <Item href={`${base}/meta/publico`} icone={IconUsers}>
+        <Item href={`${base}/meta/publico`} busca={busca} icone={IconUsers}>
           Público
         </Item>
-        <Item href={`${base}/meta/posicionamentos`} icone={IconLayoutGrid}>
+        <Item href={`${base}/meta/posicionamentos`} busca={busca} icone={IconLayoutGrid}>
           Posicionamentos
         </Item>
       </Grupo>
@@ -219,25 +243,25 @@ export function NavPlataformas({
           estado={googleIndisponivel ? "indisponível" : undefined}
           contemRotaAtiva={path.startsWith(`${base}/google`)}
         >
-          <Item href={`${base}/google`} icone={IconChartAreaLine}>
+          <Item href={`${base}/google`} busca={busca} icone={IconChartAreaLine}>
             Visão geral
           </Item>
           {temPesquisa && (
             <>
-              <Item href={`${base}/google/pesquisa`} icone={IconSearch}>
+              <Item href={`${base}/google/pesquisa`} busca={busca} icone={IconSearch}>
                 Pesquisa
               </Item>
-              <Item href={`${base}/google/termos`} icone={IconMessageSearch}>
+              <Item href={`${base}/google/termos`} busca={busca} icone={IconMessageSearch}>
                 Termos de busca
               </Item>
             </>
           )}
           {temPmax && (
-            <Item href={`${base}/google/pmax`} icone={IconSparkles}>
+            <Item href={`${base}/google/pmax`} busca={busca} icone={IconSparkles}>
               Performance Max
             </Item>
           )}
-          <Item href={`${base}/google/segmentacao`} icone={IconLayoutGrid}>
+          <Item href={`${base}/google/segmentacao`} busca={busca} icone={IconLayoutGrid}>
             Segmentação
           </Item>
         </Grupo>

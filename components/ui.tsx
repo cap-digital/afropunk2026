@@ -188,12 +188,25 @@ export function Cartao({
 export function AreaGrafico({
   children,
   className = "",
+  piso = "var(--h-grafico)",
 }: {
   children: ReactNode;
   className?: string;
+  /** Altura mínima da área. Dois gráficos empilhados pedem mais que um. */
+  piso?: string;
 }) {
+  /*
+   * O gráfico mora numa camada absoluta, fora do fluxo. Sem isso, a altura que
+   * o Recharts já desenhou entrava na medida de conteúdo da linha: a linha não
+   * podia encolher abaixo do gráfico e o gráfico não encolhia porque a linha
+   * não encolhia. O `min-h-0` da `Linha` cortava esse laço — e junto o piso, e
+   * com sete campanhas em duas fileiras o gráfico era espremido até sumir.
+   * Fora do fluxo, a medida de conteúdo da área é só o `piso`.
+   */
   return (
-    <div className={`h-full min-h-[var(--h-grafico)] ${className}`}>{children}</div>
+    <div className={`relative h-full ${className}`} style={{ minHeight: piso }}>
+      <div className="absolute inset-0">{children}</div>
+    </div>
   );
 }
 

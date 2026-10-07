@@ -9,7 +9,7 @@ import {
   type SerieTempo,
 } from "@/components/charts";
 import { carregarEscopo } from "@/lib/dados";
-import { periodoDeParams, type ParamsBusca } from "@/lib/periodo";
+import { periodoDeParams, recorteDeBusca, type ParamsBusca } from "@/lib/periodo";
 import { explicarErroMeta, getSerieDiaria, MetaError, REVALIDATE } from "@/lib/meta";
 import {
   ehEscopoValido,
@@ -40,9 +40,10 @@ export default async function MetaCampanhas({
   if (!ehEscopoValido(params.escopo)) notFound();
   const escopo = params.escopo as EscopoSlug;
   const periodo = periodoDeParams(searchParams);
+  const recorte = recorteDeBusca(searchParams);
 
   try {
-    const d = await carregarEscopo(escopo, periodo);
+    const d = await carregarEscopo(escopo, periodo, recorte);
 
     if (!d.ativo) {
       return (
@@ -167,18 +168,20 @@ export default async function MetaCampanhas({
               titulo="Investimento × cliques"
               sub="Duas escalas diferentes, dois gráficos — nunca eixo duplo"
             >
-              <div className="grid h-[18.75rem] grid-rows-2 gap-2 lg:h-full">
-                <BarrasAgrupadas
-                  dados={comparativo}
-                  series={[{ chave: "investimento", nome: "Investimento (R$)", cor: "var(--par-a)" }]}
-                  formato="brl"
-                />
-                <BarrasAgrupadas
-                  dados={comparativo}
-                  series={[{ chave: "cliques", nome: "Cliques", cor: "var(--par-b)" }]}
-                  formato="int"
-                />
-              </div>
+              <AreaGrafico piso="18.75rem">
+                <div className="grid h-full grid-rows-2 gap-2">
+                  <BarrasAgrupadas
+                    dados={comparativo}
+                    series={[{ chave: "investimento", nome: "Investimento (R$)", cor: "var(--par-a)" }]}
+                    formato="brl"
+                  />
+                  <BarrasAgrupadas
+                    dados={comparativo}
+                    series={[{ chave: "cliques", nome: "Cliques", cor: "var(--par-b)" }]}
+                    formato="int"
+                  />
+                </div>
+              </AreaGrafico>
             </Cartao>
           </Linha>
 

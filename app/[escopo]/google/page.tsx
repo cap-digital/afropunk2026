@@ -5,7 +5,7 @@ import { AreaTempo, Medidor, type SerieTempo } from "@/components/charts";
 import { carregarAds, CANAL_LABEL, type FatiaCanalAds } from "@/lib/ads";
 import { explicarErroAds, GoogleAdsError, REVALIDATE_ADS } from "@/lib/googleAds";
 import { ehControleNext } from "@/lib/erroNext";
-import { periodoDeParams, type ParamsBusca } from "@/lib/periodo";
+import { periodoDeParams, recorteDeBusca, type ParamsBusca } from "@/lib/periodo";
 import { ehEscopoValido, ESCOPOS, type EscopoSlug } from "@/lib/config";
 import { brl, brlCompact, brlCurto, compact, dec, diaMesCurto, int, pct } from "@/lib/format";
 
@@ -32,9 +32,10 @@ export default async function GoogleAds({
   if (!ehEscopoValido(params.escopo)) notFound();
   const escopo = params.escopo as EscopoSlug;
   const periodo = periodoDeParams(searchParams);
+  const recorte = recorteDeBusca(searchParams);
 
   try {
-    const d = await carregarAds(escopo, periodo);
+    const d = await carregarAds(escopo, periodo, recorte);
 
     /*
      * Sem campanha, sem página: a rota some da lateral e o acesso direto cai em

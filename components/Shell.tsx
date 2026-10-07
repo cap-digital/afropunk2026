@@ -143,7 +143,13 @@ export function Linha({
    * vazavam para fora da tela. O display é decisão de quem usa.
    */
   return (
-    <div className={`min-w-0 ${preencher ? "lg:min-h-0 lg:flex-1" : "shrink-0"} ${className}`}>
+    /*
+     * Sem `min-h-0` na linha que preenche: ele deixava a linha encolher abaixo
+     * do conteúdo quando a página não cabia, e o cartão (overflow-hidden)
+     * cortava o gráfico. Agora o piso é o conteúdo — o gráfico em `AreaGrafico`
+     * mede só a altura mínima dele — e o que não cabe rola no <main>.
+     */
+    <div className={`min-w-0 ${preencher ? "lg:flex-1" : "shrink-0"} ${className}`}>
       {children}
     </div>
   );

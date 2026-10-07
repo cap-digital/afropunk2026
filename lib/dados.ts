@@ -4,9 +4,11 @@ import {
   ESCOPO_TODAS,
   PRACA_POR_SLUG,
   PRACAS,
+  bucketNoRecorte,
   type Bucket,
   type EscopoSlug,
   type Praca,
+  type RecortePracas,
 } from "./config";
 import {
   aplicarObjetivo,
@@ -69,6 +71,8 @@ export interface DadosEscopo {
 export async function carregarEscopo(
   escopo: EscopoSlug,
   periodo: Periodo = "maximum",
+  /** Praças em tela no comparativo; ignorado no escopo de praça única. */
+  recorte: RecortePracas = null,
 ): Promise<DadosEscopo> {
   // Comparação direta (e não via helper) para o TS estreitar EscopoSlug → PracaSlug.
   const praca = escopo === ESCOPO_TODAS ? null : PRACA_POR_SLUG[escopo];
@@ -76,7 +80,7 @@ export async function carregarEscopo(
 
   const [conta, todas] = await Promise.all([getConta(), getCampanhasAtivas()]);
   const doEscopo = comparativo
-    ? todas.filter((c) => c.bucket !== null)
+    ? todas.filter((c) => bucketNoRecorte(c.bucket, recorte))
     : todas.filter((c) => c.bucket?.slug === escopo);
 
   const ids = doEscopo.map((c) => c.id);
@@ -103,7 +107,8 @@ export async function carregarEscopo(
     }));
   };
 
-  const bucketsDoEscopo: Bucket[] = praca === null ? BUCKETS : [praca];
+  const bucketsDoEscopo: Bucket[] =
+    praca === null ? BUCKETS.filter((b) => bucketNoRecorte(b, recorte)) : [praca];
   const fatias: FatiaBucket[] = bucketsDoEscopo.map((b) => {
     const cs = campanhas.filter((c) => c.bucket?.slug === b.slug);
     return {

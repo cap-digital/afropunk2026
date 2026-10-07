@@ -5,7 +5,7 @@ import { BarrasH, EmpilhadaTotal, MapaCalor, type PontoGrafico } from "@/compone
 import { carregarSegmentacao, DIA_LABEL } from "@/lib/adsDetalhe";
 import { explicarErroAds, GoogleAdsError, REVALIDATE_ADS } from "@/lib/googleAds";
 import { ehControleNext } from "@/lib/erroNext";
-import { periodoDeParams, type ParamsBusca } from "@/lib/periodo";
+import { periodoDeParams, recorteDeBusca, type ParamsBusca } from "@/lib/periodo";
 import { ehEscopoValido, ESCOPOS, type EscopoSlug } from "@/lib/config";
 import { brl, brlCompact, compact, conv, dec, int, pct } from "@/lib/format";
 
@@ -41,10 +41,11 @@ export default async function Segmentacao({
   if (!ehEscopoValido(params.escopo)) notFound();
   const escopo = params.escopo as EscopoSlug;
   const periodo = periodoDeParams(searchParams);
+  const recorte = recorteDeBusca(searchParams);
   const cor = "var(--seq-4)";
 
   try {
-    const d = await carregarSegmentacao(escopo, periodo);
+    const d = await carregarSegmentacao(escopo, periodo, recorte);
 
     /*
      * Sem campanha, sem página: a rota some da lateral e o acesso direto cai em

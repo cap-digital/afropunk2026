@@ -1,4 +1,5 @@
 import type { Periodo } from "./meta";
+import { recorteDeParams, type RecortePracas } from "./config";
 
 export type ParamsBusca = { [k: string]: string | string[] | undefined };
 
@@ -18,6 +19,11 @@ export function periodoDeParams(sp?: ParamsBusca): Periodo {
   if (!de || !ate || !ISO.test(de) || !ISO.test(ate)) return "maximum";
   // Tolera o usuário inverter as pontas.
   return de <= ate ? { de, ate } : { de: ate, ate: de };
+}
+
+/** Lê o recorte de praças (`?pracas=`) dos parâmetros da página. */
+export function recorteDeBusca(sp?: ParamsBusca): RecortePracas {
+  return recorteDeParams(sp?.pracas);
 }
 
 /** Rótulo legível do período ativo, para o cabeçalho. */

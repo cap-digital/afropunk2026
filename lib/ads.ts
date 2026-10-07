@@ -10,11 +10,13 @@ import {
 import {
   BUCKETS,
   bucketDaCampanha,
+  bucketNoRecorte,
   ESCOPO_TODAS,
   PRACA_POR_SLUG,
   type Bucket,
   type EscopoSlug,
   type Praca,
+  type RecortePracas,
 } from "./config";
 import type { Periodo } from "./meta";
 
@@ -248,6 +250,8 @@ const PERIODO_GAQL = (de: string, ate: string) =>
 export async function carregarAds(
   escopo: EscopoSlug,
   periodo: Periodo,
+  /** Praças em tela no comparativo; ignorado no escopo de praça única. */
+  recorte: RecortePracas = null,
 ): Promise<DadosAds> {
   const praca = escopo === ESCOPO_TODAS ? null : PRACA_POR_SLUG[escopo];
   const comparativo = praca === null;
@@ -294,11 +298,12 @@ export async function carregarAds(
 
   // Só o que casa com alguma praça: campanhas de edições passadas ficam fora.
   const campanhas = comparativo
-    ? todas.filter((c) => c.bucket !== null)
+    ? todas.filter((c) => bucketNoRecorte(c.bucket, recorte))
     : todas.filter((c) => c.bucket?.slug === escopo);
   const nomesNoEscopo = new Set(campanhas.map((c) => c.nome));
 
-  const bucketsDoEscopo: Bucket[] = praca === null ? BUCKETS : [praca];
+  const bucketsDoEscopo: Bucket[] =
+    praca === null ? BUCKETS.filter((b) => bucketNoRecorte(b, recorte)) : [praca];
   const fatias: FatiaAds[] = bucketsDoEscopo.map((b) => {
     const cs = campanhas.filter((c) => c.bucket?.slug === b.slug);
     return {

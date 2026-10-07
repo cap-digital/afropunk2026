@@ -529,13 +529,24 @@ export function BarrasH({
    * barra.
    */
   const alturaFaixas = `calc(${Math.max(dados.length, 1)} * var(--h-barra-faixa) + var(--h-barra-folga))`;
+  const rotuloValor = (v: number) => {
+    const cheio = fmt(v, formato);
+    return cheio.length > 12 ? fmtEixo(v, formato) : cheio;
+  };
+  /*
+   * A margem direita é onde mora o rótulo da barra mais longa. Cravada em 52px
+   * ela cortava "3.381.157" — o corpo do rótulo cresce com a janela e a margem
+   * não. Dimensionada pelo maior rótulo, a ~9px por caractere em negrito.
+   */
+  const maiorRotulo = Math.max(0, ...dados.map((d) => rotuloValor(Number(d[chaveValor]) || 0).length));
+  const margemDireita = rotularValor ? Math.max(52, maiorRotulo * 9 + 10) : 8;
   return (
     <div style={{ height: altura ?? alturaFaixas }}>
     <ResponsiveContainer width="100%" height="100%">
       <BarChart
         data={dados}
         layout="vertical"
-        margin={{ top: 2, right: rotularValor ? 52 : 8, left: 0, bottom: 0 }}
+        margin={{ top: 2, right: margemDireita, left: 0, bottom: 0 }}
         barCategoryGap="22%"
       >
         <CartesianGrid stroke={GRID} strokeDasharray="2 4" horizontal={false} />
@@ -568,10 +579,7 @@ export function BarrasH({
               position="right"
               // Valor cheio muito longo é cortado pela margem: acima de 12
               // caracteres cai para a forma compacta.
-              formatter={(v: number) => {
-                const cheio = fmt(v, formato);
-                return cheio.length > 12 ? fmtEixo(v, formato) : cheio;
-              }}
+              formatter={rotuloValor}
               style={{ fill: "var(--ink-2)", fontSize: "var(--fs-valor-grafico)", fontWeight: 600 }}
             />
           )}

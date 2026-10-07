@@ -8,7 +8,14 @@ import {
   STATUS_CAMPANHA,
   type MetricasAds,
 } from "./ads";
-import { bucketDaCampanha, ESCOPO_TODAS, type Bucket, type EscopoSlug } from "./config";
+import {
+  bucketDaCampanha,
+  bucketNoRecorte,
+  ESCOPO_TODAS,
+  type Bucket,
+  type EscopoSlug,
+  type RecortePracas,
+} from "./config";
 export { CAMPO_ATIVO_LABEL } from "./config";
 import type { Periodo } from "./meta";
 
@@ -80,9 +87,13 @@ function metricasDe(m: Record<string, string | number> = {}): MetricasAds {
 }
 
 /** A linha pertence ao escopo? Vale a mesma regra de praça do resto do painel. */
-function noEscopo(nome: string | undefined, escopo: EscopoSlug): Bucket | null | false {
+function noEscopo(
+  nome: string | undefined,
+  escopo: EscopoSlug,
+  recorte: RecortePracas,
+): Bucket | null | false {
   const b = bucketDaCampanha(nome ?? "");
-  if (escopo === ESCOPO_TODAS) return b === null ? false : b;
+  if (escopo === ESCOPO_TODAS) return bucketNoRecorte(b, recorte) ? b : false;
   return b?.slug === escopo ? b : false;
 }
 
@@ -174,6 +185,7 @@ export const FORCA_LABEL: Record<string, string> = {
 export async function carregarPesquisa(
   escopo: EscopoSlug,
   periodo: Periodo,
+  recorte: RecortePracas = null,
 ): Promise<DadosPesquisa> {
   const P = await periodoGaql(periodo, escopo);
 
@@ -221,7 +233,7 @@ export async function carregarPesquisa(
    */
   const porChave = new Map<string, PalavraChave>();
   for (const r of kw) {
-    const bucket = noEscopo(r.campaign?.name, escopo);
+    const bucket = noEscopo(r.campaign?.name, escopo, recorte);
     if (!bucket) continue;
     const texto = r.adGroupCriterion?.keyword?.text ?? "";
     const corr = r.adGroupCriterion?.keyword?.matchType ?? "";
@@ -272,7 +284,7 @@ export async function carregarPesquisa(
 
   const anuncios: AnuncioPesquisa[] = [];
   for (const r of ads) {
-    const bucket = noEscopo(r.campaign?.name, escopo);
+    const bucket = noEscopo(r.campaign?.name, escopo, recorte);
     if (!bucket) continue;
     const ad = r.adGroupAd?.ad;
     // Anúncios removidos continuam na resposta com métricas zeradas.
@@ -295,7 +307,7 @@ export async function carregarPesquisa(
 
   const leilao: LeilaoCampanha[] = [];
   for (const r of share) {
-    const bucket = noEscopo(r.campaign?.name, escopo);
+    const bucket = noEscopo(r.campaign?.name, escopo, recorte);
     if (!bucket) continue;
     leilao.push({
       campanha: r.campaign?.name ?? "",
@@ -390,6 +402,7 @@ export const STATUS_TERMO_LABEL: Record<string, string> = {
 export async function carregarTermos(
   escopo: EscopoSlug,
   periodo: Periodo,
+  recorte: RecortePracas = null,
 ): Promise<DadosTermos> {
   const P = await periodoGaql(periodo, escopo);
   const linhas = (await consultarAds(`
@@ -410,7 +423,7 @@ export async function carregarTermos(
    */
   const porTermo = new Map<string, TermoBusca>();
   for (const r of linhas) {
-    const bucket = noEscopo(r.campaign?.name, escopo);
+    const bucket = noEscopo(r.campaign?.name, escopo, recorte);
     if (!bucket) continue;
     const termo = r.searchTermView?.searchTerm ?? "";
     if (!termo) continue;
@@ -491,7 +504,11 @@ export interface DadosPmax {
 }
 
 
-export async function carregarPmax(escopo: EscopoSlug, periodo: Periodo): Promise<DadosPmax> {
+export async function carregarPmax(
+  escopo: EscopoSlug,
+  periodo: Periodo,
+  recorte: RecortePracas = null,
+): Promise<DadosPmax> {
   const P = await periodoGaql(periodo, escopo);
 
   const [gruposCrus, ativosCrus] = await Promise.all([
@@ -519,7 +536,7 @@ export async function carregarPmax(escopo: EscopoSlug, periodo: Periodo): Promis
 
   const grupos: GrupoAtivos[] = [];
   for (const r of gruposCrus) {
-    const bucket = noEscopo(r.campaign?.name, escopo);
+    const bucket = noEscopo(r.campaign?.name, escopo, recorte);
     if (!bucket) continue;
     grupos.push({
       id: r.assetGroup?.id ?? "",
@@ -538,7 +555,7 @@ export async function carregarPmax(escopo: EscopoSlug, periodo: Periodo): Promis
   const outros: AtivoPmax[] = [];
 
   for (const r of ativosCrus) {
-    const bucket = noEscopo(r.campaign?.name, escopo);
+    const bucket = noEscopo(r.campaign?.name, escopo, recorte);
     if (!bucket) continue;
     const campo = r.assetGroupAsset?.fieldType ?? "";
     const id = r.asset?.id ?? "";
@@ -656,6 +673,7 @@ async function nomesDeCidade(recursos: string[]): Promise<Map<string, string>> {
 export async function carregarSegmentacao(
   escopo: EscopoSlug,
   periodo: Periodo,
+  recorte: RecortePracas = null,
 ): Promise<DadosSegmentacao> {
   const P = await periodoGaql(periodo, escopo);
 
@@ -683,7 +701,7 @@ export async function carregarSegmentacao(
   const agrupar = (linhas: LinhaCrua[], chave: (r: LinhaCrua) => string | null) => {
     const mapa = new Map<string, MetricasAds[]>();
     for (const r of linhas) {
-      if (!noEscopo(r.campaign?.name, escopo)) continue;
+      if (!noEscopo(r.campaign?.name, escopo, recorte)) continue;
       const k = chave(r);
       if (!k) continue;
       const lista = mapa.get(k) ?? [];
@@ -698,7 +716,7 @@ export async function carregarSegmentacao(
     .map(([k, v]) => ({ nome: DISPOSITIVO_ADS_LABEL[k] ?? k, m: somarAds(v) }))
     .sort((a, b) => b.m.custo - a.m.custo);
 
-  const geoNoEscopo = geo.filter((r) => noEscopo(r.campaign?.name, escopo));
+  const geoNoEscopo = geo.filter((r) => noEscopo(r.campaign?.name, escopo, recorte));
   const recursos = [
     ...new Set(
       geoNoEscopo.map((r) => String(r.segments?.geoTargetCity ?? "")).filter(Boolean),
@@ -716,7 +734,7 @@ export async function carregarSegmentacao(
 
   const grade = new Map<string, CelulaHoraDia>();
   for (const r of horas) {
-    if (!noEscopo(r.campaign?.name, escopo)) continue;
+    if (!noEscopo(r.campaign?.name, escopo, recorte)) continue;
     const dia = DIAS.indexOf(String(r.segments?.dayOfWeek ?? ""));
     const hora = n(r.segments?.hour);
     if (dia < 0) continue;

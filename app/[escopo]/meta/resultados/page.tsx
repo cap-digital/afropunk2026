@@ -3,7 +3,7 @@ import { AreaGrafico, ErroMeta, Shell, subtituloEscopo, Linha, Pagina } from "@/
 import { Cartao, CartaoKpi, GradeKpi, Secao, Vazio } from "@/components/ui";
 import { BarrasH, LinhasTempo, type PontoGrafico, type SerieTempo } from "@/components/charts";
 import { carregarConjuntos, carregarEscopo } from "@/lib/dados";
-import { periodoDeParams, type ParamsBusca } from "@/lib/periodo";
+import { periodoDeParams, recorteDeBusca, type ParamsBusca } from "@/lib/periodo";
 import { explicarErroMeta, MetaError, REVALIDATE } from "@/lib/meta";
 import { ehEscopoValido, ESCOPOS, nomeCurtoCampanha, type EscopoSlug } from "@/lib/config";
 import { brl, dec, diaMesCurto, int } from "@/lib/format";
@@ -25,9 +25,10 @@ export default async function MetaResultados({
   if (!ehEscopoValido(params.escopo)) notFound();
   const escopo = params.escopo as EscopoSlug;
   const periodo = periodoDeParams(searchParams);
+  const recorte = recorteDeBusca(searchParams);
 
   try {
-    const d = await carregarEscopo(escopo, periodo);
+    const d = await carregarEscopo(escopo, periodo, recorte);
 
     if (!d.ativo) {
       return (

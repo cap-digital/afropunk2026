@@ -4,7 +4,7 @@ import { Cartao, CartaoKpi, GradeKpi, Vazio } from "@/components/ui";
 import { DestaqueCriativo } from "@/components/Criativos";
 import { GradeCriativos } from "@/components/GradeCriativos";
 import { carregarCriativos, carregarEscopo } from "@/lib/dados";
-import { periodoDeParams, type ParamsBusca } from "@/lib/periodo";
+import { periodoDeParams, recorteDeBusca, type ParamsBusca } from "@/lib/periodo";
 import { explicarErroMeta, MetaError, REVALIDATE, somar } from "@/lib/meta";
 import { ehEscopoValido, ESCOPOS, type EscopoSlug } from "@/lib/config";
 import { brl, compact, pct } from "@/lib/format";
@@ -26,9 +26,10 @@ export default async function MetaCriativos({
   if (!ehEscopoValido(params.escopo)) notFound();
   const escopo = params.escopo as EscopoSlug;
   const periodo = periodoDeParams(searchParams);
+  const recorte = recorteDeBusca(searchParams);
 
   try {
-    const d = await carregarEscopo(escopo, periodo);
+    const d = await carregarEscopo(escopo, periodo, recorte);
     const criativos = await carregarCriativos(d);
 
     if (criativos.length === 0) {

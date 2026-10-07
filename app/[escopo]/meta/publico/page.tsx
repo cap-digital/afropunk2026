@@ -3,7 +3,7 @@ import { AreaGrafico, ErroMeta, Linha, Pagina, Shell, subtituloEscopo } from "@/
 import { Cartao, CartaoKpi, ComLeitura, GradeKpi, Realce, Secao, Vazio } from "@/components/ui";
 import { BarrasAgrupadas, BarrasH, EmpilhadaTotal, Piramide, type PontoGrafico } from "@/components/charts";
 import { carregarBreakdowns, carregarEscopo } from "@/lib/dados";
-import { periodoDeParams, type ParamsBusca } from "@/lib/periodo";
+import { periodoDeParams, recorteDeBusca, type ParamsBusca } from "@/lib/periodo";
 import { explicarErroMeta, MetaError, REVALIDATE, type LinhaBreakdown } from "@/lib/meta";
 import { DISPOSITIVO_LABEL, ehEscopoValido, ESCOPOS, type EscopoSlug } from "@/lib/config";
 import { compact, dec, int, pct } from "@/lib/format";
@@ -31,9 +31,10 @@ export default async function MetaPublico({
   if (!ehEscopoValido(params.escopo)) notFound();
   const escopo = params.escopo as EscopoSlug;
   const periodo = periodoDeParams(searchParams);
+  const recorte = recorteDeBusca(searchParams);
 
   try {
-    const d = await carregarEscopo(escopo, periodo);
+    const d = await carregarEscopo(escopo, periodo, recorte);
 
     if (!d.ativo) {
       return (
@@ -106,7 +107,8 @@ export default async function MetaPublico({
       valor: r.impressions,
     }));
     const regioes: PontoGrafico[] = bd.regioes.slice(0, 8).map((r) => ({
-      nome: r.chave,
+      // A API devolve "Rio de Janeiro (state)" para separar o estado da cidade.
+      nome: r.chave.replace(/\s*\(state\)$/i, ""),
       valor: r.impressions,
     }));
 

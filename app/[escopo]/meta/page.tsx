@@ -27,7 +27,7 @@ import {
   carregarCriativos,
   carregarEscopo,
 } from "@/lib/dados";
-import { periodoDeParams, type ParamsBusca } from "@/lib/periodo";
+import { periodoDeParams, recorteDeBusca, type ParamsBusca } from "@/lib/periodo";
 import { explicarErroMeta, MetaError, REVALIDATE } from "@/lib/meta";
 import {
   ehEscopoValido,
@@ -54,9 +54,10 @@ export default async function MetaVisaoGeral({
   if (!ehEscopoValido(params.escopo)) notFound();
   const escopo = params.escopo as EscopoSlug;
   const periodo = periodoDeParams(searchParams);
+  const recorte = recorteDeBusca(searchParams);
 
   try {
-    const d = await carregarEscopo(escopo, periodo);
+    const d = await carregarEscopo(escopo, periodo, recorte);
 
     if (!d.ativo) {
       return (
